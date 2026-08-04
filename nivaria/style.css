@@ -44,11 +44,22 @@ body {
   line-height: 1.7;
 }
 
-article, .hero, .about, .eplist, nav.top, nav.pager, footer {
+article, .hero, .about, .eplist, nav.top, nav.pager, footer, .headerimg {
   max-width: 36em;
   margin-left: auto;
   margin-right: auto;
 }
+
+.headerimg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  box-shadow: 0 14px 40px -18px rgba(60, 40, 10, 0.45);
+  margin-bottom: clamp(1.5rem, 5vw, 2.5rem);
+}
+.hero .headerimg { margin-bottom: 1.75rem; }
 
 a { color: var(--laurel); text-decoration-color: var(--line); text-underline-offset: 3px; }
 a:hover { color: var(--honey); }
