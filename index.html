@@ -155,6 +155,39 @@
   .rum p { margin: 0.1rem 0 0; }
   .rum code { color: var(--amber); font-size: 0.92em; }
 
+  /* ── framed plate ──────────────────────────────────────── */
+  .plate { margin: 0.3rem 0 0; }
+  .plate a {
+    display: block;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    background: #ebe3d2;
+    line-height: 0;
+    transition: border-color 120ms ease, box-shadow 120ms ease;
+  }
+  .plate a:hover, .plate a:focus-visible {
+    border-color: var(--green);
+    box-shadow: 0 0 0 1px var(--green);
+    outline: none;
+  }
+  .plate img { display: block; width: 100%; height: auto; }
+  .plate figcaption {
+    margin-top: 0.5rem;
+    color: var(--faint);
+    font-size: 0.85em;
+    line-height: 1.5;
+  }
+
+  /* ── pi ────────────────────────────────────────────────── */
+  .pi {
+    word-break: break-all;
+    color: var(--dim);
+    font-size: 0.92em;
+    margin: 0 0 0.9rem;
+  }
+  .pi mark { background: none; color: var(--green); font-weight: 700; }
+
   /* ── footer ────────────────────────────────────────────── */
   footer {
     margin-top: 2.4rem; padding-top: 1.1rem;
@@ -235,9 +268,9 @@
           <span class="year">2020</span>
         </a>
         <a class="row" href="https://letsconsciousness.com/">
-          <span class="name">consciousness</span>
-          <span class="desc">a pocket museum of the only mystery you carry everywhere</span>
-          <span class="year">&nbsp;</span>
+          <span class="name">pocket museum</span>
+          <span class="desc">42 experiments on the only mystery you carry everywhere</span>
+          <span class="year">2026</span>
         </a>
         <a class="row" href="#">
           <span class="name">sosiego</span>
@@ -248,9 +281,26 @@
     </section>
 
     <section>
+      <p class="cmd"><b>open ~/projects/pocket-museum.png</b></p>
+      <figure class="plate">
+        <a href="https://letsconsciousness.com/">
+          <img src="img/pocket-museum.png" width="1408" height="768" loading="lazy"
+               alt="Engraved Victorian banner reading “The Pocket Museum of Consciousness”, est. 2026, motto “Cogito ergo sum”, with an owl, an all-seeing eye, and figures examining exhibits.">
+        </a>
+        <figcaption>The Pocket Museum of Consciousness — made and curated by me.
+        <em>Cogito ergo sum.</em></figcaption>
+      </figure>
+    </section>
+
+    <section>
       <p class="cmd"><b>history | less</b></p>
       <p class="note">work that outlived the companies that paid for it</p>
       <div class="rows">
+        <a class="row" href="https://cityonahillpress.com/">
+          <span class="name">city on a hill</span>
+          <span class="desc">illustrator for the UCSC student paper</span>
+          <span class="year">late 80s</span>
+        </a>
         <a class="row" href="https://archive.org/details/pc-gamer-demo-disc-collection">
           <span class="name">pc gamer</span>
           <span class="desc">cover discs — 758 of them survive on the Internet Archive</span>
@@ -290,6 +340,28 @@
     </section>
 
     <section>
+      <p class="cmd"><b>ls ~/radio/</b></p>
+      <p class="note">KZSC 88.1 FM, Santa Cruz — from the trees to the seas</p>
+      <div class="rows">
+        <a class="row" href="https://kzsc.org/">
+          <span class="name">shocking pink</span>
+          <span class="desc">queer radio at KZSC</span>
+          <span class="year">1989</span>
+        </a>
+        <a class="row" href="https://kzsc.org/">
+          <span class="name">wild women</span>
+          <span class="desc">5–9am — music by unusual women</span>
+          <span class="year">&nbsp;</span>
+        </a>
+        <a class="row" href="https://kzsc.org/">
+          <span class="name">bucket sisters</span>
+          <span class="desc">midnight–4am — surreal, and nobody awake to stop us</span>
+          <span class="year">&nbsp;</span>
+        </a>
+      </div>
+    </section>
+
+    <section>
       <p class="cmd"><b>cat lineage.txt</b></p>
       <p class="note">people who taught me, directly or otherwise</p>
       <div class="rows">
@@ -315,10 +387,25 @@
         </a>
         <a class="row" href="https://engineering.ucsc.edu/departments/computer-science-and-engineering/">
           <span class="name">ucsc</span>
-          <span class="desc">computer science in the redwoods</span>
+          <span class="desc">computer science in the redwoods — class of '89</span>
+          <span class="year">1989</span>
+        </a>
+        <a class="row" href="https://www.deanza.edu/ftv/animation/">
+          <span class="name">de anza</span>
+          <span class="desc">character animation track</span>
           <span class="year">&nbsp;</span>
         </a>
       </div>
+    </section>
+
+    <section>
+      <p class="cmd"><b>cat ~/.obsolete</b></p>
+      <p class="note">skills with no remaining job postings</p>
+      <ul class="roles">
+        <li>cutting film on a flatbed — one of the last cohorts at UCSC taught to do it</li>
+        <li>splicing ¼-inch tape by hand: grease pencil, razor, 45° block</li>
+        <li>shooting animation on an iron-and-steel stand, hand-painted cels, one frame at a time</li>
+      </ul>
     </section>
 
     <section>
@@ -344,6 +431,24 @@
           <span class="name">savejackson</span>
           <span class="desc">the coalition fighting the logging there</span>
           <span class="year">&nbsp;</span>
+        </a>
+      </div>
+    </section>
+
+    <section>
+      <p class="cmd"><b>echo "scale=60; 4*a(1)" | bc -l</b></p>
+      <p class="note">I was born on it</p>
+      <p class="pi"><mark>3.14</mark>1592653589793238462643383279502884197169399375105820974944</p>
+      <div class="rows">
+        <a class="row" href="https://www.youtube.com/watch?v=XanjZw5hPvE">
+          <span class="name">hard 'n phirm</span>
+          <span class="desc">“Pi” — the greatest math song ever filmed, dir. Keith Schofield</span>
+          <span class="year">2005</span>
+        </a>
+        <a class="row" href="https://en.wikipedia.org/wiki/Pi_Day">
+          <span class="name">pi day</span>
+          <span class="desc">March 14 — cake optional, irrational</span>
+          <span class="year">3/14</span>
         </a>
       </div>
     </section>
