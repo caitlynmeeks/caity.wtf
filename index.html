@@ -193,6 +193,7 @@
   .note a { color: var(--dim); text-decoration: underline; text-underline-offset: 2px; }
   .note a:hover, .note a:focus-visible { color: var(--green); }
 
+  .btns { display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .btn88 {
     display: inline-block;
     line-height: 0;
@@ -558,12 +559,20 @@
     <section>
       <p class="cmd"><b>ls ~/webring/</b></p>
       <p class="note">a member of <a href="https://maki.cafe/webring" rel="noopener" target="_blank">maki's webring</a> — take the button if you want it</p>
-      <a class="btn88" href="https://maki.cafe/webring" rel="noopener" target="_blank">
-        <img src="img/caity-wtf-88x31.gif"
-             srcset="img/caity-wtf-88x31.gif 1x, img/caity-wtf-88x31@2x.gif 2x"
-             width="88" height="31"
-             alt="caity.wtf — 88×31 webring button, green terminal text on black with a blinking cursor">
-      </a>
+      <div class="btns">
+        <a class="btn88" href="https://maki.cafe/webring" rel="noopener" target="_blank">
+          <img src="img/caity-wtf-88x31.gif"
+               srcset="img/caity-wtf-88x31.gif 1x, img/caity-wtf-88x31@2x.gif 2x"
+               width="88" height="31"
+               alt="caity.wtf — 88×31 webring button, green terminal text on black with a blinking cursor">
+        </a>
+        <a class="btn88" href="/nivaria/">
+          <img src="img/nivaria-88x31.gif"
+               srcset="img/nivaria-88x31.gif 1x, img/nivaria-88x31@2x.gif 2x"
+               width="88" height="31"
+               alt="Nivaria — 88×31 button, serif wordmark above a green island ridgeline on cream">
+        </a>
+      </div>
     </section>
 
     <footer>
