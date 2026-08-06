@@ -103,6 +103,19 @@
   .dim { color: var(--dim); }
   em { color: var(--amber); font-style: normal; }
 
+  a.ilink {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--faint);
+    text-underline-offset: 3px;
+    transition: text-decoration-color 120ms ease;
+  }
+  a.ilink:hover, a.ilink:focus-visible {
+    text-decoration-color: var(--green);
+    outline: none;
+  }
+  a.ilink:focus-visible { box-shadow: 0 0 0 2px var(--green); border-radius: 2px; }
+
   /* ── link rows ─────────────────────────────────────────── */
   .rows { display: grid; gap: 0.1rem; }
 
@@ -267,7 +280,7 @@
 
     <section>
       <p class="cmd"><b>cat now.txt</b></p>
-      <p>Writing <em>Nivaria</em>, an audio series.
+      <p>Writing <a class="ilink" href="/nivaria/"><em>Nivaria</em></a>, an audio series.
       Learning Spanish with a stubborn preference for <span class="dim">canario</span>.
       Running 6&nbsp;kW of panels and a water catchment system, and slowly
       teaching two thousand square metres of volcanic hillside to feed me.</p>
@@ -291,11 +304,6 @@
           <span class="name">pocket museum</span>
           <span class="desc">42 experiments on the only mystery you carry everywhere</span>
           <span class="year">2026</span>
-        </a>
-        <a class="row" href="#">
-          <span class="name">sosiego</span>
-          <span class="desc">notes from an off-grid finca</span>
-          <span class="year">&nbsp;</span>
         </a>
       </div>
     </section>
