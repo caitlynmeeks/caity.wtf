@@ -278,3 +278,19 @@ footer {
   text-align: center;
 }
 footer a { color: var(--faint); }
+
+/* ---------- language picker (English/Español, 2026-08-07) ---------- */
+
+.topright { display: flex; gap: 1rem; align-items: baseline; }
+.langpick {
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--soft);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.1rem 0.4rem;
+  cursor: pointer;
+}
+.langpick:hover { color: var(--honey); border-color: var(--honey); }
+nav.top.idx { justify-content: flex-end; margin-bottom: 0.5rem; }
