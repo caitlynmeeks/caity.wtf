@@ -96,21 +96,17 @@
     color: var(--bright); font-weight: 700; letter-spacing: -0.01em;
   }
 
-  /* ── portrait + name header ────────────────────────────── */
-  .me { display: flex; gap: clamp(1rem, 3vw, 1.6rem); align-items: flex-start; }
+  /* ── portrait ──────────────────────────────────────────── */
+  /* width AND height both set: the HTML width/height attributes are
+     presentational hints, and an unset height lets height="638" through. */
   .me__img {
-    flex: none;
-    width: clamp(7rem, 22vw, 11rem);
-    aspect-ratio: 1 / 1;
+    display: block;
+    width: 6rem;
+    height: 6rem;
+    object-fit: cover;
     border: 1px solid var(--line);
     border-radius: 6px;
-    object-fit: cover;
-    display: block;
-  }
-  .me__txt { min-width: 0; }
-  @media (max-width: 30rem) {
-    .me { flex-direction: column; gap: 0.9rem; }
-    .me__img { width: 9rem; }
+    margin: 0.4rem 0 0.85rem;
   }
 
   .roles { margin: 0; padding: 0; list-style: none; }
@@ -280,19 +276,15 @@
 
     <section>
       <p class="cmd"><b>whoami</b></p>
-      <div class="me">
-        <img class="me__img" src="img/caitlyn.webp" width="640" height="638"
-             alt="Caitlyn Meeks, datamoshed: a portrait in a wide-brimmed hat by the sea, sliced into horizontal bands of displaced pixels and blocks of red">
-        <div class="me__txt">
-          <h1>Caitlyn&nbsp;Meeks</h1>
-          <ul class="roles">
-            <li>creative technologist</li>
-            <li>computer science tinkerer</li>
-            <li>artist &amp; storyteller</li>
-            <li>silicon valley refusenik</li>
-          </ul>
-        </div>
-      </div>
+      <img class="me__img" src="img/caitlyn.webp" width="640" height="638"
+           alt="Caitlyn Meeks, datamoshed: a portrait in a wide-brimmed hat by the sea, sliced into horizontal bands of displaced pixels and blocks of red">
+      <h1>Caitlyn&nbsp;Meeks</h1>
+      <ul class="roles">
+        <li>creative technologist</li>
+        <li>computer science tinkerer</li>
+        <li>artist &amp; storyteller</li>
+        <li>silicon valley refusenik</li>
+      </ul>
     </section>
 
     <section>
