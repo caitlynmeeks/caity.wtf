@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Pond That Remembered Everything</title>
+<meta name="description" content="A reservoir keeps every state it ever visited and predicts by retrieval: nearest-neighbor lookup over its own history, indexed by its suffix-tree geometry, breaks the 5-gram fence no architecture in this program had beaten — with zero training beyond the readout it already had.">
+<meta name="color-scheme" content="dark">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://caity.wtf/experiments/echo-library/">
+<meta property="og:title" content="The Pond That Remembered Everything">
+<meta property="og:description" content="Lab note: retrieval as the fourth reader — a training-free episodic memory carries 75% of the vote, breaks the 5-gram fence, and beats reservoirs fifty times its size.">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0d0c'/%3E%3Ctext x='5' y='23' font-family='monospace' font-size='18' fill='%237fd88f'%3E%3E_%3C/text%3E%3C/svg%3E">
+
+<style>
+  :root {
+    --bg:     #0b0d0c;
+    --panel:  #101413;
+    --chrome: #171d1b;
+    --line:   #222b28;
+    --fg:     #ccd6d0;
+    --bright: #f2f7f4;
+    --dim:    #6d7d75;
+    --faint:  #4a5852;
+    --green:  #7fd88f;
+    --amber:  #e8b45c;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco,
+            "Cascadia Mono", "Roboto Mono", Consolas, "Liberation Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    padding: clamp(1rem, 4vw, 3.5rem) clamp(0.75rem, 4vw, 2rem);
+    background: var(--bg);
+    background-image: radial-gradient(120% 90% at 50% 0%, #131a17 0%, var(--bg) 62%);
+    background-attachment: fixed;
+    color: var(--fg);
+    font-family: var(--mono);
+    font-size: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+    line-height: 1.7;
+    display: flex; justify-content: center;
+  }
+  .terminal {
+    width: 100%; max-width: 52rem;
+    background: var(--panel);
+    border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset,
+                0 24px 60px -20px rgba(0,0,0,0.8);
+  }
+  .chrome {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.6rem 0.85rem; background: var(--chrome);
+    border-bottom: 1px solid var(--line);
+  }
+  .dot { width: 0.7rem; height: 0.7rem; border-radius: 50%; flex: none; }
+  .dot--r { background: #e05f56; } .dot--y { background: #e2b657; } .dot--g { background: #5fbf6a; }
+  .chrome__title {
+    margin: 0 auto; padding-left: 1rem; font-size: 0.8em; color: var(--dim);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  main { padding: clamp(1.1rem, 3vw, 2rem) clamp(1rem, 3.5vw, 2.25rem) 2rem; }
+  .cmd { color: var(--dim); margin: 0 0 1.2rem; overflow-wrap: anywhere; }
+  .cmd::before { content: "caity@sosiego ~/experiments/echo-library % "; color: var(--green); }
+  .cmd b { color: var(--bright); font-weight: 600; }
+  .cmd a { color: inherit; }
+
+  h1 {
+    font-size: clamp(1.25rem, 1rem + 1.4vw, 1.7rem);
+    line-height: 1.3; margin: 0 0 0.4rem;
+    color: var(--bright); font-weight: 700; letter-spacing: -0.01em;
+  }
+  .subtitle { color: var(--fg); font-size: 1em; margin: 0 0 0.5rem; font-style: italic; }
+  .byline { color: var(--dim); font-size: 0.92em; margin: 0 0 1.6rem; }
+
+  h2 {
+    font-size: 1.05em; color: var(--bright);
+    margin: 2.2rem 0 0.6rem; padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+  }
+  h2 .sec { color: var(--green); }
+  p { margin: 0.65rem 0; }
+  em { color: var(--bright); font-style: italic; }
+  a { color: var(--green); text-decoration: underline; text-underline-offset: 2px; }
+  a:hover, a:focus-visible { color: var(--bright); }
+  .abstract {
+    border-left: 2px solid var(--line);
+    padding-left: 0.9rem; color: var(--fg); font-size: 0.95em;
+  }
+  .abstract b { color: var(--bright); }
+
+  pre.eq {
+    background: var(--chrome); border: 1px solid var(--line); border-radius: 6px;
+    padding: 0.7rem 0.9rem; margin: 0.8rem 0;
+    color: var(--amber); font-size: 0.92em; line-height: 1.55;
+    overflow-x: auto;
+  }
+  code { color: var(--amber); font-size: 0.95em; }
+
+  figure.fig { margin: 1.1rem 0; }
+  figure.fig .frame {
+    display: block; border: 1px solid var(--line); border-radius: 6px;
+    overflow: hidden; background: #fcfcfb; line-height: 0;
+  }
+  figure.fig img { display: block; width: 100%; height: auto; }
+  figure.fig figcaption {
+    margin-top: 0.5rem; color: var(--faint); font-size: 0.85em; line-height: 1.55;
+  }
+  figure.fig figcaption b { color: var(--dim); }
+
+  table.data {
+    border-collapse: collapse; width: 100%; margin: 0.9rem 0;
+    font-size: 0.9em;
+  }
+  table.data caption {
+    text-align: left; color: var(--faint); font-size: 0.93em;
+    margin-bottom: 0.4rem; caption-side: top;
+  }
+  table.data th, table.data td {
+    text-align: left; padding: 0.3rem 0.8rem 0.3rem 0;
+    border-bottom: 1px solid var(--line); vertical-align: top;
+  }
+  table.data th { color: var(--dim); font-weight: 600; }
+  table.data td.num, table.data th.num { text-align: right; padding-right: 1.2rem; }
+  table.data tr.hl td { color: var(--bright); }
+  .tablewrap { overflow-x: auto; }
+
+  footer {
+    margin-top: 2.4rem; padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+    color: var(--dim); font-size: 0.9em;
+  }
+  footer p { margin: 0 0 0.35rem; }
+  ::selection { background: var(--green); color: var(--bg); }
+</style>
+</head>
+<body>
+<div class="terminal">
+  <div class="chrome" aria-hidden="true">
+    <span class="dot dot--r"></span><span class="dot dot--y"></span><span class="dot dot--g"></span>
+    <span class="chrome__title">experiments/echo-library ~~ less note.txt</span>
+  </div>
+  <main>
+    <p class="cmd"><b>cd <a href="/">~</a>/<a href="/experiments/">experiments</a>/echo-library && less note.txt</b></p>
+
+    <h1>The Pond That Remembered Everything</h1>
+    <p class="subtitle">Retrieval as the fourth reader: a training-free episodic
+    memory breaks the fence no architecture in this program had beaten</p>
+    <p class="byline">C.&thinsp;Meeks · Tenerife · August 2026 · sixth in the series —
+      <a href="/experiments/reservoir-lm/">reservoir</a> ·
+      <a href="/experiments/funhouse/">funhouse</a> ·
+      <a href="/experiments/tiny-actors/">tiny actors</a> ·
+      <a href="/experiments/readout-relative-edge/">the law</a> ·
+      <a href="/experiments/mold/">the mold</a>
+      <!-- TODO(caity): add "· code & result JSONs" link when the annex repo is pushed --></p>
+
+    <p class="abstract"><b>Abstract.</b> We give a small random reservoir an episodic
+    memory: every state it visits while reading the training corpus is stored with
+    the character that came next (~2×10⁶ entries, 8&nbsp;GB, zero training), and at
+    inference the current state retrieves its nearest stored states and lets them
+    vote, blended with the pond's own logistic readout. The index is the geometry
+    the companion notes measured: reservoir states form a near-exact suffix tree, so
+    nearest-in-state means longest-shared-suffix — retrieved neighbors share a mean
+    <b>8.2 characters</b> of history with their query (registered gate: ≥4), making
+    the library an adaptive-depth context model with no fixed order. Results, all
+    pre-registered. (1)&nbsp;<b>The fence falls:</b> pond + library reaches
+    2.013 validation / <b>2.054 test bpc</b> against the 5-gram's 2.159/2.186 on
+    identical splits — the first architecture in this program to beat that baseline,
+    at every spectral radius tested, with the album carrying 75–80% of the
+    probability mass. It simultaneously overtakes every reservoir in both companion
+    programs, including one with fifty times the units and 1.35M trained parameters.
+    (2)&nbsp;<b>Retrieval is nearly tax-free:</b> where ridge, logistic, and sparse
+    readers all price held memory (the companion law), the library's performance
+    varies by 0.014 bpc across the whole ρ range — with a slight preference for
+    <em>deeper</em> states, inverting the registered direction: depth sharpens
+    addresses and nothing has to pay to decode it. (3)&nbsp;The claim is mechanistic,
+    not novelty: adaptive-order context modeling has beaten fixed n-grams since PPM
+    (1984). The news is that a <em>random, untrained dynamical system's state
+    geometry implements it for free</em> — and that storage separated from state,
+    the transformer's deepest architectural move, works even when everything else
+    is a puddle of random numbers.</p>
+
+    <h2 id="s1"><span class="sec">§1</span> The machine</h2>
+
+    <p>The pond is the program's standard tanh reservoir (N&nbsp;=&nbsp;1000, leak 1,
+    2×10⁶ training characters, pond-lab splits). Reading the training stream once
+    produces the library: every post-washout state x_t paired with the character
+    that followed. At inference, the query state retrieves its top-64 stored
+    neighbors and they vote:</p>
+    <pre class="eq">p(c) = (1−w) · p_logistic(c | x)  +  w · Σ_neighbors softmax(−d/σ) · 1[next = c]</pre>
+    <p>(σ, w) are tuned on validation only — the sole tuning in the system. The
+    index design is stolen from the companion notes' own measurement: the state
+    cloud's dendrogram splits first on the last character, then the one before, so
+    the library is filed in 729 drawers by the last two context characters and
+    searched exactly within a drawer, on 64-dimensional PCA projections. Search
+    over two million entries costs about two minutes for half a million queries,
+    in NumPy, on the CPU.</p>
+
+    <h2 id="s2"><span class="sec">§2</span> The gate: the tree really is the index</h2>
+
+    <p>The registered gate asked whether retrieved neighbors share at least 4
+    characters of trailing context with their query (the drawer alone guarantees
+    ~2). Measured: a mean of <b>8.2</b>, stable across ρ, with a tail past 20
+    (Fig.&nbsp;1, left). Nearest-in-state is longest-suffix-match, as the suffix-tree
+    geometry promised — the library behaves as a ~9-gram whose order flexes per
+    query: ordinary moments match a few characters deep, rare phrases match as far
+    as the corpus has ever seen them. The blend curve (Fig.&nbsp;1, right) shows the
+    division of labor: bpc falls monotonically as the album's share of the vote
+    rises, crossing the 5-gram fence near w&nbsp;≈&nbsp;0.45 and bottoming at
+    w&nbsp;≈&nbsp;0.8, where the parametric readout is reduced to a smoothing prior
+    for moments the album has never seen.</p>
+
+    <figure class="fig">
+      <span class="frame"><img src="img/fig_mechanism.png" loading="lazy" decoding="async"
+        alt="Left: histogram of shared suffix length between queries and their top eight retrieved neighbors, peaked at six to seven characters with a tail past twenty, far right of the two-character bucket floor. Right: validation bits per character against blend weight, falling monotonically and crossing below the five-gram fence around weight 0.45, minimum near 0.8."></span>
+      <figcaption><b>Fig. 1.</b> The mechanism. Left: retrieved neighbors share a
+      mean 8.2 characters of history with their queries (gate bar: 4; drawer floor:
+      2). Right: validation bpc vs. the album's share of the vote (champion cell,
+      fixed σ for the sweep); the fence falls once the album carries roughly half.</figcaption>
+    </figure>
+
+    <h2 id="s3"><span class="sec">§3</span> The fence falls</h2>
+
+    <p>The 5-gram baseline — 2.159 validation / 2.186 test at this budget — had
+    survived every architecture in both programs: every reservoir at every size,
+    the tropical pond, the funhouse, the troupe, the champion 50,000-unit network
+    with 1.35 million trained parameters. The pond with a library clears it at
+    every spectral radius tested (Fig.&nbsp;2): the validation-chosen cell scores
+    <b>2.013 val / 2.054 test</b>, a 0.13-bit break of the fence and the new
+    program champion, from a thousand-unit pond, a 27,000-parameter readout, and
+    an album whose construction is a single forward pass.</p>
+
+    <figure class="fig">
+      <span class="frame"><img src="img/fig_fence.png" loading="lazy" decoding="async"
+        alt="Dot plot of test bits per character: the n-gram ladder and prior models to the right of a dashed fence line at 2.186, and three orange pond-plus-library dots at 2.05 to 2.06, clearly left of the fence."></span>
+      <figcaption><b>Fig. 2.</b> Test bpc, identical splits, 2M-character budget.
+      The dashed line is the 5-gram fence; all three library cells sit beyond it.
+      The troupe and pond rows are the program's prior champions.</figcaption>
+    </figure>
+
+    <div class="tablewrap">
+    <table class="data">
+      <caption><b>Table 1.</b> Seed replication of the champion cell (ρ=0.95;
+      pond, readout, PCA, and library all rebuilt per seed).</caption>
+      <!-- SEED-TABLE: filled from results_seeds_log.txt -->
+      <tr><th>seed</th><th class="num">val bpc</th><th class="num">test bpc</th></tr>
+      <tr><td>0</td><td class="num">2.0131</td><td class="num">2.0537</td></tr>
+      <tr><td>1</td><td class="num">2.0173</td><td class="num">2.0581</td></tr>
+      <tr><td>2</td><td class="num">2.0173</td><td class="num">2.0563</td></tr>
+    </table>
+    </div>
+
+    <h2 id="s4"><span class="sec">§4</span> The fourth reader, and what it refuses to pay</h2>
+
+    <p>The companion law prices held memory through the reader: ridge pays
+    calibration plus interference, logistic pays what its optimizer can't reach,
+    selection starves on distributed codes. Retrieval completes the taxonomy, and
+    its price list is nearly empty: across ρ&nbsp;∈&nbsp;{0.6, 0.8, 0.95} the
+    library's bpc spans 0.014 — against the 0.4-bit swings the same dial produces
+    under parametric readouts. The registered prediction (the optimum retreats to
+    shallow ρ once the album carries the memory) was falsified in the informative
+    direction: the optimum drifted <em>deeper</em>, because depth sharpens the
+    address — more past in the state means finer suffix discrimination in the
+    metric — and no readout ever has to decode that past, so the usual interference
+    bill never arrives. Memory you navigate by costs almost nothing; memory you
+    must linearly decode costs everything. That is this program's oldest thesis —
+    the first note's frozen-transformer finding was that attention retrieves the
+    past without storing it in a crowded state — now demonstrated constructively,
+    with a filing cabinet standing in for attention and zero gradients standing in
+    for pretraining.</p>
+
+    <h2 id="s5"><span class="sec">§5</span> Honesty, limits, and related work</h2>
+
+    <p>Full disclosure ledger. The first sweep shipped a numerics bug (unclamped
+    square root of a float-cancellation-negative distance → σ&nbsp;=&nbsp;NaN →
+    every vote zeroed), which the validation tuner correctly answered by switching
+    the library off; the gate-vs-blend disagreement exposed it, the broken JSONs
+    are quarantined in the repository, and every number above is from the fixed
+    rerun. The third registered prediction (the album earns most on rare contexts)
+    is UNRESOLVED: the shipped instrument binned by target-included trigram
+    frequency — target rarity, not context rarity as registered — and under that
+    (wrong) binning pure-kNN loses on rare targets through vote sparsity, which is
+    precisely why the blend retains a parametric floor. A corrected instrument is
+    queued. Scope: one corpus, 2×10⁶-character library, N&nbsp;=&nbsp;1000,
+    character level; the library memorizes the same training data the n-grams
+    count, so the comparison is data-matched by construction; three seeds on the
+    champion cell (Table&nbsp;1), single seeds elsewhere.</p>
+
+    <p>Related work. Nearest-neighbor language models over learned representations:
+    Khandelwal et&nbsp;al. (kNN-LM) — the direct modern relative; here the encoder
+    is random and untrained, and the finding is that suffix-tree geometry alone
+    suffices. Adaptive-order context modeling: PPM (Cleary &amp; Witten, 1984) and
+    context-tree weighting — the classical family this machine implements
+    geometrically; beating fixed n-grams is their legacy, not our news. Fractal
+    prediction machines (Tiňo et&nbsp;al.) supply the theory of why reservoir
+    states encode suffixes; the companion notes supply the measurements this
+    index is built on. Complementary learning systems (McClelland et&nbsp;al.) is
+    the cognitive frame: a slow parametric learner plus a fast episodic store,
+    here with the episodic store doing four-fifths of the talking.</p>
+
+    <footer>
+      <p>Credits. Experiments, analysis, figures, and infrastructure were produced
+      with Claude (Fable&nbsp;5, Anthropic) operating the laboratory tooling; the
+      echo library was proposed in the annex's opening design dialogue and waited
+      patiently while five other notes cut in line. Errors are mine.</p>
+      <p><a href="/experiments/">../</a> · <a href="/">~</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>
