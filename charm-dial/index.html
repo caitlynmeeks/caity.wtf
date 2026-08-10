@@ -137,6 +137,11 @@
 
   /* ── figures ───────────────────────────────────────────── */
   figure { margin: 0 0 1.4rem; }
+  figure.shot { max-width: 23rem; margin: 1.6rem auto; }
+  figure.shot img {
+    display: block; width: 100%; height: auto;
+    border: 1px solid var(--line); border-radius: 6px;
+  }
   .scroll { overflow-x: auto; }
   figure svg { display: block; width: 100%; min-width: 30rem; height: auto; }
   figcaption {
@@ -230,6 +235,16 @@
 
       <p class="pull">Every encoding is a claim about what a number means, and the wrong encoding
       makes the picture lie in a way that looks fine.</p>
+
+      <figure class="shot">
+        <img src="dial.png" width="402" height="811" loading="lazy" decoding="async"
+             alt="The charm dial in use: a dark circular face labelled ENERGIZED, CALM, GUARDED and WARM, with a bright dot, a heart, an open ring and a crosshair clustered in the warm and energized quadrant. Below it a readout gives P +0.74, A +0.48, D −0.04, Af +0.85, S +0.46; three rows labelled FAST, MEDIUM and SLOW hold editable hex fields; an arc strip traces four lines across recent turns; resonance reads +0.13.">
+        <figcaption>The dial as it actually runs. Everything below is a description of this panel,
+        top to bottom &mdash; the face, the readout split into the two lower corners, the three hex
+        fields, the arc, and the resonance figure under it. Note that the three hexes are carrying
+        real values here rather than the neutral <code>#80808080</code>, which is the whole point of
+        them.</figcaption>
+      </figure>
 
       <h2>What has to fit</h2>
 
@@ -521,6 +536,11 @@ D    dominance     dark     dotted</pre>
       <p>The glyph on each row is the mark that timescale draws on the face above &mdash; filled
       dot, open ring, crosshair &mdash; so the picker and the drawing name each other without a
       legend.</p>
+
+      <p>And they are inputs, not readouts. Type a hex, press Enter, and the network takes it; the
+      dial redraws to whatever you just pasted. A malformed string is refused outright rather than
+      coerced into something plausible &mdash; the field goes gray and nothing is set, because the
+      one thing worse than rejecting an edit is quietly accepting a different one.</p>
 
       <p>Two details are load-bearing. Neutral is anchored at <code>0x80</code> rather than falling
       wherever the arithmetic lands, so the negative half gets 128 steps and the positive half 127,
