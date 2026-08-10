@@ -1,0 +1,11 @@
+# Finder's per-directory sidecar. macOS rewrites it whenever a folder is
+# opened, so a tracked one is a permanently dirty working tree and a stream
+# of commits about icon positions.
+.DS_Store
+
+# Claude Code's local config. The permission allowlist accumulates the literal
+# commands approved in a session, so it is a record of what was run on this
+# machine and by whom — machine-specific, useless to a clone, and not the
+# repository's business. Ignored as a directory rather than a filename so a
+# settings.json or a CLAUDE.md appearing later is covered too.
+.claude/
