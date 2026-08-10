@@ -1,0 +1,306 @@
+/* Nivaria — caity.wtf/nivaria
+   Warm book identity: golden-hour paper, laurel green, honey.
+   Generated site; source of truth lives in the nivaria repo. */
+
+:root {
+  --paper:   #f6efe2;
+  --panel:   #efe6d3;
+  --ink:     #3b3226;
+  --soft:    #6d6353;
+  --faint:   #9c8f7a;
+  --line:    #ddd0b8;
+  --honey:   #a86b1f;
+  --laurel:  #4a6b52;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
+           "Times New Roman", serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper:  #191512;
+    --panel:  #211c17;
+    --ink:    #e6dbc6;
+    --soft:   #b0a48d;
+    --faint:  #7d715c;
+    --line:   #352d24;
+    --honey:  #d99a4e;
+    --laurel: #8fae94;
+  }
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  padding: clamp(1.25rem, 4vw, 3rem) clamp(1rem, 5vw, 2rem) 4rem;
+  background: var(--paper);
+  background-image: radial-gradient(120% 80% at 50% 0%,
+                    rgba(200, 150, 60, 0.07) 0%, rgba(0,0,0,0) 60%);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
+  line-height: 1.7;
+}
+
+article, .hero, .about, .eplist, nav.top, nav.pager, footer, .headerimg {
+  max-width: 36em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.headerimg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  box-shadow: 0 14px 40px -18px rgba(60, 40, 10, 0.45);
+  margin-bottom: clamp(1.5rem, 5vw, 2.5rem);
+}
+.hero .headerimg { margin-bottom: 1.75rem; }
+
+a { color: var(--laurel); text-decoration-color: var(--line); text-underline-offset: 3px; }
+a:hover { color: var(--honey); }
+
+/* ---------- top nav ---------- */
+
+nav.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: clamp(2rem, 6vw, 3.5rem);
+  font-size: 0.85rem;
+}
+.wordmark {
+  font-variant: small-caps;
+  letter-spacing: 0.22em;
+  font-size: 1rem;
+  text-decoration: none;
+  color: var(--honey);
+}
+nav.top .home { color: var(--faint); text-decoration: none; }
+nav.top .home:hover { color: var(--honey); }
+
+/* ---------- landing ---------- */
+
+.hero { text-align: center; margin-top: clamp(1rem, 6vw, 3rem); }
+.brand {
+  font-variant: small-caps;
+  letter-spacing: 0.3em;
+  font-weight: 500;
+  font-size: clamp(2.2rem, 8vw, 3.4rem);
+  margin: 0;
+  color: var(--honey);
+  text-indent: 0.3em; /* optically recenter the letterspacing */
+}
+.tagline {
+  margin: 0.5rem 0 0;
+  font-style: italic;
+  color: var(--soft);
+  font-size: 1.1rem;
+}
+
+.about {
+  margin-top: clamp(2rem, 6vw, 3rem);
+  padding-top: 2rem;
+  border-top: 1px solid var(--line);
+}
+
+.eplist { margin-top: 3rem; }
+.eplist h2 {
+  font-variant: small-caps;
+  letter-spacing: 0.18em;
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--soft);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.5rem;
+}
+.eprow {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: "num name time" "num teaser time";
+  column-gap: 1rem;
+  padding: 0.9rem 0.6rem;
+  margin: 0 -0.6rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+}
+.eprow:hover { background: var(--panel); color: inherit; }
+.epnum {
+  grid-area: num;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--honey);
+  white-space: nowrap;
+  padding-top: 0.35rem;
+  min-width: 6.5em;
+}
+.epname { grid-area: name; font-size: 1.15rem; }
+.eprow:hover .epname { color: var(--honey); }
+.epteaser { grid-area: teaser; color: var(--soft); font-size: 0.92rem; line-height: 1.5; }
+.eptime {
+  grid-area: time;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--faint);
+  padding-top: 0.35rem;
+}
+.cut {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--paper);
+  background: var(--faint);
+  border-radius: 4px;
+  padding: 0.1em 0.45em;
+  vertical-align: 0.2em;
+  margin-left: 0.4em;
+  letter-spacing: 0.05em;
+}
+.more { color: var(--faint); font-style: italic; font-size: 0.9rem; margin-top: 1.5rem; }
+
+@media (max-width: 540px) {
+  .eprow { grid-template-columns: 1fr; grid-template-areas: "num" "name" "teaser" "time"; row-gap: 0.15rem; }
+  .epnum, .eptime { padding-top: 0; }
+}
+
+/* ---------- episode pages ---------- */
+
+article header { text-align: center; margin-bottom: 2.5rem; }
+.eplabel {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--honey);
+  margin: 0 0 0.75rem;
+}
+article h1 {
+  font-weight: 500;
+  font-size: clamp(1.9rem, 6vw, 2.6rem);
+  margin: 0;
+  line-height: 1.2;
+}
+.subtitle { font-style: italic; color: var(--soft); margin: 0.5rem 0 0; font-size: 1.15rem; }
+.epigraph { font-style: italic; color: var(--faint); margin: 1rem 0 0; font-size: 0.95rem; }
+.cutnote {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.25em 0.8em;
+  margin-top: 1.2rem;
+}
+
+/* the on-air narrator frame (show open and outro) */
+.onair {
+  text-align: center;
+  font-style: italic;
+  color: var(--soft);
+  margin: 2.5rem 0;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.onair p { margin: 0.35rem 0; }
+.onair.outro { margin-top: 3rem; }
+
+.prose p { margin: 0 0 1.1em; }
+.brk {
+  text-align: center;
+  color: var(--faint);
+  letter-spacing: 0.6em;
+  text-indent: 0.6em;
+  margin: 2.2rem 0;
+  user-select: none;
+}
+
+/* device readouts (mesh messages) and machine logs */
+.device, .log {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  line-height: 1.75;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--laurel);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin: 1.6rem 0;
+  color: var(--soft);
+  overflow-x: auto;
+}
+.log { border-left-color: var(--honey); }
+.device em, .log em { font-style: normal; color: var(--ink); }
+
+/* glossary */
+.gloss {
+  margin-top: 3rem;
+  font-size: 0.95rem;
+  color: var(--soft);
+}
+.gloss h2, .gloss h3 {
+  font-variant: small-caps;
+  letter-spacing: 0.15em;
+  font-weight: 500;
+  color: var(--ink);
+}
+.gloss h2 { font-size: 1.05rem; border-bottom: 1px solid var(--line); padding-bottom: 0.5rem; }
+.gloss h3 { font-size: 0.95rem; }
+.gloss ul { padding-left: 1.2em; }
+.gloss li { margin-bottom: 0.55em; }
+.gloss strong { color: var(--ink); }
+
+/* ---------- pager & footer ---------- */
+
+nav.pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 3.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.9rem;
+}
+nav.pager a { text-decoration: none; }
+nav.pager .up { color: var(--faint); }
+nav.pager .prev, nav.pager .next { max-width: 38%; }
+nav.pager .next { text-align: right; }
+
+footer {
+  margin-top: 3rem;
+  font-size: 0.78rem;
+  color: var(--faint);
+  text-align: center;
+}
+footer a { color: var(--faint); }
+
+/* ---------- language picker (English/Español, 2026-08-07) ---------- */
+
+.topright { display: flex; gap: 1rem; align-items: baseline; }
+.langpick {
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--soft);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.1rem 0.4rem;
+  cursor: pointer;
+}
+.langpick:hover { color: var(--honey); border-color: var(--honey); }
+nav.top.idx { justify-content: flex-end; margin-bottom: 0.5rem; }
+
+/* ---------- about note (the Nivaria/Saga orientation line) ---------- */
+
+.aboutnote {
+  font-size: 0.9rem;
+  color: var(--faint);
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
