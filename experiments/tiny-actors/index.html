@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Thousand Tiny Actors: Language Modeling Without Arithmetic</title>
+<meta name="description" content="A driven ensemble of random rule-following automata — no multiplication, no addition, no floating point — matches echo state networks holding more parameters on text8, refuses the readout migration that moves reservoir optima, and turns out to be mostly a lookup table.">
+<meta name="color-scheme" content="dark">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://caity.wtf/experiments/tiny-actors/">
+<meta property="og:title" content="A Thousand Tiny Actors: Language Modeling Without Arithmetic">
+<meta property="og:description" content="Lab note: a random automata ensemble as a language model — a subcritical optimum in the edge of chaos's birthplace, crowding-free memory, and a champion that is 86% lookup table.">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0d0c'/%3E%3Ctext x='5' y='23' font-family='monospace' font-size='18' fill='%237fd88f'%3E%3E_%3C/text%3E%3C/svg%3E">
+
+<style>
+  :root {
+    --bg:     #0b0d0c;
+    --panel:  #101413;
+    --chrome: #171d1b;
+    --line:   #222b28;
+    --fg:     #ccd6d0;
+    --bright: #f2f7f4;
+    --dim:    #6d7d75;
+    --faint:  #4a5852;
+    --green:  #7fd88f;
+    --amber:  #e8b45c;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco,
+            "Cascadia Mono", "Roboto Mono", Consolas, "Liberation Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    padding: clamp(1rem, 4vw, 3.5rem) clamp(0.75rem, 4vw, 2rem);
+    background: var(--bg);
+    background-image: radial-gradient(120% 90% at 50% 0%, #131a17 0%, var(--bg) 62%);
+    background-attachment: fixed;
+    color: var(--fg);
+    font-family: var(--mono);
+    font-size: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+    line-height: 1.7;
+    display: flex; justify-content: center;
+  }
+  .terminal {
+    width: 100%; max-width: 52rem;
+    background: var(--panel);
+    border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset,
+                0 24px 60px -20px rgba(0,0,0,0.8);
+  }
+  .chrome {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.6rem 0.85rem; background: var(--chrome);
+    border-bottom: 1px solid var(--line);
+  }
+  .dot { width: 0.7rem; height: 0.7rem; border-radius: 50%; flex: none; }
+  .dot--r { background: #e05f56; } .dot--y { background: #e2b657; } .dot--g { background: #5fbf6a; }
+  .chrome__title {
+    margin: 0 auto; padding-left: 1rem; font-size: 0.8em; color: var(--dim);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  main { padding: clamp(1.1rem, 3vw, 2rem) clamp(1rem, 3.5vw, 2.25rem) 2rem; }
+  .cmd { color: var(--dim); margin: 0 0 1.2rem; overflow-wrap: anywhere; }
+  .cmd::before { content: "caity@sosiego ~/experiments/tiny-actors % "; color: var(--green); }
+  .cmd b { color: var(--bright); font-weight: 600; }
+  .cmd a { color: inherit; }
+
+  h1 {
+    font-size: clamp(1.25rem, 1rem + 1.4vw, 1.7rem);
+    line-height: 1.3; margin: 0 0 0.4rem;
+    color: var(--bright); font-weight: 700; letter-spacing: -0.01em;
+  }
+  .subtitle { color: var(--fg); font-size: 1em; margin: 0 0 0.5rem; font-style: italic; }
+  .byline { color: var(--dim); font-size: 0.92em; margin: 0 0 1.6rem; }
+
+  h2 {
+    font-size: 1.05em; color: var(--bright);
+    margin: 2.2rem 0 0.6rem; padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+  }
+  h2 .sec { color: var(--green); }
+  p { margin: 0.65rem 0; }
+  em { color: var(--bright); font-style: italic; }
+  a { color: var(--green); text-decoration: underline; text-underline-offset: 2px; }
+  a:hover, a:focus-visible { color: var(--bright); }
+  .abstract {
+    border-left: 2px solid var(--line);
+    padding-left: 0.9rem; color: var(--fg); font-size: 0.95em;
+  }
+  .abstract b { color: var(--bright); }
+
+  pre.eq {
+    background: var(--chrome); border: 1px solid var(--line); border-radius: 6px;
+    padding: 0.7rem 0.9rem; margin: 0.8rem 0;
+    color: var(--amber); font-size: 0.92em; line-height: 1.55;
+    overflow-x: auto;
+  }
+  code { color: var(--amber); font-size: 0.95em; }
+
+  figure.fig { margin: 1.1rem 0; }
+  figure.fig .frame {
+    display: block; border: 1px solid var(--line); border-radius: 6px;
+    overflow: hidden; background: #fcfcfb; line-height: 0;
+  }
+  figure.fig img { display: block; width: 100%; height: auto; }
+  figure.fig figcaption {
+    margin-top: 0.5rem; color: var(--faint); font-size: 0.85em; line-height: 1.55;
+  }
+  figure.fig figcaption b { color: var(--dim); }
+
+  table.data {
+    border-collapse: collapse; width: 100%; margin: 0.9rem 0;
+    font-size: 0.9em;
+  }
+  table.data caption {
+    text-align: left; color: var(--faint); font-size: 0.93em;
+    margin-bottom: 0.4rem; caption-side: top;
+  }
+  table.data caption b { color: var(--dim); }
+  table.data th, table.data td {
+    text-align: left; padding: 0.3rem 0.8rem 0.3rem 0;
+    border-bottom: 1px solid var(--line); vertical-align: top;
+  }
+  table.data th { color: var(--dim); font-weight: 600; }
+  table.data td.num, table.data th.num { text-align: right; padding-right: 1.2rem; }
+  table.data tr.hl td { color: var(--bright); }
+  .tablewrap { overflow-x: auto; }
+
+  footer {
+    margin-top: 2.4rem; padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+    color: var(--dim); font-size: 0.9em;
+  }
+  footer p { margin: 0 0 0.35rem; }
+  ::selection { background: var(--green); color: var(--bg); }
+</style>
+</head>
+<body>
+<div class="terminal">
+  <div class="chrome" aria-hidden="true">
+    <span class="dot dot--r"></span><span class="dot dot--y"></span><span class="dot dot--g"></span>
+    <span class="chrome__title">experiments/tiny-actors ~~ less note.txt</span>
+  </div>
+  <main>
+    <p class="cmd"><b>cd <a href="/">~</a>/<a href="/experiments/">experiments</a>/tiny-actors && less note.txt</b></p>
+
+    <h1>A Thousand Tiny Actors</h1>
+    <p class="subtitle">Language modeling without arithmetic: a random automata
+    ensemble, a pinned optimum, and a champion that is mostly a lookup table</p>
+    <p class="byline">C.&thinsp;Meeks · Tenerife · August 2026 ·
+      companion to <a href="/experiments/reservoir-lm/">the reservoir note</a> and
+      <a href="/experiments/funhouse/">the funhouse</a>
+      <!-- TODO(caity): add "· code & result JSONs" link when the annex repo is pushed --></p>
+
+    <p class="abstract"><b>Abstract.</b> We build a character-level language model whose
+    dynamics contain no arithmetic: one thousand actors, each holding one of eight
+    discrete moods, each consulting a personal random rule table over its own mood, three
+    neighbors' moods, and the current character. Only a readout is trained, on identical
+    text8 splits and readout code as the companion notes. Five results. (1)&nbsp;A
+    control dial for criticality must heal rather than persist: biasing rules to
+    <em>keep the current mood</em> cannot reach the ordered phase (a perturbed actor
+    faithfully keeps its perturbation; the measured Derrida spread floors at ~1.5),
+    while biasing toward a fixed <em>home mood</em> sweeps cleanly through the
+    transition. (2)&nbsp;Under a ridge readout the bpc optimum is strictly subcritical
+    (λ_D&nbsp;=&nbsp;0.73) — the interior-optimum result of the companion note,
+    reproduced in the substrate where "edge of chaos" was coined. (3)&nbsp;Under a
+    logistic readout the optimum does <em>not</em> migrate toward criticality — it is
+    pinned at the same cell, and the logistic advantage is flat (0.40–0.46 bpc) across
+    the entire dial, numerically matching the pure readout-calibration tax isolated in
+    the funhouse note. The interference relief that moves reservoir optima has nothing
+    to relieve here: discrete mood storage is crowding-free. (4)&nbsp;The best cell
+    reaches 2.304 validation bpc with 2.2×10⁵ trained parameters — ahead of every
+    tanh reservoir of comparable and larger size at the same data budget.
+    (5)&nbsp;Deep in the ordered phase the ensemble is <em>exactly</em> a finite-state
+    machine: state determined by the trailing 8 characters, 115,200 samples collapsing
+    to 18,741 distinct states, with 2,336 states shared across suffix classes — partial
+    automaton minimization by physics, as in the companion note's max-plus reservoir.
+    The champion itself is 86% suffix-determined at depth 12: the best model in this
+    program's weight class is mostly a lookup table.</p>
+
+    <h2 id="s1"><span class="sec">§1</span> The machine and its dial</h2>
+
+    <p>N&nbsp;=&nbsp;1000 actors each hold a mood s_i&nbsp;∈&nbsp;{0…7} and watch
+    m&nbsp;=&nbsp;3 fixed random neighbors. Every step, all actors update
+    synchronously by personal random rule tables — heterogeneity is the point; there is
+    no shared law, no metric, and no arithmetic anywhere in the dynamics:</p>
+    <pre class="eq">s_i(t+1) = rule_i( s_i(t), s_{n1}(t), s_{n2}(t), s_{n3}(t), c_t )</pre>
+    <p>The character c_t is the prompt the whole stage hears. The trained readout sees
+    only the moods (one-hot, N·k&nbsp;=&nbsp;8000 features): ridge to one-hot targets
+    with validation-fitted temperature, or multinomial logistic — the companion notes'
+    readout code, unchanged. Criticality is measured, not assumed: λ_D is the mean
+    one-step Hamming spread from a single flipped actor, post-washout.</p>
+
+    <p>The dial itself taught the first lesson. Our first bias — with probability β a
+    rule entry <em>keeps the actor's current mood</em> — looks like a calm knob and is
+    not one: a perturbed actor's "keep your mood" faithfully keeps the <em>perturbed</em>
+    mood, so persistence preserves mistakes and the spread cannot fall below the
+    self-persistence floor (measured λ_D&nbsp;=&nbsp;1.54 at β&nbsp;=&nbsp;0.9; the
+    ordered phase is unreachable by construction). The working dial is typecasting:
+    each actor has a fixed home mood that biased entries return to, so perturbations
+    heal regardless of what they were. Measured λ_D then sweeps 3.41&nbsp;→&nbsp;0.39
+    as β runs 0.3&nbsp;→&nbsp;0.95, crossing criticality between β&nbsp;=&nbsp;0.8 and
+    0.9. Stubbornness is not stability; order requires a restoring force, not inertia —
+    the discrete cousin of the echo-state property.</p>
+
+    <h2 id="s2"><span class="sec">§2</span> The edge, in its birthplace</h2>
+
+    <p>Random automata networks are where the edge-of-chaos hypothesis was born.
+    The companion note found that language reservoirs tuned under a ridge readout
+    reject the edge; the same experiment here — five cells straddling the measured
+    transition, 2×10⁶ training characters each — reproduces it in the original
+    substrate: validation bpc has an interior optimum at λ_D&nbsp;=&nbsp;0.73, strictly
+    inside the ordered phase, with both flanks rising (Fig.&nbsp;1). The best stage
+    keeps its actors mostly in character.</p>
+
+    <figure class="fig">
+      <span class="frame"><img src="img/fig_edge_and_crown.png" loading="lazy" decoding="async"
+        alt="Validation bits per character against measured Derrida spread for ridge and logistic readouts. Both curves have their minimum at spread 0.73, inside the ordered phase; the logistic curve reaches 2.304, below the 4-gram line and below the tanh reservoir with twenty thousand units at 2.348; a dashed vertical line marks criticality."></span>
+      <figcaption><b>Fig. 1.</b> Validation bpc vs. measured Derrida spread λ_D
+      (N=1000 actors, 2M training characters). Both readouts share the same
+      subcritical argmin — the pinning of §3. References: 4-gram and 5-gram on
+      identical splits; tanh ESN N=20k under the same logistic readout and budget
+      (from the companion repository's N-sweep).</figcaption>
+    </figure>
+
+    <div class="tablewrap">
+    <table class="data">
+      <caption><b>Table 1.</b> text8, 2×10⁶ training characters, identical splits
+      throughout; validation bpc (test where run). Troupe rows in bold; reservoir
+      comparisons from the companion program at the same budget and readout code.</caption>
+      <tr><th>model</th><th class="num">val bpc</th><th class="num">test bpc</th><th class="num">trained params</th></tr>
+      <tr><td>3-gram</td><td class="num">2.928</td><td class="num">2.934</td><td class="num">~2×10⁴</td></tr>
+      <tr class="hl"><td><b>troupe, ridge, λ_D=0.73</b></td><td class="num">2.759</td><td class="num">2.766</td><td class="num">2.2×10⁵</td></tr>
+      <tr><td>tanh ESN N=5k, logistic</td><td class="num">—</td><td class="num">2.448</td><td class="num">1.4×10⁵</td></tr>
+      <tr><td>4-gram</td><td class="num">2.441</td><td class="num">2.436</td><td class="num">~5×10⁵</td></tr>
+      <tr><td>tanh ESN N=10k, logistic</td><td class="num">2.347</td><td class="num">—</td><td class="num">2.7×10⁵</td></tr>
+      <tr><td>tanh ESN N=20k, logistic</td><td class="num">2.348</td><td class="num">—</td><td class="num">5.4×10⁵</td></tr>
+      <tr class="hl"><td><b>troupe, logistic, λ_D=0.73</b></td><td class="num">2.304</td><td class="num">2.318</td><td class="num">2.2×10⁵</td></tr>
+      <tr><td>5-gram</td><td class="num">2.159</td><td class="num">2.186</td><td class="num">~1.4×10⁷</td></tr>
+      <tr><td>tanh ESN N=50k, logistic (the program's leader)</td><td class="num">2.174</td><td class="num">—</td><td class="num">1.35×10⁶</td></tr>
+    </table>
+    </div>
+
+    <p>The headline row: a thousand actors holding three bits each, wired by lookup
+    tables, outscore tanh reservoirs holding ten and twenty thousand floating-point
+    units at the same data budget — with fewer trained parameters than either. Caveat
+    stated plainly: single seed on both sides of that comparison; the margin over
+    N=10k (0.043) is several times the pond program's seed noise (±0.01) but a seed
+    replication is the obvious next chore.</p>
+
+    <h2 id="s3"><span class="sec">§3</span> The pinning: memory without crowding</h2>
+
+    <p>The companion note's sharpest result was that its reservoir optimum
+    <em>migrates</em> under a better readout: ridge prefers ρ&nbsp;=&nbsp;0.6, logistic
+    leaps to 0.95, because most of the high-memory penalty was interference a richer
+    reader could relieve. The troupe refuses the move. The logistic argmin sits at the
+    same λ_D&nbsp;=&nbsp;0.73 as ridge (grid caveat: migration inside (0.73,&nbsp;1.07)
+    would be invisible), and — the sharper diagnostic — the logistic advantage is
+    <em>flat across the entire dial</em>: 0.40–0.46 bpc everywhere, where the
+    reservoir's gap grew five-fold with ρ (Fig.&nbsp;2). Flatter still: the gap sits
+    numerically on the pure readout-calibration tax (0.464 bpc) that the funhouse note
+    isolated on provably feature-complete inputs.</p>
+
+    <figure class="fig">
+      <span class="frame"><img src="img/fig_flat_gap.png" loading="lazy" decoding="async"
+        alt="The logistic readout's advantage over ridge plotted against Derrida spread: a nearly flat line between 0.40 and 0.46 bits per character, hugging a dashed reference at 0.464 labeled as the pure readout tax isolated in the funhouse note."></span>
+      <figcaption><b>Fig. 2.</b> The logistic−ridge gap vs. λ_D. In the reservoir this
+      gap grows steeply with memory depth (interference relief); in the troupe it is
+      flat and equals the calibration-only tax. Nothing here is being relieved.</figcaption>
+    </figure>
+
+    <p>Reading: the reservoir pays two taxes — readout calibration, plus interference
+    from memories superposed in a shared continuous state — and the second is what a
+    better reader relieves, moving the optimum. The troupe appears to pay only the
+    first. Its moods are discrete; nothing is graded, nothing superposes, so there is
+    no crosstalk for a better reader to untangle and nothing to migrate for.
+    Crowding-free memory — and §4 supplies the mechanism.</p>
+
+    <h2 id="s4"><span class="sec">§4</span> The crystal: mostly a lookup table</h2>
+
+    <p>Group sampled stage-states by the trailing k characters of input (115,200
+    samples per cell; only suffix classes with ≥2 samples count, exact 1000-actor
+    vector equality required; a shift-by-one alignment control scores far below the
+    aligned version, 0.615 vs 0.993). Deep in the ordered phase the ensemble is not
+    <em>approximately</em> suffix-determined — it is exactly a finite-state machine
+    (Fig.&nbsp;3): at λ_D&nbsp;=&nbsp;0.39, determinism reaches 1.000 at
+    k*&nbsp;=&nbsp;8, the 115,200 samples collapse to 18,741 distinct states, and
+    2,336 of those states are shared by multiple determined suffix classes — the
+    dynamics merging equivalent histories on its own, the partial automaton
+    minimization the companion note found in its max-plus reservoir, here reproduced
+    in a rule-table substrate.</p>
+
+    <figure class="fig">
+      <span class="frame"><img src="img/fig_crystal.png" loading="lazy" decoding="async"
+        alt="Suffix determinism against suffix depth for five settings of the Derrida spread. The most ordered setting rises steeply and reaches determinism one at depth eight; the champion setting rises to 0.86 at depth twelve; near-critical and chaotic settings stay near zero, with every sampled state distinct."></span>
+      <figcaption><b>Fig. 3.</b> Suffix-determinism vs. depth k per cell, with
+      distinct-state counts. Deep order: an exact order-8 automaton (18.7k states).
+      Chaos: all 115,200 states distinct, determinism 0.000 — the smooth-reservoir
+      signature. The champion (λ_D=0.73) sits at 0.861 by k=12: mostly a lookup
+      table.</figcaption>
+    </figure>
+
+    <p>Toward criticality the crystal melts continuously — 18.7k&nbsp;→&nbsp;85.9k&nbsp;→
+    114.1k&nbsp;→&nbsp;all-distinct — the third substrate in this program to show the
+    same discrete-to-fractal transition. And the two discretization routes differ
+    mechanically: the max-plus reservoir's trajectories collide exactly in finite time
+    (absorbing), while the troupe <em>heals</em> — differences die out under the
+    typecast pull. A pre-registered mean-field form for that healing,
+    det(k)&nbsp;≈&nbsp;exp(−D₀·λ_D^k), got the ordinal picture right (the champion
+    should not and does not determinize by k&nbsp;=&nbsp;12; the deep-subcritical cell
+    should and does, k*&nbsp;=&nbsp;8 vs. predicted 9.5) and the rate wrong in the
+    favorable direction: measured determinism at the champion is 0.861 where the form
+    predicts 0.023. Large perturbations heal far faster than the linearized Derrida
+    rate — typecast pulls a wrong actor home regardless of its neighborhood, and λ_D,
+    a small-perturbation growth rate, overestimates the survival of big differences.</p>
+
+    <p>The synthesis the title promises: the best model in this note — the one
+    outscoring reservoirs five times its size — is 86% lookup table. It stores the
+    recent past not by superposing it in a crowded continuous state but by healing
+    into a configuration that <em>stands for</em> the recent suffix. That is why §3
+    found nothing to relieve: filing, not echo.</p>
+
+    <h2 id="s5"><span class="sec">§5</span> Limitations and related work</h2>
+
+    <p>Scope: one corpus (text8), character level, N&nbsp;=&nbsp;1000 actors, k&nbsp;=&nbsp;8
+    moods, one seed per cell (the pond-side comparisons in Table&nbsp;1 are also
+    single-seed at 2M characters); five dial cells, so migration inside
+    (0.73,&nbsp;1.07) is unexcluded; determinism results are within-sample (115,200
+    states) as in the companion note's automaton analysis. The λ_D&nbsp;=&nbsp;0.73
+    optimum is a claim about these readout families and this budget.</p>
+
+    <p>Related work. Random Boolean networks and the Derrida annealed approximation:
+    Kauffman; Derrida &amp; Pomeau. Edge-of-chaos computation: Langton, Packard;
+    computation at the edge in RBNs is the founding literature this note's §2 answers.
+    Reservoir computing with cellular automata (ReCA): Yilmaz; Nichele &amp; Molund —
+    the nearest architectural antecedent, using uniform elementary CA rules; the
+    troupe differs in per-cell heterogeneous rule tables, per-step symbol drive to
+    every cell, a measured criticality dial with a healing (typecast) bias, and the
+    geometry/determinism instrumentation. The interference framing and all baselines
+    come from the two companion notes; the pure-readout-tax number is the funhouse
+    note's. Fractal prediction machines and suffix-keyed state geometry: Tiňo et al.</p>
+
+    <p>Reproducibility: every run is seeded; result JSONs record full configurations;
+    the lab journal contains each prediction's pre-registration text, including the
+    copy-own dial's registered failure, the amended healing form, and both misses.
+    <!-- TODO(caity): link the annex repository here when pushed --></p>
+
+    <footer>
+      <p>Credits. Experiments, analysis, figures, and infrastructure were produced with
+      Claude (Fable&nbsp;5, Anthropic) operating the laboratory tooling; the improv-troupe
+      metaphor is mine, from the same design dialogue that produced this annex's eleven
+      architectures. Errors are mine.</p>
+      <p><a href="/experiments/">../</a> · <a href="/">~</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>
