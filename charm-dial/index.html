@@ -246,6 +246,103 @@
       particular person rather than simply held. That is not a display detail. It means the picture
       is incomplete unless it says whom it is about.</p>
 
+      <figure>
+        <div class="scroll">
+        <svg viewBox="0 0 700 450" role="img"
+             aria-label="Anatomy of the charm dial: a circular face with pleasure across and arousal up, carrying a bright filled dot for the momentary state, an open ring for where it is heading, a dim crosshair for the baseline, a heart for affiliation, a dashed reference ring for neutral dominance, a fading trail, and an expanding ripple for surprise.">
+          <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+
+            <!-- face -->
+            <circle class="fig-face" cx="185" cy="225" r="140"/>
+            <circle class="fig-face" cx="185" cy="225" r="70"/>
+            <path class="fig-face" d="M45 225 H325 M185 85 V365"/>
+            <text class="fig-lbl" x="185" y="72"  text-anchor="middle">ENERGIZED</text>
+            <text class="fig-lbl" x="185" y="390" text-anchor="middle">CALM</text>
+            <text class="fig-lbl" x="30" y="225" text-anchor="middle"
+                  transform="rotate(-90 30 225)">GUARDED</text>
+            <text class="fig-lbl" x="345" y="225" text-anchor="middle"
+                  transform="rotate(90 345 225)">WARM</text>
+
+            <!-- surprise ripple -->
+            <circle cx="230" cy="175" r="55" fill="none" stroke="#cdcdcd"
+                    stroke-opacity="0.22" stroke-width="1.4"/>
+
+            <!-- trail into the fast mark -->
+            <path d="M112 296 Q 152 252 186 218 T 230 175" fill="none"
+                  stroke="#e1e1e1" stroke-opacity="0.3" stroke-width="1.7"/>
+
+            <!-- baseline -> fast (deviation), fast -> medium (heading) -->
+            <path d="M165 250 L230 175" stroke="#3a3a3a" stroke-width="1"
+                  stroke-dasharray="2 3"/>
+            <path d="M230 175 L196 140" stroke="#5a5a5a" stroke-width="1"/>
+
+            <!-- slow: dim crosshair -->
+            <path d="M158 250 H172 M165 243 V257" stroke="#5e5e5e" stroke-width="1.2"/>
+
+            <!-- medium: open ring -->
+            <circle cx="196" cy="140" r="10" fill="none" stroke="#9a9a9a" stroke-width="1.5"/>
+
+            <!-- neutral-dominance reference -->
+            <circle cx="230" cy="175" r="8.5" fill="none" stroke="#3f3f3f"
+                    stroke-width="1" stroke-dasharray="2 2"/>
+
+            <!-- fast: filled dot, radius carries dominance -->
+            <circle cx="230" cy="175" r="12" fill="#ededed"/>
+
+            <!-- affiliation heart, filled from the point -->
+            <circle cx="252" cy="154" r="14" fill="#1a1a1a"/>
+            <clipPath id="hclip">
+              <path d="M252 163 C241 150 246 139 252 145 C258 139 263 150 252 163 Z"/>
+            </clipPath>
+            <rect x="238" y="152" width="28" height="14" fill="#ededed" clip-path="url(#hclip)"/>
+            <path d="M252 163 C241 150 246 139 252 145 C258 139 263 150 252 163 Z"
+                  fill="none" stroke="#9a9a9a" stroke-width="1"/>
+
+            <!-- leaders -->
+            <g class="fig-lead">
+              <path d="M344 62 L206 138"/>
+              <path d="M344 120 L266 152"/>
+              <path d="M344 178 L243 176"/>
+              <path d="M344 240 L239 184"/>
+              <path d="M344 302 L272 213"/>
+              <path d="M344 358 L173 252"/>
+              <path d="M344 412 L118 292"/>
+            </g>
+
+            <!-- callouts -->
+            <g class="fig-note">
+              <text x="352" y="52">medium <tspan class="k">— the fast mark advanced</tspan></text>
+              <text x="352" y="68">along its trajectory. A position,</text>
+              <text x="352" y="84">never a velocity.</text>
+
+              <text x="352" y="116">affiliation <tspan class="k">— a heart, filled</tspan></text>
+              <text x="352" y="132">from the point. Half is neutral.</text>
+
+              <text x="352" y="174">fast <tspan class="k">— the moment. Its radius</tspan></text>
+              <text x="352" y="190">carries dominance.</text>
+
+              <text x="352" y="236">the dashed ring is neutral</text>
+              <text x="352" y="252">dominance, always drawn, so the</text>
+              <text x="352" y="268">dot's size reads absolutely.</text>
+
+              <text x="352" y="298">surprise <tspan class="k">— a ripple, gone in</tspan></text>
+              <text x="352" y="314">about a second.</text>
+
+              <text x="352" y="354">slow <tspan class="k">— the baseline.</tspan></text>
+              <text x="352" y="370">Temperament, as a dim crosshair.</text>
+
+              <text x="352" y="408">the trail, which goes dashed when</text>
+              <text x="352" y="424">the moment fights the trend.</text>
+            </g>
+          </g>
+        </svg>
+        </div>
+        <figcaption>The whole face. Three marks that are all positions, two channels drawn as
+        events, and one reference ring that exists only so a size can be read. Redrawn here with
+        the marks pulled apart for legibility &mdash; in use they frequently overlap, which is why
+        the heart has a dark backing under it.</figcaption>
+      </figure>
+
       <h2>The plane</h2>
 
       <p>Pleasure runs across, arousal runs up. That much is the standard reading of a circumplex
@@ -259,11 +356,19 @@
 x     = cx + p · scale · R
 y     = cy − a · scale · R</pre>
 
-      <p>Axes are independently bounded to [&minus;1, 1], so the reachable region is a square.
-      Inscribing that square in the dial wastes most of the face and no state ever approaches the
-      rim; projecting it out means the corners are reachable and a state at the edge genuinely is at
-      an extreme. A test asserts the consequence directly &mdash; <em>no reachable state places a
-      mark outside the dial</em>.</p>
+      <p>Pleasure and arousal are independent, so the reachable space is a <em>square</em> &mdash; a
+      character can be fully elated and fully energized at once. The dial is drawn as a disc.
+      Scaling each axis onto the radius directly puts that corner at 1.41 times the radius, outside
+      the ring the dial draws as its own edge, and it did: on 18% of recorded turns the mark was
+      sitting outside the face it was supposed to be inside.</p>
+
+      <p>So the square is mapped onto the disc along each spoke. The direction from center is left
+      exactly alone and only the distance is rescaled, from the Euclidean length to the larger of
+      the two axes. Russell reads the angle as <em>which</em> mood this is and the radius as
+      <em>how strong</em> &mdash; so this keeps the first untouched while making the second say how
+      far your strongest axis is pushed. The rim is reached by full pleasure alone, and by full
+      pleasure with full arousal together; no range is given up, and nothing can leave the dial. A
+      test now asserts that last part directly.</p>
 
       <p>The quadrant labels read ENERGIZED, CALM, GUARDED, WARM, so the face can be read without
       knowing which axis is which.</p>
@@ -294,7 +399,7 @@ y     = cy − a · scale · R</pre>
       the midpoint lands exactly where it should &mdash; half full is neutral, which is what neutral
       affiliation is.</p>
 
-      <p>It fills upward from the point, so a nearly-cold heart is still recognisably a heart
+      <p>It fills upward from the point, so a nearly-cold heart is still recognizably a heart
       outline rather than a smudge in the bottom of one. The outline is stroked at every value, for
       the same reason the dot never reaches zero radius.</p>
 
@@ -320,11 +425,11 @@ y     = cy − a · scale · R</pre>
       <h2>Three timescales, and no hue</h2>
 
       <p>The three marks are separated by luminance and by shape: <b>fast</b> is a filled dot and
-      the brightest thing on the face, <b>medium</b> an open ring in mid grey, <b>slow</b> a dim
+      the brightest thing on the face, <b>medium</b> an open ring in mid gray, <b>slow</b> a dim
       crosshair.</p>
 
-      <p>Not by colour. A palette would have been easier to read at a glance and would have failed
-      for anyone who cannot separate the hues, in greyscale, and in a screenshot run through
+      <p>Not by color. A palette would have been easier to read at a glance and would have failed
+      for anyone who cannot separate the hues, in grayscale, and in a screenshot run through
       anything. Shape survives all three. The frontend tests assert it as a property &mdash;
       <em>selection is shown without relying on hue</em> &mdash; rather than trusting anyone to
       remember.</p>
@@ -377,11 +482,11 @@ y     = cy − a · scale · R</pre>
 
 <pre class="math">P    pleasure      light    solid
 Af   affiliation   violet   solid
-A    arousal       grey     dashed
+A    arousal       gray     dashed
 D    dominance     dark     dotted</pre>
 
-      <p>Colour, dash pattern <em>and</em> a letter at the end of each line where it terminates.
-      Direct labelling rather than a legend, so identity is never carried by colour alone and the
+      <p>Color, dash pattern <em>and</em> a letter at the end of each line where it terminates.
+      Direct labelling rather than a legend, so identity is never carried by color alone and the
       eye never has to travel to a key and back. One recessive midline marks zero; there is no other
       chrome, because at 56 pixels tall every added rule costs a line of data.</p>
 
@@ -394,19 +499,46 @@ D    dominance     dark     dotted</pre>
       still moving would be a lie about which tense you are reading. Typing returns you to the
       present, which is also asserted in a test.</p>
 
-      <h2>The state as a hex</h2>
+      <h2>What it borrows from the color picker</h2>
 
-      <p>One more thing, because it fell out for free. Each axis is one byte with neutral anchored
-      at exactly <code>0x80</code>, so a timescale is a copy-pasteable string in the spirit of a
-      colour hex &mdash; <code>#80808080</code> is neutral across the board.</p>
+      <p>None of the above is a new interaction. It is a color picker.</p>
 
-      <p>It round-trips exactly, and the browser's codec and the server's agree byte for byte. There
-      is a test whose entire job is to assert that they do, because a lossy round-trip would make
-      the string a lossy description of a state while still looking like a precise one.</p>
+      <p>A color picker is two things bolted together: a two-dimensional field you point at, and a
+      hex string you can copy, paste, and mail to someone. The field is for choosing by eye when you
+      do not know the number. The hex is for moving an exact value between places when you do. They
+      describe the same state in two registers, and the reason the pattern has survived thirty years
+      untouched is that the two registers cover each other's weaknesses completely.</p>
+
+      <p>Affect has the same shape of problem. So the dial is the field, and underneath it are three
+      hex strings &mdash; one per Varela timescale, each editable:</p>
+
+<pre class="math">●  FAST     #80808080     P  A  D  S     the moment
+◉  MEDIUM   #80808080     P  A  D  Af    the four slopes
+✛  SLOW     #80808080     P  A  D  Af    the baseline
+             └┬┘└┬┘└┬┘└┬┘
+              one byte per axis · 0x80 is exactly neutral</pre>
+
+      <p>The glyph on each row is the mark that timescale draws on the face above &mdash; filled
+      dot, open ring, crosshair &mdash; so the picker and the drawing name each other without a
+      legend.</p>
+
+      <p>Two details are load-bearing. Neutral is anchored at <code>0x80</code> rather than falling
+      wherever the arithmetic lands, so the negative half gets 128 steps and the positive half 127,
+      and a neutral state reads as exactly zero instead of a hair off it. And the byte is computed
+      with <code>floor(x + 0.5)</code> rather than a rounding function, because Python rounds halves
+      to even and JavaScript rounds them up &mdash; two languages disagreeing about a half-step
+      would put a one-bit difference between the browser and the server on the same state. There is
+      a test whose only job is to assert the two codecs agree byte for byte.</p>
+
+      <p>What that buys is the thing the color picker has always bought: a state you can move. Copy
+      the fast hex off a character in a good mood and paste it onto another one. Keep a baseline in
+      a text file. Paste a temperament into a fresh character and it starts life as somebody rather
+      than at the origin. <code>#80808080</code> is neutral across the board, which is also, not
+      quite by accident, mid-gray in the register the notation was borrowed from.</p>
 
       <h2>What the tests are actually about</h2>
 
-      <p>The frontend suite is unusual in that most of it concerns legibility rather than behaviour.
+      <p>The frontend suite is unusual in that most of it concerns legibility rather than behavior.
       A sample, unedited:</p>
 
       <ul class="asserts">
