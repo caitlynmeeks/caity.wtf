@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Welcome to the Funhouse: Interference Without Dynamics — Random Window Features as a Null Model for Reservoir Language Models</title>
+<meta name="description" content="A memoryless random-optics baseline for reservoir language models on text8: a 0.46-bpc readout tax isolated at feature-complete inputs, a window-length V-curve reproducing the interference cost of held-but-unneeded past with no dynamics, and a matched-parameter dead heat with a tuned echo state network.">
+<meta name="color-scheme" content="dark">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://caity.wtf/experiments/funhouse/">
+<meta property="og:title" content="Welcome to the Funhouse: Interference Without Dynamics">
+<meta property="og:description" content="Lab note: frozen random complex projections of a character window, run against reservoirs and n-grams on identical splits — a readout tax, a window tax, and a weight-class upset.">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0d0c'/%3E%3Ctext x='5' y='23' font-family='monospace' font-size='18' fill='%237fd88f'%3E%3E_%3C/text%3E%3C/svg%3E">
+
+<style>
+  :root {
+    --bg:     #0b0d0c;
+    --panel:  #101413;
+    --chrome: #171d1b;
+    --line:   #222b28;
+    --fg:     #ccd6d0;
+    --bright: #f2f7f4;
+    --dim:    #6d7d75;
+    --faint:  #4a5852;
+    --green:  #7fd88f;
+    --amber:  #e8b45c;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco,
+            "Cascadia Mono", "Roboto Mono", Consolas, "Liberation Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    padding: clamp(1rem, 4vw, 3.5rem) clamp(0.75rem, 4vw, 2rem);
+    background: var(--bg);
+    background-image: radial-gradient(120% 90% at 50% 0%, #131a17 0%, var(--bg) 62%);
+    background-attachment: fixed;
+    color: var(--fg);
+    font-family: var(--mono);
+    font-size: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+    line-height: 1.7;
+    display: flex; justify-content: center;
+  }
+  .terminal {
+    width: 100%; max-width: 52rem;
+    background: var(--panel);
+    border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset,
+                0 24px 60px -20px rgba(0,0,0,0.8);
+  }
+  .chrome {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.6rem 0.85rem; background: var(--chrome);
+    border-bottom: 1px solid var(--line);
+  }
+  .dot { width: 0.7rem; height: 0.7rem; border-radius: 50%; flex: none; }
+  .dot--r { background: #e05f56; } .dot--y { background: #e2b657; } .dot--g { background: #5fbf6a; }
+  .chrome__title {
+    margin: 0 auto; padding-left: 1rem; font-size: 0.8em; color: var(--dim);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  main { padding: clamp(1.1rem, 3vw, 2rem) clamp(1rem, 3.5vw, 2.25rem) 2rem; }
+  .cmd { color: var(--dim); margin: 0 0 1.2rem; overflow-wrap: anywhere; }
+  .cmd::before { content: "caity@sosiego ~/experiments/funhouse % "; color: var(--green); }
+  .cmd b { color: var(--bright); font-weight: 600; }
+  .cmd a { color: inherit; }
+
+  h1 {
+    font-size: clamp(1.25rem, 1rem + 1.4vw, 1.7rem);
+    line-height: 1.3; margin: 0 0 0.4rem;
+    color: var(--bright); font-weight: 700; letter-spacing: -0.01em;
+  }
+  .subtitle { color: var(--fg); font-size: 1em; margin: 0 0 0.5rem; font-style: italic; }
+  .byline { color: var(--dim); font-size: 0.92em; margin: 0 0 1.6rem; }
+
+  h2 {
+    font-size: 1.05em; color: var(--bright);
+    margin: 2.2rem 0 0.6rem; padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+  }
+  h2 .sec { color: var(--green); }
+  p { margin: 0.65rem 0; }
+  em { color: var(--bright); font-style: italic; }
+  a { color: var(--green); text-decoration: underline; text-underline-offset: 2px; }
+  a:hover, a:focus-visible { color: var(--bright); }
+  .abstract {
+    border-left: 2px solid var(--line);
+    padding-left: 0.9rem; color: var(--fg); font-size: 0.95em;
+  }
+  .abstract b { color: var(--bright); }
+
+  pre.eq {
+    background: var(--chrome); border: 1px solid var(--line); border-radius: 6px;
+    padding: 0.7rem 0.9rem; margin: 0.8rem 0;
+    color: var(--amber); font-size: 0.92em; line-height: 1.55;
+    overflow-x: auto;
+  }
+  code { color: var(--amber); font-size: 0.95em; }
+
+  figure.fig { margin: 1.1rem 0; }
+  figure.fig .frame {
+    display: block; border: 1px solid var(--line); border-radius: 6px;
+    overflow: hidden; background: #fcfcfb; line-height: 0;
+  }
+  figure.fig img { display: block; width: 100%; height: auto; }
+  figure.fig figcaption {
+    margin-top: 0.5rem; color: var(--faint); font-size: 0.85em; line-height: 1.55;
+  }
+  figure.fig figcaption b { color: var(--dim); }
+
+  table.data {
+    border-collapse: collapse; width: 100%; margin: 0.9rem 0;
+    font-size: 0.9em;
+  }
+  table.data caption {
+    text-align: left; color: var(--faint); font-size: 0.93em;
+    margin-bottom: 0.4rem; caption-side: top;
+  }
+  table.data caption b { color: var(--dim); }
+  table.data th, table.data td {
+    text-align: left; padding: 0.3rem 0.8rem 0.3rem 0;
+    border-bottom: 1px solid var(--line); vertical-align: top;
+  }
+  table.data th { color: var(--dim); font-weight: 600; }
+  table.data td.num, table.data th.num { text-align: right; padding-right: 1.2rem; }
+  table.data tr.hl td { color: var(--bright); }
+  .tablewrap { overflow-x: auto; }
+
+  footer {
+    margin-top: 2.4rem; padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+    color: var(--dim); font-size: 0.9em;
+  }
+  footer p { margin: 0 0 0.35rem; }
+  ::selection { background: var(--green); color: var(--bg); }
+</style>
+</head>
+<body>
+<div class="terminal">
+  <div class="chrome" aria-hidden="true">
+    <span class="dot dot--r"></span><span class="dot dot--y"></span><span class="dot dot--g"></span>
+    <span class="chrome__title">experiments/funhouse ~~ less note.txt</span>
+  </div>
+  <main>
+    <p class="cmd"><b>cd <a href="/">~</a>/<a href="/experiments/">experiments</a>/funhouse && less note.txt</b></p>
+
+    <h1>Welcome to the Funhouse: Interference Without Dynamics</h1>
+    <p class="subtitle">Random window features as a null model for reservoir language models</p>
+    <p class="byline">C.&thinsp;Meeks · Tenerife · August 2026 ·
+      companion to <a href="/experiments/reservoir-lm/">the reservoir note</a>
+      <!-- TODO(caity): add "· code & result JSONs" link when the annex repo is pushed --></p>
+
+    <p class="abstract"><b>Abstract.</b> We evaluate a system with no recurrence and no
+    state — frozen random complex projections ("random optics") of the last L characters,
+    read through intensity detectors — as a null model for the reservoir language models of
+    the <a href="/experiments/reservoir-lm/">companion note</a>, on identical text8 splits
+    and identical readout code. Four results. (1)&nbsp;<b>Calibration.</b> At L&nbsp;=&nbsp;2
+    the features provably span the 729-context table (rank 729/729, condition number 94),
+    and a logistic readout reproduces the 3-gram baseline to within 0.018 bpc.
+    (2)&nbsp;<b>A readout tax, isolated.</b> On those same feature-complete inputs, ridge
+    regression with temperature calibration costs 0.464 bpc over the logistic readout —
+    a pure readout-calibration penalty, measured for the first time free of any confound
+    with feature quality. (3)&nbsp;<b>A window tax.</b> At fixed feature budget the
+    window-length curve is a V: best at L&nbsp;=&nbsp;3, monotonically worse to
+    L&nbsp;=&nbsp;10, and the shape survives the readout change. The companion note's
+    interference cost of held-but-unneeded past reappears in a system with no dynamics:
+    crowding a fixed-dimensional random representation is sufficient; recurrence is not
+    necessary. (4)&nbsp;<b>A weight-class dead heat.</b> Given the 7-character window that
+    provably determines a matched tropical reservoir's state, random features lose to the
+    reservoirs by 0.47 bpc; but at its own best window the null model reaches 2.623
+    validation bpc — a dead heat with the tuned N&nbsp;=&nbsp;1000 tanh reservoir (2.642)
+    at matched trained parameters and data, resolved nominally in the window model's
+    favor. At this scale, both machines are effectively three-character models.
+    Predictions were pre-registered; two of four were falsified, one with inverted sign,
+    and we report them as registered.</p>
+
+    <h2 id="s1"><span class="sec">§1</span> Setup and baselines</h2>
+
+    <p>Corpus, splits, metric, and baselines are the companion note's: text8
+    (V&nbsp;=&nbsp;27; splits 90M/5M/5M), bits per character on held-out text, add-α
+    n-grams recomputed on the same slices. All runs here use 2×10⁶ training characters
+    unless stated (the n-gram ladder at that budget: 3-gram 2.928, 4-gram 2.441, 5-gram
+    2.159 validation bpc), are seeded, and record their full configuration in result
+    JSONs.</p>
+
+    <p>The model is a feature map with no time in it. The input at position t is the
+    one-hot of the last L characters; the map is a stack of random complex matrices with
+    intensity nonlinearities — the only nonlinearity light gives you:</p>
+    <pre class="eq">u_t = onehot(c_{t−L+1} … c_t) ∈ {0,1}^{27L}
+z₁ = |M₁ u_t|²,   z₂ = |M₂ z₁|², …   (M_ℓ complex Gaussian, F features per layer)</pre>
+    <p>The first layer is a gather-and-sum (the window is L-sparse); scalings keep unit
+    variance per layer. The trained parameters are a readout on the final features:
+    ridge to one-hot targets with validation-fitted temperature, or multinomial logistic
+    regression — the companion note's readout code, unchanged. F&nbsp;=&nbsp;1024 gives
+    (F+1)·27&nbsp;=&nbsp;27,675 trainable parameters, the same weight class as the
+    companion's N&nbsp;=&nbsp;1000 reservoirs (27,027).</p>
+
+    <div class="tablewrap">
+    <table class="data">
+      <caption><b>Table 1.</b> Validation and test bpc at the 2×10⁶-character training
+      budget, identical splits throughout. Funhouse rows in bold. The reservoir row is
+      from the companion repository's N-sweep result JSONs (validation reported there;
+      same data budget, same readout code).</caption>
+      <tr><th>model</th><th class="num">val bpc</th><th class="num">test bpc</th><th class="num">trainable params</th><th>training</th></tr>
+      <tr><td>uniform</td><td class="num">4.755</td><td class="num">4.755</td><td class="num">0</td><td>—</td></tr>
+      <tr><td>2-gram</td><td class="num">3.447</td><td class="num">3.449</td><td class="num">~7×10²</td><td>seconds</td></tr>
+      <tr><td>3-gram</td><td class="num">2.928</td><td class="num">2.934</td><td class="num">~2×10⁴</td><td>seconds</td></tr>
+      <tr class="hl"><td><b>funhouse L=3, F=1024, ridge</b></td><td class="num">3.102</td><td class="num">3.103</td><td class="num">2.8×10⁴</td><td>seconds</td></tr>
+      <tr><td>tanh ESN N=1k, logistic, tuned ρ</td><td class="num">2.642</td><td class="num">—</td><td class="num">2.7×10⁴</td><td>minutes</td></tr>
+      <tr class="hl"><td><b>funhouse L=3, F=1024, logistic</b></td><td class="num">2.623</td><td class="num">2.624</td><td class="num">2.8×10⁴</td><td>~3 min SGD</td></tr>
+      <tr><td>4-gram</td><td class="num">2.441</td><td class="num">2.436</td><td class="num">~5×10⁵</td><td>seconds</td></tr>
+      <tr><td>5-gram</td><td class="num">2.159</td><td class="num">2.186</td><td class="num">~1.4×10⁷</td><td>seconds</td></tr>
+    </table>
+    </div>
+
+    <h2 id="s2"><span class="sec">§2</span> Calibration, and a readout tax isolated</h2>
+
+    <p>Before any comparison, a gate — pre-registered in the lab journal before the first
+    run. At L&nbsp;=&nbsp;2 there are only 27²&nbsp;=&nbsp;729 distinct contexts, and
+    depth-1 intensity features of a 2-slot window contain all pairwise slot interactions,
+    so with F&nbsp;≫&nbsp;729 the features should span every function of the context —
+    in which case a logistic readout can represent the exact 3-gram predictor, and the
+    funhouse must reproduce the 3-gram baseline or the build is wrong.</p>
+
+    <p>It does, after one honest wobble: the first attempt missed the registered ±0.05
+    band by 0.03, the diagnosis rule fired, the feature matrix over the 729 contexts
+    proved full-rank (condition number 94 — the mirrors were fine), and gentler
+    optimization landed at 2.946 validation bpc, 0.018 above the measured 3-gram anchor
+    (2.928). The miss was optimizer slack, and is reported as such.</p>
+
+    <p>The gate's control arm produced the first finding. On the <em>identical,
+    provably feature-complete</em> inputs, ridge-to-one-hot with temperature calibration
+    scores 3.410: a 0.464-bpc penalty that cannot be blamed on the features, because the
+    features span the target function class (Fig.&nbsp;1). The companion note measured a
+    0.36-bpc gap between its ridge and logistic readouts, but there the two effects —
+    readout calibration and feature quality — were inseparable. Here the entire gap is
+    readout. Two corroborating details: the penalty is a property of the function class
+    and not the basis (two different random bases of the same class — F=2048 depth-1 and
+    F=1024 depth-2 — give ridge bpc identical to four decimals, as projection theory
+    predicts at negligible regularization); and every ridge number in both labs should be
+    read as carrying a representation-dependent surcharge of this order.</p>
+
+    <figure class="fig">
+      <span class="frame"><img src="img/fig_readout_tax.png" loading="lazy" decoding="async"
+        alt="Dot comparison on one axis: logistic readout at 2.946 bits per character, close to the dotted 3-gram anchor at 2.928, versus ridge plus temperature at 3.410 on the same features; the gap is labeled a readout tax of 0.464."></span>
+      <figcaption><b>Fig. 1.</b> The readout tax at feature-complete inputs. L=2 window,
+      F=2048, identical features under both readouts; validation bpc, 2M training
+      characters. The features provably span the 3-gram function class (rank 729/729),
+      so the 0.464 gap is pure readout calibration.</figcaption>
+    </figure>
+
+    <h2 id="s3"><span class="sec">§3</span> The window tax</h2>
+
+    <p>The pre-registered expectation for the window sweep was a plateau: bpc improving
+    with L and flattening once the marginal character stops paying, with the best L in
+    {5..9}. The registered form is <em>falsified</em>. At fixed F&nbsp;=&nbsp;1024 the
+    curve is a V with its minimum at L&nbsp;=&nbsp;3, deteriorating monotonically through
+    L&nbsp;=&nbsp;10 (3.102&nbsp;→&nbsp;3.797 under ridge); and the V survives the
+    logistic readout (2.623 at L=3 vs. 3.214 at L=7), so it is not a ridge artifact
+    (Fig.&nbsp;2). A second registered prediction — that a deeper mirror stack helps —
+    was falsified with inverted sign: at L&nbsp;=&nbsp;7, each additional layer hurts
+    (Table&nbsp;2).</p>
+
+    <figure class="fig">
+      <span class="frame"><img src="img/fig_window_tax.png" loading="lazy" decoding="async"
+        alt="Validation bits per character against window length one through ten. The ridge curve is a V with minimum 3.102 at window three, rising steadily to 3.797 at window ten. Logistic points at windows three, four, and seven sit lower, also rising from 2.623. Dotted horizontal reference lines mark the 3-, 4-, and 5-gram baselines and a dashed line marks the tanh reservoir with logistic readout at 2.642."></span>
+      <figcaption><b>Fig. 2.</b> The window tax. Validation bpc vs. window length L at
+      F=1024, depth 2, 2M training characters; ridge sweep (blue), logistic points
+      (orange), n-gram anchors and the matched-parameter tanh ESN N=1k reference
+      (dashed). Both readouts prefer L=3; every character past the third costs.</figcaption>
+    </figure>
+
+    <p>Read mechanistically, this is the companion note's central phenomenon stripped of
+    its dynamics. There, characters held in superposition in a recurrent state imposed an
+    interference cost on a shared readout, and decodable-but-unneeded memory made the
+    language model worse. Here there is no state, no recurrence, and no memory — only a
+    fixed budget of random features shared across a growing window — and the same
+    signature appears: past that the task barely uses (text8 prediction is dominated by
+    ~3 characters of context) dilutes the representation of the past it needs. The
+    interference cost of held-but-unneeded history is not a property of reservoir
+    dynamics. It is a property of fixed-dimensional shared representations under a
+    single readout, and it prices window width exactly as it prices spectral radius.</p>
+
+    <div class="tablewrap">
+    <table class="data">
+      <caption><b>Table 2.</b> Depth at L=7, F=1024, ridge, validation bpc. The
+      registered prediction (depth 2 beats depth 1 by ≥ 0.05) was falsified with
+      inverted sign.</caption>
+      <tr><th>mirror layers</th><th class="num">1</th><th class="num">2</th><th class="num">3</th></tr>
+      <tr><td>val bpc</td><td class="num">3.401</td><td class="num">3.566</td><td class="num">3.703</td></tr>
+    </table>
+    </div>
+
+    <h2 id="s4"><span class="sec">§4</span> The weight-class comparison</h2>
+
+    <p>The companion note proved its max-plus reservoir's state is <em>exactly</em> a
+    function of the trailing 7 characters. A 7-character window therefore contains
+    everything that machine knew, and the pre-registered question was whether random
+    projections of that window match it. Three outcomes were registered; the answer was
+    the second: at L&nbsp;=&nbsp;7, F&nbsp;=&nbsp;1024, matched ridge readout and data
+    (10⁶ characters), the funhouse scores 3.573 against the tropical reservoir's 3.100
+    and the tanh's 3.100 — the reservoirs beat a random projection of their own window
+    content by 0.47 bpc. Recurrence at this scale is not a window in disguise.</p>
+
+    <p>But the flagged post-hoc block reverses the moral. At its own best window the
+    funhouse reaches 2.623 validation bpc under logistic — against the tuned tanh
+    reservoir's 2.642 at matched trained parameters (2.8×10⁴ vs 2.7×10⁴) and matched
+    data. The margin (0.019) is within plausible seed and optimizer noise; we call it a
+    dead heat resolved nominally in the window model's favor, and note that a dead heat
+    is all a null model needs. Reconciliation of the two verdicts: the reservoirs' win at
+    L&nbsp;=&nbsp;7 does not show them <em>using</em> seven characters — it shows the
+    window-7 projection wasting its feature budget on deep lags. At this width, pond and
+    funhouse alike are effectively three-character models; the companion note's own probes
+    (7.5 characters decodable at its ridge champion, while performance is governed by far
+    fewer) said the same thing from the other side.</p>
+
+    <p>One prediction is registered for the sequel before its runs: if the tax is
+    capacity-relative, the optimal window should widen as the feature budget grows —
+    argmin&nbsp;L non-decreasing in F over {1k, 4k, 16k}, at least one strict increase.
+    That is the same law the companion program found for spectral radius under richer
+    readouts, transplanted to a machine with no dynamics at all; a confirmation would
+    make "the interference budget prices the past" substrate-independent in a second
+    direction.</p>
+
+    <h2 id="s5"><span class="sec">§5</span> Limitations and related work</h2>
+
+    <p>Scope: one corpus (text8), character level, F&nbsp;≤&nbsp;2048, 2×10⁶ training
+    characters (10⁶ where matched to the companion's N=1000 runs), seed 0 throughout —
+    single-seed except where the companion supplies seed replications; the logistic
+    optimizer's sensitivity is documented (§2's wobble) and its noise bounds the §4 dead
+    heat. The L=2 logistic reference uses F=2048 depth-1 (its calibration configuration)
+    while the sweep uses F=1024 depth-2; §2's basis-invariance result is why this does
+    not matter for ridge, and the logistic L-comparison is made within the sweep
+    configuration only. The claims are about this task class, these readout families,
+    and these budgets.</p>
+
+    <p>Related work. Random-feature models and extreme learning machines are old and
+    well studied (Rahimi &amp; Recht; Huang et&nbsp;al.); optical computing through
+    random scattering media realizes them physically (Saade et&nbsp;al.), which is the
+    architecture's namesake. Next-generation reservoir computing (Gauthier et&nbsp;al.)
+    is the nearest antecedent — features of delayed inputs without recurrence — using
+    polynomial rather than random-intensity features, and motivated as a replacement for
+    reservoirs rather than as a null model. The contribution here is the role and the
+    protocol: a memoryless control run under a pre-registered comparison against
+    reservoirs on identical splits, with the readout tax isolated at provably
+    feature-complete inputs. Path-signature features on the same window are the
+    canonical-feature counterpart (Chevyrev &amp; Kormilitzin) and remain unrun; no
+    claims on that track.</p>
+
+    <p>Reproducibility: every run is seeded and its result JSON records the full
+    configuration; the lab journal contains the pre-registration text of every prediction
+    above, in page order, written before the corresponding runs.
+    <!-- TODO(caity): link the annex repository here when pushed --></p>
+
+    <footer>
+      <p>Credits. Experiments, analysis, figures, and infrastructure were produced with
+      Claude (Fable&nbsp;5, Anthropic) operating the laboratory tooling; the architecture
+      is one of eleven from a design dialogue between C.M. and Claude — the funhouse
+      metaphor is mine, the null-model role is the machine's own suggestion. Errors are
+      mine.</p>
+      <p><a href="/experiments/">../</a> · <a href="/">~</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>
