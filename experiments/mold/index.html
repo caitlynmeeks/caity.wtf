@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What the Mold Couldn't Learn (and What That Teaches)</title>
+<meta name="description" content="Three Physarum-inspired machines for language modeling, three pre-registered negatives with mechanisms: an l1 flow-solver that found every representation distributed, a growth rule that couldn't hear word order, and an entrainment bank that proved our corpora contain no clocks.">
+<meta name="color-scheme" content="dark">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://caity.wtf/experiments/mold/">
+<meta property="og:title" content="What the Mold Couldn't Learn (and What That Teaches)">
+<meta property="og:description" content="Lab note: slime-mold computation meets character-level language modeling — three machines, three mechanistic negatives, zero unexplained results.">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0d0c'/%3E%3Ctext x='5' y='23' font-family='monospace' font-size='18' fill='%237fd88f'%3E%3E_%3C/text%3E%3C/svg%3E">
+
+<style>
+  :root {
+    --bg:     #0b0d0c;
+    --panel:  #101413;
+    --chrome: #171d1b;
+    --line:   #222b28;
+    --fg:     #ccd6d0;
+    --bright: #f2f7f4;
+    --dim:    #6d7d75;
+    --faint:  #4a5852;
+    --green:  #7fd88f;
+    --amber:  #e8b45c;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco,
+            "Cascadia Mono", "Roboto Mono", Consolas, "Liberation Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    padding: clamp(1rem, 4vw, 3.5rem) clamp(0.75rem, 4vw, 2rem);
+    background: var(--bg);
+    background-image: radial-gradient(120% 90% at 50% 0%, #131a17 0%, var(--bg) 62%);
+    background-attachment: fixed;
+    color: var(--fg);
+    font-family: var(--mono);
+    font-size: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+    line-height: 1.7;
+    display: flex; justify-content: center;
+  }
+  .terminal {
+    width: 100%; max-width: 52rem;
+    background: var(--panel);
+    border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset,
+                0 24px 60px -20px rgba(0,0,0,0.8);
+  }
+  .chrome {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.6rem 0.85rem; background: var(--chrome);
+    border-bottom: 1px solid var(--line);
+  }
+  .dot { width: 0.7rem; height: 0.7rem; border-radius: 50%; flex: none; }
+  .dot--r { background: #e05f56; } .dot--y { background: #e2b657; } .dot--g { background: #5fbf6a; }
+  .chrome__title {
+    margin: 0 auto; padding-left: 1rem; font-size: 0.8em; color: var(--dim);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  main { padding: clamp(1.1rem, 3vw, 2rem) clamp(1rem, 3.5vw, 2.25rem) 2rem; }
+  .cmd { color: var(--dim); margin: 0 0 1.2rem; overflow-wrap: anywhere; }
+  .cmd::before { content: "caity@sosiego ~/experiments/mold % "; color: var(--green); }
+  .cmd b { color: var(--bright); font-weight: 600; }
+  .cmd a { color: inherit; }
+
+  h1 {
+    font-size: clamp(1.25rem, 1rem + 1.4vw, 1.7rem);
+    line-height: 1.3; margin: 0 0 0.4rem;
+    color: var(--bright); font-weight: 700; letter-spacing: -0.01em;
+  }
+  .subtitle { color: var(--fg); font-size: 1em; margin: 0 0 0.5rem; font-style: italic; }
+  .byline { color: var(--dim); font-size: 0.92em; margin: 0 0 1.6rem; }
+
+  h2 {
+    font-size: 1.05em; color: var(--bright);
+    margin: 2.2rem 0 0.6rem; padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+  }
+  h2 .sec { color: var(--green); }
+  p { margin: 0.65rem 0; }
+  em { color: var(--bright); font-style: italic; }
+  a { color: var(--green); text-decoration: underline; text-underline-offset: 2px; }
+  a:hover, a:focus-visible { color: var(--bright); }
+  .abstract {
+    border-left: 2px solid var(--line);
+    padding-left: 0.9rem; color: var(--fg); font-size: 0.95em;
+  }
+  .abstract b { color: var(--bright); }
+
+  pre.eq {
+    background: var(--chrome); border: 1px solid var(--line); border-radius: 6px;
+    padding: 0.7rem 0.9rem; margin: 0.8rem 0;
+    color: var(--amber); font-size: 0.92em; line-height: 1.55;
+    overflow-x: auto;
+  }
+  code { color: var(--amber); font-size: 0.95em; }
+
+  figure.fig { margin: 1.1rem 0; }
+  figure.fig .frame {
+    display: block; border: 1px solid var(--line); border-radius: 6px;
+    overflow: hidden; background: #fcfcfb; line-height: 0;
+  }
+  figure.fig img { display: block; width: 100%; height: auto; }
+  figure.fig figcaption {
+    margin-top: 0.5rem; color: var(--faint); font-size: 0.85em; line-height: 1.55;
+  }
+  figure.fig figcaption b { color: var(--dim); }
+
+  footer {
+    margin-top: 2.4rem; padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+    color: var(--dim); font-size: 0.9em;
+  }
+  footer p { margin: 0 0 0.35rem; }
+  ::selection { background: var(--green); color: var(--bg); }
+</style>
+</head>
+<body>
+<div class="terminal">
+  <div class="chrome" aria-hidden="true">
+    <span class="dot dot--r"></span><span class="dot dot--y"></span><span class="dot dot--g"></span>
+    <span class="chrome__title">experiments/mold ~~ less note.txt</span>
+  </div>
+  <main>
+    <p class="cmd"><b>cd <a href="/">~</a>/<a href="/experiments/">experiments</a>/mold && less note.txt</b></p>
+
+    <h1>What the Mold Couldn't Learn (and What That Teaches)</h1>
+    <p class="subtitle">Three Physarum machines meet a language model: a solver that
+    found nothing sparse, a growth rule that couldn't hear, and an oscillator that
+    told us our text has no clock</p>
+    <p class="byline">C.&thinsp;Meeks · Tenerife · August 2026 · companion to
+      <a href="/experiments/reservoir-lm/">the reservoir note</a>,
+      <a href="/experiments/funhouse/">the funhouse</a>,
+      <a href="/experiments/tiny-actors/">a thousand tiny actors</a>, and
+      <a href="/experiments/readout-relative-edge/">the readout-relative edge</a>
+      <!-- TODO(caity): add "· code & result JSONs" link when the annex repo is pushed --></p>
+
+    <p class="abstract"><b>Abstract.</b> Slime molds solve mazes, plan rail networks,
+    and anticipate periodic events. We built three machines from that biology and set
+    them on character-level language modeling, with every prediction pre-registered:
+    a readout GROWN by Physarum flow dynamics (provably an ℓ1 / basis-pursuit
+    solver); a reservoir whose wiring thickens with use (Tero's tube-reinforcement
+    law, three definitions of "traffic"); and a bank of adaptive-frequency
+    oscillators that entrain to rhythms in the stream (Saigusa's anticipating
+    amoeba). All three work as machines. All three returned negatives, each with its
+    mechanism in hand. (1)&nbsp;The flow-reader passes its solver gate to 5×10⁻¹⁰,
+    then finds <em>nothing to select</em>: on random-mirror features and on a
+    thousand-actor automata ensemble alike, every pruning step strictly worsens
+    prediction — every representation this program has grown is a fully distributed
+    code. (2)&nbsp;The growth rule reshapes wiring vigorously but cannot tell
+    Wikipedia from shuffled Wikipedia under ANY traffic definition — volume and
+    unsigned rhythm are order-blind by construction, and even confirmed-prediction
+    traffic left performance inside a ±0.01-bpc band around random wiring: at fixed
+    topology and spectral radius, edge <em>magnitudes</em> are a nearly dead lever.
+    (3)&nbsp;The oscillator bank locks to a genuine periodic marker with ~90% of its
+    reachable oscillators — and finds no rhythm whatsoever in Markov streams whose
+    dependency sits at a fixed lag: <em>entrainment reads clocks, not
+    correlations</em>, and our corpora contain none. Three machines, three
+    mechanistic negatives, zero unexplained results — and a map of which
+    biological levers do not reach language, and why.</p>
+
+    <h2 id="s1"><span class="sec">§1</span> The reader that found nothing to select</h2>
+
+    <p>Straszak &amp; Vishnoi proved that Physarum's tube dynamics are iteratively
+    reweighted least squares converging to the basis-pursuit solution — the slime
+    mold is an ℓ1 solver. So we replaced the program's ridge readout with flow:
+    conductances on feature–symbol tubes, reweighted least squares on the same Gram
+    matrices, early stopping on validation. The solver gate passed emphatically
+    (5-sparse recovery from an underdetermined system, max error 5×10⁻¹⁰, exact
+    support). A sparse reader is a categorically different animal from ridge or
+    logistic: it can <em>refuse</em> crowded features instead of averaging them, and
+    the <a href="/experiments/readout-relative-edge/">readout-relative-edge law</a>
+    predicts each reader class prices interference its own way.</p>
+
+    <p>Then it met the program's representations, and the answer was uniform
+    (Fig.&nbsp;1): on the funhouse's random mirrors and on the tiny-actors
+    ensemble's mood features alike, <em>every</em> IRLS iteration at <em>every</em>
+    ℓ1 pressure strictly worsens validation bpc; the best point is always iteration
+    zero, dense; the full thousand actors stay in the cast ("how many actors does
+    Wikipedia need?" — all of them). Both registered sparsity predictions were
+    falsified by their named alternative: these codes are fully distributed. Random
+    projections smear structure across every mirror by construction; and the
+    automata ensemble — whose crowning trick is <em>crowding-free</em> memory —
+    turns out to achieve it not by concentrating information in specialist actors
+    but by keeping its superposition discrete. Crowding-free does not imply
+    concentrated. The flow-reader stands as a validated instrument whose measured
+    finding is an absence: no privileged features, anywhere we looked.</p>
+
+    <figure class="fig">
+      <span class="frame"><img src="img/fig_pruning_hurts.png" loading="lazy" decoding="async"
+        alt="Two panels of validation bits per character against IRLS iteration, one line per regularization strength. Funhouse mirrors on the left, troupe actors on the right: every line rises from iteration zero; dashed lines mark the dense ridge baselines below."></span>
+      <figcaption><b>Fig. 1.</b> Pruning only ever hurts. IRLS trajectories of the
+      flow-reader on funhouse mirrors (left) and troupe mood features (right), one
+      line per ℓ1 pressure λ; dashed: dense ridge. Every step away from dense loses
+      bits; the support never shrinks below the full feature set at matched bpc.</figcaption>
+    </figure>
+
+    <h2 id="s2"><span class="sec">§2</span> The loom that couldn't hear</h2>
+
+    <p>Tero's law grew Tokyo's rail map in a dish: tubes that carry flow thicken,
+    the rest wither, with a response exponent μ that tunes lean-vs-redundant
+    networks. We let it grow a reservoir's wiring — drive the network with text, no
+    readout, reinforce by traffic, renormalize (homeostasis), freeze, then evaluate.
+    The load-bearing control: grow one loom on text8 and a twin on
+    character-shuffled text8. If growth learns <em>language</em>, the real corpus
+    must beat the gibberish.</p>
+
+    <p>It never did (Fig.&nbsp;2) — and the three-way ladder of traffic definitions
+    says why with increasing precision. <em>Volume</em> (window-averaged activity)
+    is order-blind: shuffled text has identical unigram statistics, so every tube
+    feels identical flow. <em>Unsigned rhythm</em> (|pre|·|post| across a step)
+    rectifies away the correlational content and collapses back to volume.
+    <em>Kept promises</em> (signed pre·post correlation aligned with each edge's
+    sign — an edge is fed when its prediction comes true) is order-sensitive by
+    construction, sharpened wiring hardest — and was corpus-blind anyway. Meanwhile
+    the μ dial behaved exactly as the biology says (wiring entropy monotone in μ;
+    winner-take-all at μ=2), so the rule works; it just doesn't reshape wiring
+    toward language. With three traffic statistics acquitted, two suspects remain,
+    registered for the sequel: the homeostasis rescale may launder differential
+    structure out — or, the wider reading the whole grid supports, edge magnitudes
+    at fixed topology and spectral radius are simply a near-dead lever for a
+    linear-readout language model (all fifteen cells sit in a 0.014-bpc band around
+    random). If that holds, growth must rewire <em>topology</em>, not thickness —
+    a different mold.</p>
+
+    <figure class="fig">
+      <span class="frame"><img src="img/fig_loom_band.png" loading="lazy" decoding="async"
+        alt="Dot plot of validation bits per character for eight growth arms, each with a text8-grown and a shuffled-grown dot; the pairs overlap at every arm and all dots sit within a few thousandths of the dashed random-wiring line."></span>
+      <figcaption><b>Fig. 2.</b> The mold couldn't tell Wikipedia from word salad.
+      Every traffic rule × μ arm: text8-grown (orange) vs shuffled-grown (blue),
+      against random wiring (dashed). Pairs coincide everywhere; the whole grid
+      spans 0.014 bpc.</figcaption>
+    </figure>
+
+    <h2 id="s3"><span class="sec">§3</span> The bank that reads clocks</h2>
+
+    <p>Saigusa's chilled Physarum slows down <em>before</em> the next cold shock
+    arrives — a brainless blob anticipating WHEN, plausibly by oscillator
+    entrainment. Our version: a bank of adaptive-frequency oscillators
+    (Righetti–Buchli–Ijspeert dynamics), each tracking one symbol's rhythm, natural
+    periods log-spaced over 2–64 characters. Both gates passed after two honest
+    fixes recorded in the journal (a frequency floor — a minimum metabolic rate —
+    and single-symbol routing, since a mixed diet of aperiodic kicks drowns any
+    rhythm): a lone oscillator locks a detuned start to a kick train <em>exactly</em>
+    (16&nbsp;→&nbsp;10.00), and on a corpus carrying a deterministic marker every 12
+    characters, essentially every oscillator whose lock basin could reach the rhythm
+    found it (Fig.&nbsp;3, left).</p>
+
+    <p>Then the registered discovery test: corpora from the
+    <a href="/experiments/readout-relative-edge/">law experiment</a>, where the next
+    character depends on the character exactly j back. Autocorrelation at lag 12,
+    prize of 1.3 bits sitting right there — and the bank finds nothing (Fig.&nbsp;3,
+    right): no peak at j for any j, histograms indistinguishable from the
+    no-structure control. The spec's own pre-registered caveat is the mechanism:
+    a lag-j Markov dependency is <em>statistical fondness</em>, not punctuality; a
+    Righetti oscillator entrains to kicks that arrive on time, and the aperiodic
+    majority of arrivals randomizes the adaptation. <em>Entrainment reads clocks,
+    not correlations.</em> The pond keeps its place as an instrument — and its
+    first scientific statement is about the data: neither spike corpora nor, by
+    every indication, English prose is periodic in the way a phase-based memory
+    needs. One imagined route to future-keyed state geometry — the trained
+    transformer's corner in the companion notes — is hereby closed: you cannot
+    clockwork your way to the future when the text keeps no time.</p>
+
+    <figure class="fig">
+      <span class="frame"><img src="img/fig_clock_vs_correlation.png" loading="lazy" decoding="async"
+        alt="Two panels of adapted-period distributions. Left: after entrainment on a periodic marker corpus, sharp peaks at periods six and twelve rise far above the initialization. Right: on a spike corpus with dependency at lag twelve, the adapted distribution shows no peak at twelve, only a drift toward short periods."></span>
+      <figcaption><b>Fig. 3.</b> A clock it can read vs. a correlation it can't.
+      Left: adapted periods of marker-listeners after a period-12 marker corpus —
+      locked at 12 and its 6-harmonic. Right: the same bank on a spike corpus with
+      its dependency at lag 12 — no peak, anywhere.</figcaption>
+    </figure>
+
+    <h2 id="s4"><span class="sec">§4</span> What that teaches, limits, and related work</h2>
+
+    <p>Three negatives, one map. The flow-reader teaches that this program's
+    representations — random and self-organized alike — hold language as fully
+    distributed codes, so selection-based readers have no purchase and
+    interference-tolerance profiles, not sparsity, are where reader classes differ.
+    The loom teaches that "use it or lose it" needs a use-signal that survives
+    averaging, rectification, AND homeostasis before it can hear word order — and
+    that thickness itself may never have been load-bearing. The bank teaches that
+    anticipation-by-entrainment requires punctuality that symbol streams do not
+    possess. None of these was knowable from the armchair; each is one afternoon's
+    compute; and each was registered before it ran, with the falsifications doing
+    the teaching.</p>
+
+    <p>Limits: one corpus family (text8 + the spike sources), N&nbsp;=&nbsp;1000
+    reservoirs and banks, single seeds, one machine; the loom's dead-lever reading
+    is a hypothesis with a registered discriminating experiment, not a verdict; the
+    flow-reader's budgets and λ grids are stated in the journal and its conclusions
+    are, as everywhere in this program, budget-relative.</p>
+
+    <p>Related work. The maze and the rail map: Nakagaki et&nbsp;al.; Tero
+    et&nbsp;al. Provable Physarum computation: Bonifaci, Mehlhorn &amp; Varma; the
+    IRLS/basis-pursuit equivalence the reader runs on: Straszak &amp; Vishnoi.
+    Anticipation in Physarum: Saigusa et&nbsp;al.; adaptive-frequency oscillators:
+    Righetti, Buchli &amp; Ijspeert. Self-organizing reservoirs (SORN): Lazar
+    et&nbsp;al. — the loom's nearest neighbor, whose plasticity acts on thresholds
+    and topology rather than magnitudes alone; in light of §2, that difference may
+    be the whole story. Lasso readouts for reservoirs exist scattered in the ESN
+    literature; the contribution here is the program — three biological mechanisms
+    run under one pre-registered protocol against one scoreboard, with the
+    machinery of the four companion notes.</p>
+
+    <footer>
+      <p>Credits. Experiments, analysis, figures, and infrastructure were produced
+      with Claude (Fable&nbsp;5, Anthropic) operating the laboratory tooling; the
+      three machines were specified in a design dialogue between C.M. and a second
+      Claude instance, whose pre-registered caveat in §3 turned out to be the
+      finding. Errors are mine.</p>
+      <p><a href="/experiments/">../</a> · <a href="/">~</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>
