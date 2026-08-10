@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Dial and the Arc ~~ caity.wtf</title>
+<meta name="description" content="Drawing a five-axis affect state at three timescales on one small square, without lying about it: encodings, one category error, and a bug only a render could find.">
+<meta name="color-scheme" content="dark">
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://caity.wtf/charm-dial/">
+<meta property="og:title" content="The Dial and the Arc">
+<meta property="og:description" content="Drawing a five-axis affect state at three timescales on one small square, without lying about it: encodings, one category error, and a bug only a render could find.">
+<meta name="twitter:card" content="summary">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0d0c'/%3E%3Ctext x='5' y='23' font-family='monospace' font-size='18' fill='%237fd88f'%3E%3E_%3C/text%3E%3C/svg%3E">
+
+<style>
+  :root {
+    --bg:     #0b0d0c;
+    --panel:  #101413;
+    --chrome: #171d1b;
+    --line:   #222b28;
+    --fg:     #ccd6d0;
+    --bright: #f2f7f4;
+    --dim:    #6d7d75;
+    --faint:  #4a5852;
+    --green:  #7fd88f;
+    --amber:  #e8b45c;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco,
+            "Cascadia Mono", "Roboto Mono", Consolas, "Liberation Mono", monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    padding: clamp(1rem, 4vw, 3.5rem) clamp(0.75rem, 4vw, 2rem);
+    background: var(--bg);
+    background-image: radial-gradient(120% 90% at 50% 0%, #131a17 0%, var(--bg) 62%);
+    background-attachment: fixed;
+    color: var(--fg);
+    font-family: var(--mono);
+    font-size: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+    line-height: 1.75;
+    display: flex;
+    justify-content: center;
+  }
+
+  .terminal {
+    width: 100%;
+    max-width: 54rem;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset,
+                0 24px 60px -20px rgba(0,0,0,0.8);
+  }
+
+  /* ── window chrome ─────────────────────────────────────── */
+  .chrome {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.6rem 0.85rem;
+    background: var(--chrome);
+    border-bottom: 1px solid var(--line);
+  }
+  .dot { width: 0.7rem; height: 0.7rem; border-radius: 50%; flex: none; }
+  .dot--r { background: #e05f56; }
+  .dot--y { background: #e2b657; }
+  .dot--g { background: #5fbf6a; }
+  .chrome__title {
+    margin: 0 auto; padding-left: 1rem;
+    font-size: 0.8em; color: var(--dim); letter-spacing: 0.02em;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  main { padding: clamp(1.1rem, 3vw, 2rem) clamp(1rem, 3.5vw, 2.25rem) 1.5rem; }
+
+  .cmd { color: var(--dim); margin: 0 0 0.2rem; overflow-wrap: anywhere; }
+  .cmd::before { content: "caity@sosiego ~ % "; color: var(--green); }
+  .cmd b { color: var(--bright); font-weight: 600; }
+
+  .note { color: var(--faint); margin: 0 0 1.6rem; font-size: 0.92em; }
+  .note::before { content: "# "; }
+
+  /* ── the piece ─────────────────────────────────────────── */
+  h1 {
+    font-size: clamp(1.35rem, 1rem + 1.7vw, 1.85rem);
+    line-height: 1.28; margin: 0.4rem 0 0.6rem;
+    color: var(--bright); font-weight: 700; letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .byline { color: var(--faint); margin: 0 0 0.4rem; font-size: 0.9em; }
+  .byline b { color: var(--dim); font-weight: 600; }
+
+  .lede { color: var(--fg); }
+
+  h2 {
+    font-size: 1.05em; font-weight: 700; color: var(--green);
+    margin: 2.4rem 0 0.75rem; letter-spacing: 0.01em;
+    padding-top: 1.2rem; border-top: 1px solid var(--line);
+  }
+  h2::before { content: "## "; color: var(--faint); font-weight: 400; }
+
+  p { margin: 0 0 1rem; }
+  p:last-child { margin-bottom: 0; }
+  em { color: var(--amber); font-style: normal; }
+  b, strong { color: var(--bright); font-weight: 700; }
+  code { color: var(--green); font-size: 0.94em; }
+
+  ul, ol { margin: 0 0 1rem; padding-left: 1.3rem; }
+  li { margin: 0 0 0.55rem; }
+  li::marker { color: var(--green); }
+
+  pre.math {
+    margin: 0 0 1.15rem;
+    padding: 0.85rem 1rem;
+    background: #0c100f;
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--green);
+    border-radius: 5px;
+    overflow-x: auto;
+    color: var(--fg);
+    font-size: 0.88em;
+    line-height: 1.7;
+    white-space: pre;
+  }
+
+  .pull {
+    margin: 1.4rem 0;
+    padding: 0.15rem 0 0.15rem 1rem;
+    border-left: 2px solid var(--amber);
+    color: var(--bright);
+  }
+
+  /* ── figures ───────────────────────────────────────────── */
+  figure { margin: 0 0 1.4rem; }
+  .scroll { overflow-x: auto; }
+  figure svg { display: block; width: 100%; min-width: 30rem; height: auto; }
+  figcaption {
+    margin-top: 0.6rem; color: var(--faint);
+    font-size: 0.85em; line-height: 1.55;
+  }
+  .fig-face { fill: none; stroke: #272727; stroke-width: 1; }
+  .fig-lbl  { fill: #4a4a4a; font-size: 11px; letter-spacing: 0.08em; }
+  .fig-note { fill: var(--dim); font-size: 12.5px; }
+  .fig-note tspan.k { fill: var(--green); }
+  .fig-lead { stroke: var(--line); stroke-width: 1; fill: none; }
+
+  /* ── assertion list ────────────────────────────────────── */
+  .asserts { list-style: none; padding-left: 0; margin: 0 0 1rem; display: grid; gap: 0.4rem; }
+  .asserts li { margin: 0; padding-left: 0.9rem; border-left: 2px solid var(--line); color: var(--amber); }
+
+  a.ilink {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--faint);
+    text-underline-offset: 3px;
+    transition: text-decoration-color 120ms ease;
+  }
+  a.ilink:hover, a.ilink:focus-visible {
+    text-decoration-color: var(--green);
+    outline: none;
+  }
+  a.ilink:focus-visible { box-shadow: 0 0 0 2px var(--green); border-radius: 2px; }
+
+  .back {
+    display: inline-block; margin-bottom: 1.4rem;
+    color: var(--dim); text-decoration: none; font-size: 0.9em;
+  }
+  .back::before { content: "cd "; color: var(--green); }
+  .back:hover, .back:focus-visible { color: var(--green); outline: none; }
+
+  footer {
+    margin-top: 2.4rem; padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+    color: var(--dim); font-size: 0.9em;
+  }
+  footer p { margin: 0 0 0.35rem; }
+  .prompt { margin-top: 1rem; color: var(--green); }
+  .cursor {
+    display: inline-block; width: 0.55em; height: 1.05em;
+    background: var(--green); vertical-align: -0.18em; margin-left: 0.15em;
+    animation: blink 1.15s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cursor { animation: none; }
+    html { scroll-behavior: auto; }
+    * { transition-duration: 0.01ms !important; }
+  }
+
+  ::selection { background: var(--green); color: var(--bg); }
+</style>
+</head>
+<body>
+
+<div class="terminal">
+  <div class="chrome" aria-hidden="true">
+    <span class="dot dot--r"></span>
+    <span class="dot dot--y"></span>
+    <span class="dot dot--g"></span>
+    <span class="chrome__title">caity.wtf ~~ charm-dial ~~ 80×24</span>
+  </div>
+
+  <main>
+    <a class="back" href="/">~/</a>
+
+    <p class="cmd"><b>cat ~/projects/charm-network/the-dial-and-the-arc.md</b></p>
+    <p class="note">five axes, three timescales, one small square</p>
+
+    <article>
+      <h1>The Dial and the Arc: Drawing an Affect State Without Lying About It</h1>
+      <p class="byline"><b>Caitlyn Meeks</b> ~~ source at
+      <a class="ilink" href="https://github.com/caitlynmeeks/charmnet-release" rel="noopener" target="_blank">github.com/caitlynmeeks/charmnet-release</a> (MIT)</p>
+
+      <p class="lede">The <a class="ilink" href="/charm-network/">previous piece</a> described the
+      state: four affect axes plus surprise, each held at three nested timescales, advancing on
+      wall-clock time whether or not anyone is talking. It said nothing at all about how you look
+      at it.</p>
+
+      <p>That turned out to be the harder half. The state is thirteen numbers that change
+      continuously, and thirteen numbers in a table is not a thing anyone reads &mdash; it is a thing
+      people glance at, and stop glancing at by the second day. What follows is one 286-pixel
+      square, the reasoning behind each encoding, and the one place where the obvious drawing would
+      have been a category error.</p>
+
+      <p class="pull">Every encoding is a claim about what a number means, and the wrong encoding
+      makes the picture lie in a way that looks fine.</p>
+
+      <h2>What has to fit</h2>
+
+      <p>Per turn, the appraisal model emits pleasure, arousal, dominance, affiliation and surprise.
+      The charm network holds the first four at three timescales &mdash; momentary state,
+      trajectory, baseline &mdash; and surprise at one, because a momentary startle has no long-run
+      average worth the name.</p>
+
+      <p>So: thirteen numbers &mdash; five in the momentary state, four in the trajectory, four in
+      the baseline &mdash; plus resonance, the derived measure of whether the moment agrees with the
+      direction of travel. All of it live, all of it changing while you watch.</p>
+
+      <p>Two of those axes are <em>directed</em> &mdash; affiliation and dominance are held toward a
+      particular person rather than simply held. That is not a display detail. It means the picture
+      is incomplete unless it says whom it is about.</p>
+
+      <h2>The plane</h2>
+
+      <p>Pleasure runs across, arousal runs up. That much is the standard reading of a circumplex
+      and there was no reason to be clever about it.</p>
+
+      <p>The one non-obvious bit is that the mark is not placed at <code>(p, a)</code> scaled by the
+      radius. It is placed along the spoke to that angle, rescaled so the <em>square</em> of
+      reachable values fills the circular face:</p>
+
+<pre class="math">scale = max(|p|, |a|) / hypot(p, a)
+x     = cx + p · scale · R
+y     = cy − a · scale · R</pre>
+
+      <p>Axes are independently bounded to [&minus;1, 1], so the reachable region is a square.
+      Inscribing that square in the dial wastes most of the face and no state ever approaches the
+      rim; projecting it out means the corners are reachable and a state at the edge genuinely is at
+      an extreme. A test asserts the consequence directly &mdash; <em>no reachable state places a
+      mark outside the dial</em>.</p>
+
+      <p>The quadrant labels read ENERGIZED, CALM, GUARDED, WARM, so the face can be read without
+      knowing which axis is which.</p>
+
+      <h2>Size, and something to read it against</h2>
+
+      <p>Dominance becomes the radius of the mark:</p>
+
+<pre class="math">radius = 5 + dominance · 3      (px: 2 through 8, neutral at 5)</pre>
+
+      <p>Never zero. A mark that vanishes at one end of an axis reads as <em>missing data</em>, not
+      as low dominance, and those two need to look different.</p>
+
+      <p>But a size judgement with nothing to compare against is not a judgement. Alone on a face,
+      an 8-pixel dot and a 2-pixel dot both look like "a dot". So the fast mark is drawn inside a
+      dashed ring at exactly the neutral-dominance radius, permanently. The dot is then read against
+      its own zero rather than against memory, and the reading becomes absolute instead of
+      relative.</p>
+
+      <h2>A heart that fills rather than turns</h2>
+
+      <p>Affiliation gets a small heart set above and right of the mark, like an exponent, filled
+      from the bottom &mdash; <code>fill = (affiliation + 1) / 2</code>.</p>
+
+      <p>Fill, specifically, and not rotation. A small icon's angle has no baseline to be read
+      against, and the middle of a rotation carries no meaning: a heart at 45 degrees is not "mildly
+      warm", it is a tilted heart. Fill is a length judgement, which stays legible at icon size, and
+      the midpoint lands exactly where it should &mdash; half full is neutral, which is what neutral
+      affiliation is.</p>
+
+      <p>It fills upward from the point, so a nearly-cold heart is still recognisably a heart
+      outline rather than a smudge in the bottom of one. The outline is stroked at every value, for
+      the same reason the dot never reaches zero radius.</p>
+
+      <p>One heart, on the fast mark only. The axis has all three timescales, but three hearts on
+      one face is clutter, and the other two are already carried by the numeric fields underneath.
+      And because affiliation is directed, a line beside the dial names the party it is about
+      &mdash; <em>toward Sam</em>. With nobody addressed, that line is empty rather than showing a
+      warmth toward no one.</p>
+
+      <h2>Things that happen, versus things that are</h2>
+
+      <p>Two channels are not states at all, and are drawn as events.</p>
+
+      <p><b>Surprise</b> is a ripple: a ring expanding from the mark over about a second, fading as
+      it goes. Momentary by construction, so a persistent mark would misrepresent it. It happens and
+      it is gone, which is the whole character of the quantity.</p>
+
+      <p><b>Resonance</b> &mdash; whether the moment agrees with the trend &mdash; is carried by the
+      trail the fast mark leaves. Coherent, the trail is solid. Below &minus;0.3 it goes dashed.
+      Nothing is added to the picture; something already in it changes texture, and a conversation
+      pulling against its own direction looks broken-up rather than annotated.</p>
+
+      <h2>Three timescales, and no hue</h2>
+
+      <p>The three marks are separated by luminance and by shape: <b>fast</b> is a filled dot and
+      the brightest thing on the face, <b>medium</b> an open ring in mid grey, <b>slow</b> a dim
+      crosshair.</p>
+
+      <p>Not by colour. A palette would have been easier to read at a glance and would have failed
+      for anyone who cannot separate the hues, in greyscale, and in a screenshot run through
+      anything. Shape survives all three. The frontend tests assert it as a property &mdash;
+      <em>selection is shown without relying on hue</em> &mdash; rather than trusting anyone to
+      remember.</p>
+
+      <p>Selection is the same problem twice, because the selected timescale also needs marking.
+      Brightness alone cannot carry it: fast is already the brightest thing here, so there is no
+      lift available. Nor a ring around the selected mark &mdash; the medium mark <em>is</em> a
+      ring, and a ring drawn around a ring reads as data rather than as a pointer at data. So: four
+      corner brackets, drawn last so they are never buried under the fast mark's glow.</p>
+
+      <h2>The category error at the middle of it</h2>
+
+      <p>The medium mark is the interesting one, and the obvious drawing is wrong.</p>
+
+      <p>The trajectory is a set of slopes &mdash; how fast each axis is moving. The obvious thing
+      is to plot the slope vector as a point. Do that and the dial now contains two different kinds
+      of thing in one coordinate space: fast and slow are <em>positions</em> in affect space, and
+      the medium mark is a <em>velocity</em>. The same location means something different depending
+      on which mark is sitting there, which is precisely the failure a shared coordinate space is
+      supposed to prevent.</p>
+
+      <p>So the medium mark is the fast position advanced along the trajectory &mdash;
+      <code>medium = fast + slope · gain</code>. That keeps all three marks honest positions: this
+      is where it is, this is where it is heading, this is what it is normally like.</p>
+
+      <p>And it has the property the slope drawing lacks. When nothing is moving, the projection
+      collapses onto the fast dot exactly. "Not heading anywhere" looks like <em>not heading
+      anywhere</em>, rather than like a mark sitting at the origin &mdash; which is a claim about
+      neutral affect, and an entirely different sentence.</p>
+
+      <p>Two lines complete it: a dashed one from baseline to fast, the deviation that drives the
+      mood description, and a solid one from fast to medium, which is the direction of travel.</p>
+
+      <h2>The bug only a render could find</h2>
+
+      <p>The heart rides at the mark's upper right, offset by the mark's radius. At the rim, that
+      offset put it off the edge of the canvas. A character very warm or very energized pushes the
+      dot to the boundary, and its heart went over the side with it.</p>
+
+      <p>Every structural check passed the entire time it was happening. The fix is four lines
+      clamping the anchor inside the canvas, and it sits in the codebase with a comment saying what
+      it is for &mdash; because the interesting part is not the arithmetic. It is that a suite
+      asserting on values cannot see a thing leave the frame. Some bugs are only visible in a
+      picture.</p>
+
+      <h2>The arc</h2>
+
+      <p>The dial is the present tense. The arc strip beneath it is the past: a 56-pixel band, four
+      series, oldest on the left.</p>
+
+<pre class="math">P    pleasure      light    solid
+Af   affiliation   violet   solid
+A    arousal       grey     dashed
+D    dominance     dark     dotted</pre>
+
+      <p>Colour, dash pattern <em>and</em> a letter at the end of each line where it terminates.
+      Direct labelling rather than a legend, so identity is never carried by colour alone and the
+      eye never has to travel to a key and back. One recessive midline marks zero; there is no other
+      chrome, because at 56 pixels tall every added rule costs a line of data.</p>
+
+      <p>Hovering scrubs it, and the readout underneath gives the timestamp and all four values,
+      signed, at that moment.</p>
+
+      <p>Scrubbing also pins the dial to that moment, and this is the part I like best. When the
+      dial is pinned it stops animating &mdash; the trail and the ripples hold still. What you are
+      looking at is not a mood the character is in; it is a mood they <em>were</em> in, and a mood
+      still moving would be a lie about which tense you are reading. Typing returns you to the
+      present, which is also asserted in a test.</p>
+
+      <h2>The state as a hex</h2>
+
+      <p>One more thing, because it fell out for free. Each axis is one byte with neutral anchored
+      at exactly <code>0x80</code>, so a timescale is a copy-pasteable string in the spirit of a
+      colour hex &mdash; <code>#80808080</code> is neutral across the board.</p>
+
+      <p>It round-trips exactly, and the browser's codec and the server's agree byte for byte. There
+      is a test whose entire job is to assert that they do, because a lossy round-trip would make
+      the string a lossy description of a state while still looking like a precise one.</p>
+
+      <h2>What the tests are actually about</h2>
+
+      <p>The frontend suite is unusual in that most of it concerns legibility rather than behaviour.
+      A sample, unedited:</p>
+
+      <ul class="asserts">
+        <li>no reachable state places a mark outside the dial</li>
+        <li>the readout stays clear of the dial it sits on</li>
+        <li>selection is shown without relying on hue</li>
+        <li>mediumChannels sits on the fast dot when nothing is moving</li>
+        <li>a hair below zero never shows a minus sign</li>
+        <li>one turn is not "1 turns"</li>
+        <li>an empty view says which emptiness it is</li>
+      </ul>
+
+      <p>The last three are not about affect at all. They are about a display not saying something
+      faintly false: <code>-0.00</code> is a claim about sign that a rounding artefact should not
+      get to make, <code>1 turns</code> is a small wrongness that makes a reader trust the rest
+      less, and an empty box that does not say <em>which</em> emptiness it is &mdash; nothing
+      recorded, or everything filtered out &mdash; is a display declining to answer the only
+      question being asked of it.</p>
+
+      <p>None of that is affect modelling. It is the same rule as the claim/act quarantine in the
+      previous piece, applied to pixels instead of prose: an interface that says something
+      not-quite-true is worse than one that says nothing, because the person cannot tell which parts
+      to discount.</p>
+
+      <h2>What is not being claimed</h2>
+
+      <p>The dial shows the scaffold's state. It is not a picture of an inner life, and nothing here
+      asserts one &mdash; the <a class="ilink" href="/charm-network/">previous piece</a> has the full
+      version of that disclaimer and it holds unchanged.</p>
+
+      <p>What it is: a readout for numbers that already exist, whose whole design brief was to not
+      overstate them. Every encoding above is a small argument against a more impressive drawing
+      that would have implied something the data does not support. The animation stops when nothing
+      is moving. The projection collapses when the trend is flat. The heart sits at half when there
+      is nobody in particular to feel warm toward.</p>
+
+      <p>An affect display that is inspectable is worth more than one that is persuasive, and those
+      two goals conflict more often than I expected going in.</p>
+    </article>
+
+    <footer>
+      <p>Made on a hillside, on solar power, in the fog.</p>
+      <p class="prompt">caity@sosiego ~ %<span class="cursor"></span></p>
+    </footer>
+
+  </main>
+</div>
+
+</body>
+</html>
