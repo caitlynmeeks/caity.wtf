@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suffix-Tree Geometry and a Readout-Dependent Edge in Reservoir Language Models</title>
+<meta name="description" content="Character-level reservoir language models on text8: an interior optimum under ridge readout, ultrametric state geometry, a max-plus reservoir that ties tanh and collapses to a finite automaton, and a pre-registered readout intervention that relocates the optimum.">
+<meta name="color-scheme" content="dark">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://caity.wtf/experiments/reservoir-lm/">
+<meta property="og:title" content="Suffix-Tree Geometry and a Readout-Dependent Edge in Reservoir Language Models">
+<meta property="og:description" content="Lab note: measured claims on reservoir language models — suffix-tree state geometry, semiring equivalence, automaton collapse, and a readout-dependent edge of chaos.">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0d0c'/%3E%3Ctext x='5' y='23' font-family='monospace' font-size='18' fill='%237fd88f'%3E%3E_%3C/text%3E%3C/svg%3E">
+
+<style>
+  :root {
+    --bg:     #0b0d0c;
+    --panel:  #101413;
+    --chrome: #171d1b;
+    --line:   #222b28;
+    --fg:     #ccd6d0;
+    --bright: #f2f7f4;
+    --dim:    #6d7d75;
+    --faint:  #4a5852;
+    --green:  #7fd88f;
+    --amber:  #e8b45c;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco,
+            "Cascadia Mono", "Roboto Mono", Consolas, "Liberation Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    padding: clamp(1rem, 4vw, 3.5rem) clamp(0.75rem, 4vw, 2rem);
+    background: var(--bg);
+    background-image: radial-gradient(120% 90% at 50% 0%, #131a17 0%, var(--bg) 62%);
+    background-attachment: fixed;
+    color: var(--fg);
+    font-family: var(--mono);
+    font-size: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+    line-height: 1.7;
+    display: flex; justify-content: center;
+  }
+  .terminal {
+    width: 100%; max-width: 52rem;
+    background: var(--panel);
+    border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset,
+                0 24px 60px -20px rgba(0,0,0,0.8);
+  }
+  .chrome {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.6rem 0.85rem; background: var(--chrome);
+    border-bottom: 1px solid var(--line);
+  }
+  .dot { width: 0.7rem; height: 0.7rem; border-radius: 50%; flex: none; }
+  .dot--r { background: #e05f56; } .dot--y { background: #e2b657; } .dot--g { background: #5fbf6a; }
+  .chrome__title {
+    margin: 0 auto; padding-left: 1rem; font-size: 0.8em; color: var(--dim);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  main { padding: clamp(1.1rem, 3vw, 2rem) clamp(1rem, 3.5vw, 2.25rem) 2rem; }
+  .cmd { color: var(--dim); margin: 0 0 1.2rem; overflow-wrap: anywhere; }
+  .cmd::before { content: "caity@sosiego ~/experiments/reservoir-lm % "; color: var(--green); }
+  .cmd b { color: var(--bright); font-weight: 600; }
+  .cmd a { color: inherit; }
+
+  h1 {
+    font-size: clamp(1.25rem, 1rem + 1.4vw, 1.7rem);
+    line-height: 1.3; margin: 0 0 0.4rem;
+    color: var(--bright); font-weight: 700; letter-spacing: -0.01em;
+  }
+  .byline { color: var(--dim); font-size: 0.92em; margin: 0 0 1.6rem; }
+
+  h2 {
+    font-size: 1.05em; color: var(--bright);
+    margin: 2.2rem 0 0.6rem; padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+  }
+  h2 .sec { color: var(--green); }
+  p { margin: 0.65rem 0; }
+  em { color: var(--bright); font-style: italic; }
+  a { color: var(--green); text-decoration: underline; text-underline-offset: 2px; }
+  a:hover, a:focus-visible { color: var(--bright); }
+  .abstract {
+    border-left: 2px solid var(--line);
+    padding-left: 0.9rem; color: var(--fg); font-size: 0.95em;
+  }
+  .abstract b { color: var(--bright); }
+
+  pre.eq {
+    background: var(--chrome); border: 1px solid var(--line); border-radius: 6px;
+    padding: 0.7rem 0.9rem; margin: 0.8rem 0;
+    color: var(--amber); font-size: 0.92em; line-height: 1.55;
+    overflow-x: auto;
+  }
+  code { color: var(--amber); font-size: 0.95em; }
+
+  figure.fig { margin: 1.1rem 0; }
+  figure.fig .frame {
+    display: block; border: 1px solid var(--line); border-radius: 6px;
+    overflow: hidden; background: #fcfcfb; line-height: 0;
+  }
+  figure.fig img { display: block; width: 100%; height: auto; }
+  figure.fig figcaption {
+    margin-top: 0.5rem; color: var(--faint); font-size: 0.85em; line-height: 1.55;
+  }
+  figure.fig figcaption b { color: var(--dim); }
+
+  table.data {
+    border-collapse: collapse; width: 100%; margin: 0.9rem 0;
+    font-size: 0.9em;
+  }
+  table.data caption {
+    text-align: left; color: var(--faint); font-size: 0.93em;
+    margin-bottom: 0.4rem; caption-side: top;
+  }
+  table.data caption b { color: var(--dim); }
+  table.data th, table.data td {
+    text-align: left; padding: 0.3rem 0.8rem 0.3rem 0;
+    border-bottom: 1px solid var(--line); vertical-align: top;
+  }
+  table.data th { color: var(--dim); font-weight: 600; }
+  table.data td.num, table.data th.num { text-align: right; padding-right: 1.2rem; }
+  table.data tr.hl td { color: var(--bright); }
+  .tablewrap { overflow-x: auto; }
+
+  footer {
+    margin-top: 2.4rem; padding-top: 1.1rem;
+    border-top: 1px solid var(--line);
+    color: var(--dim); font-size: 0.9em;
+  }
+  footer p { margin: 0 0 0.35rem; }
+  ::selection { background: var(--green); color: var(--bg); }
+</style>
+</head>
+<body>
+<div class="terminal">
+  <div class="chrome" aria-hidden="true">
+    <span class="dot dot--r"></span><span class="dot dot--y"></span><span class="dot dot--g"></span>
+    <span class="chrome__title">experiments/reservoir-lm ~~ less note.txt</span>
+  </div>
+  <main>
+    <p class="cmd"><b>cd <a href="/">~</a>/<a href="/experiments/">experiments</a>/reservoir-lm && less note.txt</b></p>
+
+    <h1>Suffix-Tree Geometry and a Readout-Dependent Edge in Reservoir Language Models</h1>
+    <p class="byline">C.&thinsp;Meeks · Tenerife · August 2026 ·
+      <a href="https://github.com/caitlynmeeks/reservoir-llm-experiments" rel="noopener" target="_blank">code &amp; result JSONs</a></p>
+
+    <p class="abstract"><b>Abstract.</b> We fit only a readout — ridge, then multinomial
+    logistic — on the states of fixed, randomly parameterized dynamical systems driven by
+    text8, and evaluate character-level language modeling against count-based n&#8209;gram
+    baselines computed on identical splits. Four results. (1)&nbsp;Under a ridge readout, a
+    40-configuration grid over spectral radius ρ and leak rate a has an interior optimum at
+    ρ&nbsp;≈&nbsp;0.5–0.6, a&nbsp;=&nbsp;1: not at the edge of stability, contrary to the
+    expectation set by memory-capacity analysis. (2)&nbsp;State geometry mirrors the suffix
+    ultrametric: the Spearman correlation between per-configuration ultrametric faithfulness
+    and bits per character is −0.83, and single-linkage cophenetic correlation at the optimum
+    is 0.990. (3)&nbsp;A max-plus (tropical) reservoir is statistically indistinguishable
+    from the tanh reservoir at matched size, data, and readout; it exhibits the same
+    suffix-keyed geometry, and its state is exactly determined by the trailing 7 characters —
+    a finite-state machine in which 370 suffix classes are merged, i.e. partially minimized
+    by the dynamics. (4)&nbsp;A pre-registered readout intervention relocates the optimum:
+    under a logistic readout the best ρ is 0.95, and 42% of the high-ρ penalty survives. The
+    apparent absence of an edge-of-chaos optimum is a property of the readout family, not of
+    the dynamics alone. The best configuration reaches 2.398 test bpc with 1.35×10⁵ trainable
+    parameters, statistically indistinguishable from a 4-gram model on the same splits.</p>
+
+    <h2 id="s1"><span class="sec">§1</span> Setup and baselines</h2>
+
+    <p>Corpus: text8 (10⁸ characters, alphabet size V&nbsp;=&nbsp;27; splits 90M/5M/5M).
+    Metric: bits per character on held-out text,</p>
+    <pre class="eq">bpc = −(1/T) Σ_t log₂ p(c_{t+1} | state_t).</pre>
+
+    <p>The reservoir is a sparse leaky echo state network with fixed random weights; the
+    input is the one-hot character:</p>
+    <pre class="eq">x_t = (1 − a)·x_{t−1} + a·tanh(W x_{t−1} + W_in u_t + b),
+W rescaled so that its spectral radius is ρ;  W sparse (10 nonzeros/row);  x_t ∈ ℝ^N.</pre>
+
+    <p>The only trained parameters are a readout from x_t to next-character scores. Readout
+    A is ridge regression to one-hot targets via accumulated normal equations,
+    β&nbsp;=&nbsp;(XᵀX&nbsp;+&nbsp;λI)⁻¹XᵀY, with a two-parameter temperature calibration fit
+    on validation; readout B (§3) is multinomial logistic regression on the same frozen
+    states. N&nbsp;=&nbsp;5000 throughout unless stated; every run is seeded and each result
+    JSON records its full configuration.</p>
+
+    <p>Baselines are add-α n-grams (α tuned on validation) computed on the same splits.
+    All headline numbers below are test-split values.</p>
+
+    <div class="tablewrap">
+    <table class="data">
+      <caption><b>Table 1.</b> Test bpc, text8. Reservoir rows in bold; n-gram ladder
+      computed on identical splits (5M train characters). Training time is the full cost of
+      fitting the trainable parameters.</caption>
+      <tr><th>model</th><th class="num">test bpc</th><th class="num">trainable params</th><th>training</th></tr>
+      <tr><td>uniform</td><td class="num">4.755</td><td class="num">0</td><td>—</td></tr>
+      <tr><td>1-gram</td><td class="num">4.127</td><td class="num">27</td><td>seconds</td></tr>
+      <tr><td>2-gram</td><td class="num">3.447</td><td class="num">~7×10²</td><td>seconds</td></tr>
+      <tr><td>3-gram</td><td class="num">2.920</td><td class="num">~2×10⁴</td><td>seconds</td></tr>
+      <tr class="hl"><td><b>ESN N=5k, ridge, defaults (ρ=0.95, a=0.6)</b></td><td class="num">2.805</td><td class="num">1.35×10⁵</td><td>0.16 s solve</td></tr>
+      <tr class="hl"><td><b>ESN N=5k, ridge, tuned (ρ=0.6, a=1)</b></td><td class="num">2.696</td><td class="num">1.35×10⁵</td><td>0.16 s solve</td></tr>
+      <tr class="hl"><td><b>ESN N=5k, logistic, ρ=0.95 (2M chars)</b></td><td class="num">2.448</td><td class="num">1.35×10⁵</td><td>~2 min SGD</td></tr>
+      <tr class="hl"><td><b>ESN N=5k, logistic, ρ=0.95 (5M chars)</b></td><td class="num">2.398</td><td class="num">1.35×10⁵</td><td>~3.5 min SGD</td></tr>
+      <tr><td>4-gram</td><td class="num">2.392</td><td class="num">~5×10⁵</td><td>seconds</td></tr>
+      <tr><td>5-gram</td><td class="num">2.095</td><td class="num">~1.4×10⁷</td><td>seconds</td></tr>
+      <tr><td>small trained transformer (literature)</td><td class="num">~1.4–1.6</td><td class="num">10⁶–10⁷</td><td>hours</td></tr>
+    </table>
+    </div>
+
+    <p>Classical reservoir analysis predicts an optimum near the stability boundary: linear
+    memory capacity over white-noise input peaks just past ρ&nbsp;=&nbsp;1
+    (Fig.&nbsp;1, N&nbsp;=&nbsp;200 control experiment). The language task disagrees. Over a
+    10×4 grid in (ρ, a) at N&nbsp;=&nbsp;5000 under the ridge readout (2×10⁶ training
+    characters per cell), validation bpc is monotone in leak rate — a&nbsp;=&nbsp;1
+    dominates everywhere — with a broad interior optimum at ρ&nbsp;≈&nbsp;0.5–0.6
+    (Fig.&nbsp;2). Both low-ρ and high-ρ boundaries of the basin were verified to turn
+    upward. The scope of this claim is fixed in §3: it holds <em>for the ridge readout
+    family</em>.</p>
+
+    <figure class="fig">
+      <span class="frame"><img src="img/fig1_mc_edge.png" loading="lazy" decoding="async"
+        alt="Line chart: total memory capacity versus spectral radius for an N=200 ESN driven by white noise, rising to a peak at rho = 1.1 and collapsing beyond."></span>
+      <figcaption><b>Fig. 1.</b> Control: Jaeger memory capacity vs. ρ (N=200, white-noise
+      drive, leak 1). The classical edge-of-chaos peak at ρ≈1.1.</figcaption>
+    </figure>
+
+    <figure class="fig">
+      <span class="frame"><img src="img/fig2_sweep.png" loading="lazy" decoding="async"
+        alt="Heatmap of validation bits per character over a 10 by 4 grid of spectral radius and leak rate; darker is better; best cell at rho 0.6, leak 1.0, value 2.73; the leak 0.1 row is uniformly poor."></span>
+      <figcaption><b>Fig. 2.</b> Validation bpc over (ρ × a), N=5000, ridge readout, 2M
+      training characters per cell. Interior optimum at ρ=0.6, a=1.0 (2.73); no edge-of-chaos
+      peak under this readout.</figcaption>
+    </figure>
+
+    <h2 id="s2"><span class="sec">§2</span> Geometry of reservoir states</h2>
+
+    <p>The suffix metric on character streams, d(s,&nbsp;s′)&nbsp;=&nbsp;2^(−k) where k is
+    the length of the shared trailing substring, is an ultrametric; spaces with this metric
+    are trees, and n-gram prediction is nearest-neighbor prediction under it. For each sweep
+    configuration we sample 2×10⁴ post-washout states with their trailing suffixes and
+    define</p>
+    <pre class="eq">faithfulness = Spearman( ‖x_i − x_j‖₂ ,  2^(−LCS(suffix_i, suffix_j)) )</pre>
+    <p>over 2×10⁴ random state pairs. Faithfulness predicts language performance across the
+    grid: Spearman(faithfulness, val&nbsp;bpc) = −0.83 (p&nbsp;=&nbsp;3.5×10⁻¹¹, 40
+    configurations; Fig.&nbsp;3). The correlation is carried by the leak axis; within the
+    a&nbsp;=&nbsp;1 row faithfulness is approximately constant (≈0.45) while bpc still varies
+    with ρ — that residual is the subject of §3.</p>
+
+    <figure class="fig">
+      <span class="frame"><img src="img/fig3_faithfulness.png" loading="lazy" decoding="async"
+        alt="Scatter plot of validation bits per character against ultrametric faithfulness for 40 configurations, colored by leak rate; higher faithfulness associates with lower bpc; overall Spearman minus 0.83."></span>
+      <figcaption><b>Fig. 3.</b> Ultrametric faithfulness vs. val bpc, 40 configurations,
+      colored by leak rate (ordinal ramp). Champion annotated.</figcaption>
+    </figure>
+
+    <p>At the ridge optimum the state cloud is nearly an exact tree: single-linkage
+    clustering of 2×10³ sampled states has cophenetic correlation 0.990, and the dendrogram's
+    top-level partition is the identity of the last character, with the previous character
+    partitioning each block one level down (Fig.&nbsp;4). No objective ever asked for this
+    structure; it is the fixed dynamics' own representation of the stream.</p>
+
+    <figure class="fig">
+      <span class="frame"><img src="img/fig4_dendrogram.png" loading="lazy" decoding="async"
+        alt="Single-linkage dendrogram over two thousand reservoir states with a color strip beneath showing each leaf's last and previous character; leaves form contiguous blocks by last character, labeled with letters."></span>
+      <figcaption><b>Fig. 4.</b> Single-linkage dendrogram, champion cell (ρ=0.6, a=1);
+      cophenetic correlation 0.990. Strips: last and previous character per leaf, in leaf
+      order. The 27 hues in the strip exceed any colorblind-safe categorical palette; block
+      letters carry the identities.</figcaption>
+    </figure>
+
+    <p>Mechanistically, at a&nbsp;=&nbsp;1 the linearized state is Σ_k ρ^k·W_in·e(c_{t−k}) —
+    a radix-(1/ρ) expansion whose digits are the recent characters. Decoding the character at
+    lag k from the state by ridge probe confirms the picture and locates its failure: decode
+    depth (largest k at ≥50% held-out accuracy) is linear in −1/ln&nbsp;ρ for small ρ and
+    saturates at high ρ, where accumulated digits interfere (Fig.&nbsp;5). Measured depths at
+    a&nbsp;=&nbsp;1: 5.7 (ρ=0.4), 7.5 (0.6), 9.3 (0.8), 10.5 (0.95), 11.7 (1.1), 12.7
+    (1.25).</p>
+
+    <figure class="fig">
+      <span class="frame"><img src="img/fig5_digit_decay.png" loading="lazy" decoding="async"
+        alt="Left: held-out accuracy of decoding the character at lag k from the state, for six spectral radii; curves are ordered cliffs moving right as rho grows. Right: decode depth against minus one over log rho, linear at small rho, saturating at large rho."></span>
+      <figcaption><b>Fig. 5.</b> Digit decay at a=1 (20-character suffix window). Left:
+      decode accuracy vs. lag per ρ. Right: depth vs. −1/ln ρ; the radix model is linear at
+      small ρ and breaks by saturation at large ρ.</figcaption>
+    </figure>
+
+    <h2 id="s3"><span class="sec">§3</span> Interference and the readout boundary</h2>
+
+    <p>Combining §1 and §2: decodable memory depth increases monotonically in ρ while
+    ridge-readout language performance deteriorates past ρ&nbsp;≈&nbsp;0.55. Information
+    demonstrably present in the state (a dedicated probe extracts it) degrades the
+    prediction; characters held in superposition impose an interference cost on a single
+    shared linear readout.</p>
+
+    <p>Whether that cost lives in the state or in the readout is testable. Before running
+    the test we pre-registered its reading (thresholds written into the lab journal before
+    the curve completed): logistic-readout argmin&nbsp;ρ&nbsp;∈&nbsp;[0.5,&nbsp;0.6] ⇒
+    the tax is a property of the state ("pinned"); argmin&nbsp;≥&nbsp;0.8 ⇒ it was readout
+    poverty ("migrated"); between ⇒ partial. A second pre-registered statistic: the penalty
+    at ρ&nbsp;=&nbsp;1.1 above each curve's own minimum, and the logistic/ridge ratio of
+    those penalties — the fraction of the high-ρ cost the better readout fails to remove.
+    Protocol: identical splits, washout, and segmentation for both readouts; validation used
+    only for early stopping (logistic) and temperature (ridge); headline numbers from the
+    test split.</p>
+
+    <p>Result: <em>migrated</em>. The logistic argmin is ρ&nbsp;=&nbsp;0.95 (ridge: 0.6),
+    and the logistic advantage grows with ρ — validation delta +0.03 at ρ&nbsp;=&nbsp;0.4,
+    +0.40 at ρ&nbsp;=&nbsp;1.1 (Fig.&nbsp;6). The penalty ratio is 0.047/0.112&nbsp;=&nbsp;0.42.
+    The optimum's location is therefore a property of the readout family; the residual 42%
+    of the high-ρ cost is the state's own. The §1 claim revises to: the language task avoids
+    the edge <em>under a readout that cannot afford it</em>. At full training budget (5M
+    characters) the logistic configuration at ρ&nbsp;=&nbsp;0.95 reaches
+    val&nbsp;2.338&nbsp;/&nbsp;test&nbsp;2.398 — a statistical dead heat with the 4-gram
+    (2.392), against roughly one quarter of the trainable parameters. The ridge model at the
+    same knobs and budget: test 2.755.</p>
+
+    <figure class="fig">
+      <span class="frame"><img src="img/fig6_acid_test.png" loading="lazy" decoding="async"
+        alt="Two curves of validation bits per character against spectral radius: ridge is nearly flat with minimum at rho 0.6; logistic sits far lower with minimum at rho 0.95; the gap between curves widens as rho grows."></span>
+      <figcaption><b>Fig. 6.</b> Pre-registered readout intervention, N=5000, a=1, 2M
+      training characters per cell. Ridge argmin ρ=0.6; logistic argmin ρ=0.95; penalty
+      ratio at ρ=1.1: 0.42.</figcaption>
+    </figure>
+
+    <h2 id="s4"><span class="sec">§4</span> Semiring equivalence and automaton collapse</h2>
+
+    <p>To test whether any of the above depends on smooth arithmetic, we built a reservoir
+    over the max-plus (tropical) semiring, where addition is max and multiplication is +.
+    States are best-path scores over the random reservoir graph — the recursion is a
+    soft-Viterbi table with per-step projective normalization:</p>
+    <pre class="eq">x′_i = max( max_j (W_ij + x_j),  (W_in)_{i,c_t} ) ;   x′ ← x′ − max_i x′_i.</pre>
+    <p>The stability parameter is the maximum cycle mean λ of W (Karp's algorithm), the
+    tropical analogue of spectral radius; a uniform shift of all edge weights sets it
+    exactly. λ&nbsp;&lt;&nbsp;0 gives fading memory of a characteristically tropical kind:
+    trajectories from different initial states do not converge asymptotically but
+    <em>collide exactly in finite time</em> (Fig.&nbsp;7), consistent with max-plus coupling
+    theory.</p>
+
+    <figure class="fig">
+      <span class="frame"><img src="img/fig7_tropical_esp.png" loading="lazy" decoding="async"
+        alt="Log-scale distance between two tropical reservoir trajectories started from different initial states under identical input, for three cycle-mean values; each drops to exactly zero in finite time, faster for more negative cycle mean."></span>
+      <figcaption><b>Fig. 7.</b> Tropical fading memory (N=500): exact finite-time collision
+      of trajectories at λ = −0.5, −0.1, 0 (t = 1, 5, 11).</figcaption>
+    </figure>
+
+    <p>At matched size (N&nbsp;=&nbsp;1000), data (10⁶ characters), and ridge readout, the
+    two semirings are statistically indistinguishable over five seeds each
+    (Table&nbsp;2). Both architectures were tuned on their own stability grids.</p>
+
+    <div class="tablewrap">
+    <table class="data">
+      <caption><b>Table 2.</b> Seed replication, N=1000, 1M training characters, ridge
+      readout, validation bpc (mean ± sd over seeds 0–4).</caption>
+      <tr><th>architecture</th><th>tuned point</th><th class="num">val bpc</th></tr>
+      <tr><td>tanh ESN</td><td>ρ=0.6, a=1</td><td class="num">3.108 ± 0.010</td></tr>
+      <tr><td>max-plus ESN</td><td>λ=−0.1</td><td class="num">3.103 ± 0.007</td></tr>
+    </table>
+    </div>
+
+    <p>The tie extends to representation. Passing the tropical states through §2's
+    instruments: faithfulness +0.454 (tanh control at the same N: +0.448), cophenetic
+    correlation 0.970 (0.985), same last-character top-level partition (Fig.&nbsp;8). Since
+    any fading-memory system over a discrete stream embeds some suffix-keyed geometry, the
+    claim is deliberately not "both contain a tree." It is that both algebras' <em>tuned
+    optima co-locate at maximal tree-faithfulness</em>, and that faithfulness — not
+    architecture — is the quantity that predicts performance across every configuration
+    measured. The performance-governing quantity is substrate-independent.</p>
+
+    <figure class="fig">
+      <span class="frame"><img src="img/fig8_geometry.png" loading="lazy" decoding="async"
+        alt="Two dendrograms side by side, tanh and tropical, each with character strips beneath; both show contiguous last-character blocks; cophenetic correlations 0.985 and 0.970."></span>
+      <figcaption><b>Fig. 8.</b> Same instruments, both algebras (N=1000): single-linkage
+      dendrograms with last/previous-character strips. Cophenetic 0.985 (tanh) vs. 0.970
+      (tropical).</figcaption>
+    </figure>
+
+    <p>The two systems build the tree differently. The tanh state superposes lagged
+    characters (graded attenuation); the max-plus state stores them columnarly — a character
+    survives in a coordinate only while it remains that coordinate's maximum, and is then
+    erased rather than faded. Both mechanistic predictions verify (Fig.&nbsp;9): the
+    tropical lag-decode curve is an all-or-nothing cliff (0.94&nbsp;→&nbsp;0.39 across one
+    lag) where tanh fades over three; and 293 of 2000 sampled tropical states are exact
+    duplicates (27% of pairwise distances tied; tanh: none), which mechanically accounts for
+    part of the cophenetic deficit.</p>
+
+    <figure class="fig">
+      <span class="frame"><img src="img/fig9_masonry.png" loading="lazy" decoding="async"
+        alt="Decode accuracy against lag for tanh and tropical reservoirs at matched performance; the tropical curve is perfect through lag three then falls to noise within one lag; the tanh curve declines gradually over three lags."></span>
+      <figcaption><b>Fig. 9.</b> Lag-decode at N=1000, matched-bpc champions: graded decay
+      (tanh, superposed storage) vs. one-lag cliff (max-plus, columnar storage).</figcaption>
+    </figure>
+
+    <p>Exact collisions over a finite alphabet imply something stronger. Grouping sampled
+    states by trailing suffix (counting only suffix classes with ≥2 samples, to exclude
+    trivially deterministic singletons): the fraction of classes mapping to exactly one
+    state rises 0.35 (k=4), 0.84 (k=5), 0.997 (k=6), 1.000 (k=7). Within sample, the
+    max-plus state is <em>exactly</em> a function of the trailing 7 characters — a
+    finite-state machine, with the readout a lookup table on its states. Moreover at
+    k&nbsp;=&nbsp;7, 370 determined classes share states with other classes (191 merge
+    groups; largest spans 26 suffixes): distinct states run fewer than distinct suffixes,
+    i.e. the dynamics performs a partial minimization of the automaton. Merges are
+    linguistically coherent — contexts ending in <code>" the "</code> merge across their
+    2-character prefixes; <code>"cation "</code>, <code>"dition "</code>, <code>"ration "</code>
+    share a state — the equivalence classes a variable-order Markov model would prune to.
+    The tanh control under the same analysis: 20000 distinct states in 20000 samples,
+    determinism 0.000 at every depth. Both systems realize the suffix tree; one as a finite
+    automaton, one as an infinite-precision iterated-function-system attractor.</p>
+
+    <div class="tablewrap">
+    <table class="data">
+      <caption><b>Table 3.</b> Suffix-determinism by depth k (fraction of multi-sample
+      suffix classes mapping to a single state), 2×10⁴ samples, N=1000.</caption>
+      <tr><th>k</th><th class="num">4</th><th class="num">5</th><th class="num">6</th><th class="num">7</th></tr>
+      <tr><td>max-plus (λ=−0.1)</td><td class="num">0.351</td><td class="num">0.838</td><td class="num">0.997</td><td class="num">1.000</td></tr>
+      <tr><td>tanh (ρ=0.6)</td><td class="num">0.000</td><td class="num">0.000</td><td class="num">0.000</td><td class="num">0.000</td></tr>
+    </table>
+    </div>
+
+    <h2 id="s5"><span class="sec">§5</span> Limitations and related work</h2>
+
+    <p>Scope: one corpus (text8), character level, N&nbsp;≤&nbsp;5000, single machine, and
+    two readout families; the n-gram ladder is recomputed on our exact splits. The §1
+    optimum and its §3 revision are claims about this task class and these readout families,
+    not about reservoirs in general. The automaton and merging results are sample-based
+    (2×10⁴ states) and stated as within-sample; seed replication covers the N=1000 tie only.
+    The transformer row of Table&nbsp;1 is a literature anchor, not our run.</p>
+
+    <p>Related work. Echo state networks and memory capacity: Jaeger (2001); leak/spectral
+    radius trade-offs are standard. Reservoir language modeling at scale, the direct
+    antecedent: Köster &amp; Uchida (arXiv:2507.15779). Suffix-keyed fractal state geometry
+    of contracting RNNs ("Markovian architectural bias," fractal prediction machines):
+    Tiňo and collaborators — §2 measures this bias and correlates it with performance; the
+    max-plus realization appears new. Max-plus algebra in neural computation: morphological
+    neural networks (Ritter &amp; Sussner); max-plus spectral theory and coupling: Baccelli
+    et&nbsp;al. Memory traces under superposition and interference: Ganguli &amp;
+    Sompolinsky. Randomized-signature reservoirs (Cuchiero et&nbsp;al.) are the recognized
+    bridge between reservoirs and path signatures; we make no claims on that track here.</p>
+
+    <p>Reproducibility: all runs are seeded; every result JSON contains its full
+    configuration; per-figure JSON artifacts and the complete lab journal (including the
+    pre-registration text of §3, which was written before its result) are in the
+    <a href="https://github.com/caitlynmeeks/reservoir-llm-experiments" rel="noopener"
+    target="_blank">repository</a>.</p>
+
+    <footer>
+      <p>Credits. Experiments, analysis, figures, and infrastructure were produced with
+      Claude (Fable&nbsp;5, Anthropic) operating the laboratory tooling; a second Claude
+      instance contributed the experimental program and the manuscript structure. Errors
+      are mine.</p>
+      <p><a href="/experiments/">../</a> · <a href="/">~</a></p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>
