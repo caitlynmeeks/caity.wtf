@@ -9,7 +9,7 @@
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://caity.wtf/experiments/mold/">
 <meta property="og:title" content="What the Mold Couldn't Learn (and What That Teaches)">
-<meta property="og:description" content="Lab note: slime-mold computation meets character-level language modeling — three machines, three mechanistic negatives, zero unexplained results.">
+<meta property="og:description" content="Lab note: slime-mold computation meets character-level language modeling. Three machines, three mechanistic negatives, zero unexplained results.">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0d0c'/%3E%3Ctext x='5' y='23' font-family='monospace' font-size='18' fill='%237fd88f'%3E%3E_%3C/text%3E%3C/svg%3E">
 
@@ -148,25 +148,25 @@
     amoeba). All three work as machines. All three returned negatives, each with its
     mechanism in hand. (1)&nbsp;The flow-reader passes its solver gate to 5×10⁻¹⁰,
     then finds <em>nothing to select</em>: on random-mirror features and on a
-    thousand-actor automata ensemble alike, every pruning step strictly worsens
-    prediction — every representation this program has grown is a fully distributed
+    thousand-actor automata ensemble alike, every pruning step strictly worsens prediction: every
+    representation this program has grown is a fully distributed
     code. (2)&nbsp;The growth rule reshapes wiring vigorously but cannot tell
-    Wikipedia from shuffled Wikipedia under ANY traffic definition — volume and
-    unsigned rhythm are order-blind by construction, and even confirmed-prediction
+    Wikipedia from shuffled Wikipedia under ANY traffic definition: volume and unsigned rhythm are
+    order-blind by construction, and even confirmed-prediction
     traffic left performance inside a ±0.01-bpc band around random wiring: at fixed
     topology and spectral radius, edge <em>magnitudes</em> are a nearly dead lever.
     (3)&nbsp;The oscillator bank locks to a genuine periodic marker with ~90% of its
-    reachable oscillators — and finds no rhythm whatsoever in Markov streams whose
+    reachable oscillators, and finds no rhythm whatsoever in Markov streams whose
     dependency sits at a fixed lag: <em>entrainment reads clocks, not
     correlations</em>, and our corpora contain none. Three machines, three
-    mechanistic negatives, zero unexplained results — and a map of which
+    mechanistic negatives, zero unexplained results, and a map of which
     biological levers do not reach language, and why.</p>
 
     <h2 id="s1"><span class="sec">§1</span> The reader that found nothing to select</h2>
 
     <p>Straszak &amp; Vishnoi proved that Physarum's tube dynamics are iteratively
-    reweighted least squares converging to the basis-pursuit solution — the slime
-    mold is an ℓ1 solver. So we replaced the program's ridge readout with flow:
+    reweighted least squares converging to the basis-pursuit solution: the slime mold is an ℓ1
+    solver. So we replaced the program's ridge readout with flow:
     conductances on feature–symbol tubes, reweighted least squares on the same Gram
     matrices, early stopping on validation. The solver gate passed emphatically
     (5-sparse recovery from an underdetermined system, max error 5×10⁻¹⁰, exact
@@ -179,12 +179,11 @@
     (Fig.&nbsp;1): on the funhouse's random mirrors and on the tiny-actors
     ensemble's mood features alike, <em>every</em> IRLS iteration at <em>every</em>
     ℓ1 pressure strictly worsens validation bpc; the best point is always iteration
-    zero, dense; the full thousand actors stay in the cast ("how many actors does
-    Wikipedia need?" — all of them). Both registered sparsity predictions were
+    zero, dense; the full thousand actors stay in the cast ("how many actors does Wikipedia need?"
+    All of them). Both registered sparsity predictions were
     falsified by their named alternative: these codes are fully distributed. Random
-    projections smear structure across every mirror by construction; and the
-    automata ensemble — whose crowning trick is <em>crowding-free</em> memory —
-    turns out to achieve it not by concentrating information in specialist actors
+    projections smear structure across every mirror by construction; and the automata ensemble,
+    whose crowning trick is <em>crowding-free</em> memory, turns out to achieve it not by concentrating information in specialist actors
     but by keeping its superposition discrete. Crowding-free does not imply
     concentrated. The flow-reader stands as a validated instrument whose measured
     finding is an absence: no privileged features, anywhere we looked.</p>
@@ -202,29 +201,27 @@
 
     <p>Tero's law grew Tokyo's rail map in a dish: tubes that carry flow thicken,
     the rest wither, with a response exponent μ that tunes lean-vs-redundant
-    networks. We let it grow a reservoir's wiring — drive the network with text, no
-    readout, reinforce by traffic, renormalize (homeostasis), freeze, then evaluate.
+    networks. We let it grow a reservoir's wiring: drive the network with text, no readout, reinforce by traffic, renormalize (homeostasis), freeze, then evaluate.
     The load-bearing control: grow one loom on text8 and a twin on
     character-shuffled text8. If growth learns <em>language</em>, the real corpus
     must beat the gibberish.</p>
 
-    <p>It never did (Fig.&nbsp;2) — and the three-way ladder of traffic definitions
+    <p>It never did (Fig.&nbsp;2), and the three-way ladder of traffic definitions
     says why with increasing precision. <em>Volume</em> (window-averaged activity)
     is order-blind: shuffled text has identical unigram statistics, so every tube
     feels identical flow. <em>Unsigned rhythm</em> (|pre|·|post| across a step)
     rectifies away the correlational content and collapses back to volume.
-    <em>Kept promises</em> (signed pre·post correlation aligned with each edge's
-    sign — an edge is fed when its prediction comes true) is order-sensitive by
-    construction, sharpened wiring hardest — and was corpus-blind anyway. Meanwhile
+    <em>Kept promises</em> (signed pre·post correlation aligned with each edge's sign; an edge is
+    fed when its prediction comes true) is order-sensitive by
+    construction, sharpened wiring hardest, and was corpus-blind anyway. Meanwhile
     the μ dial behaved exactly as the biology says (wiring entropy monotone in μ;
     winner-take-all at μ=2), so the rule works; it just doesn't reshape wiring
     toward language. With three traffic statistics acquitted, two suspects remain,
-    registered for the sequel: the homeostasis rescale may launder differential
-    structure out — or, the wider reading the whole grid supports, edge magnitudes
+    registered for the sequel: the homeostasis rescale may launder differential structure out; or,
+    the wider reading the whole grid supports, edge magnitudes
     at fixed topology and spectral radius are simply a near-dead lever for a
     linear-readout language model (all fifteen cells sit in a 0.014-bpc band around
-    random). If that holds, growth must rewire <em>topology</em>, not thickness —
-    a different mold.</p>
+    random). If that holds, growth must rewire <em>topology</em>, not thickness: a different mold.</p>
 
     <figure class="fig">
       <span class="frame"><img src="img/fig_loom_band.png" loading="lazy" decoding="async"
@@ -237,13 +234,13 @@
 
     <h2 id="s3"><span class="sec">§3</span> The bank that reads clocks</h2>
 
-    <p>Saigusa's chilled Physarum slows down <em>before</em> the next cold shock
-    arrives — a brainless blob anticipating WHEN, plausibly by oscillator
+    <p>Saigusa's chilled Physarum slows down <em>before</em> the next cold shock arrives: a
+    brainless blob anticipating WHEN, plausibly by oscillator
     entrainment. Our version: a bank of adaptive-frequency oscillators
     (Righetti–Buchli–Ijspeert dynamics), each tracking one symbol's rhythm, natural
     periods log-spaced over 2–64 characters. Both gates passed after two honest
-    fixes recorded in the journal (a frequency floor — a minimum metabolic rate —
-    and single-symbol routing, since a mixed diet of aperiodic kicks drowns any
+    fixes recorded in the journal (a frequency floor, i.e. a minimum metabolic rate, and
+    single-symbol routing, since a mixed diet of aperiodic kicks drowns any
     rhythm): a lone oscillator locks a detuned start to a kick train <em>exactly</em>
     (16&nbsp;→&nbsp;10.00), and on a corpus carrying a deterministic marker every 12
     characters, essentially every oscillator whose lock basin could reach the rhythm
@@ -252,37 +249,37 @@
     <p>Then the registered discovery test: corpora from the
     <a href="/experiments/readout-relative-edge/">law experiment</a>, where the next
     character depends on the character exactly j back. Autocorrelation at lag 12,
-    prize of 1.3 bits sitting right there — and the bank finds nothing (Fig.&nbsp;3,
+    prize of 1.3 bits sitting right there, and the bank finds nothing (Fig.&nbsp;3,
     right): no peak at j for any j, histograms indistinguishable from the
     no-structure control. The spec's own pre-registered caveat is the mechanism:
     a lag-j Markov dependency is <em>statistical fondness</em>, not punctuality; a
     Righetti oscillator entrains to kicks that arrive on time, and the aperiodic
     majority of arrivals randomizes the adaptation. <em>Entrainment reads clocks,
-    not correlations.</em> The pond keeps its place as an instrument — and its
-    first scientific statement is about the data: neither spike corpora nor, by
+    not correlations.</em> The pond keeps its place as an instrument, and its first scientific
+    statement is about the data: neither spike corpora nor, by
     every indication, English prose is periodic in the way a phase-based memory
-    needs. One imagined route to future-keyed state geometry — the trained
-    transformer's corner in the companion notes — is hereby closed: you cannot
+    needs. One imagined route to future-keyed state geometry (the trained transformer's corner in
+    the companion notes) is hereby closed: you cannot
     clockwork your way to the future when the text keeps no time.</p>
 
     <figure class="fig">
       <span class="frame"><img src="img/fig_clock_vs_correlation.png" loading="lazy" decoding="async"
         alt="Two panels of adapted-period distributions. Left: after entrainment on a periodic marker corpus, sharp peaks at periods six and twelve rise far above the initialization. Right: on a spike corpus with dependency at lag twelve, the adapted distribution shows no peak at twelve, only a drift toward short periods."></span>
       <figcaption><b>Fig. 3.</b> A clock it can read vs. a correlation it can't.
-      Left: adapted periods of marker-listeners after a period-12 marker corpus —
-      locked at 12 and its 6-harmonic. Right: the same bank on a spike corpus with
-      its dependency at lag 12 — no peak, anywhere.</figcaption>
+      Left: adapted periods of marker-listeners after a period-12 marker corpus, locked at 12 and
+      its 6-harmonic. Right: the same bank on a spike corpus with
+      its dependency at lag 12: no peak, anywhere.</figcaption>
     </figure>
 
     <h2 id="s4"><span class="sec">§4</span> What that teaches, limits, and related work</h2>
 
     <p>Three negatives, one map. The flow-reader teaches that this program's
-    representations — random and self-organized alike — hold language as fully
+    representations, random and self-organized alike, hold language as fully
     distributed codes, so selection-based readers have no purchase and
     interference-tolerance profiles, not sparsity, are where reader classes differ.
     The loom teaches that "use it or lose it" needs a use-signal that survives
-    averaging, rectification, AND homeostasis before it can hear word order — and
-    that thickness itself may never have been load-bearing. The bank teaches that
+    averaging, rectification, AND homeostasis before it can hear word order, and that thickness
+    itself may never have been load-bearing. The bank teaches that
     anticipation-by-entrainment requires punctuality that symbol streams do not
     possess. None of these was knowable from the armchair; each is one afternoon's
     compute; and each was registered before it ran, with the falsifications doing
@@ -298,11 +295,11 @@
     et&nbsp;al. Provable Physarum computation: Bonifaci, Mehlhorn &amp; Varma; the
     IRLS/basis-pursuit equivalence the reader runs on: Straszak &amp; Vishnoi.
     Anticipation in Physarum: Saigusa et&nbsp;al.; adaptive-frequency oscillators:
-    Righetti, Buchli &amp; Ijspeert. Self-organizing reservoirs (SORN): Lazar
-    et&nbsp;al. — the loom's nearest neighbor, whose plasticity acts on thresholds
+    Righetti, Buchli &amp; Ijspeert. Self-organizing reservoirs (SORN): Lazar et&nbsp;al., the
+    loom's nearest neighbor, whose plasticity acts on thresholds
     and topology rather than magnitudes alone; in light of §2, that difference may
     be the whole story. Lasso readouts for reservoirs exist scattered in the ESN
-    literature; the contribution here is the program — three biological mechanisms
+    literature; the contribution here is the program: three biological mechanisms
     run under one pre-registered protocol against one scoreboard, with the
     machinery of the four companion notes.</p>
 

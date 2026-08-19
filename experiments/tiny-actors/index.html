@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>A Thousand Tiny Actors: Language Modeling Without Arithmetic</title>
-<meta name="description" content="A driven ensemble of random rule-following automata — no multiplication, no addition, no floating point — matches echo state networks holding more parameters on text8, refuses the readout migration that moves reservoir optima, and turns out to be mostly a lookup table.">
+<meta name="description" content="A driven ensemble of random rule-following automata (no multiplication, no addition, no floating point) matches echo state networks holding more parameters on text8, refuses the readout migration that moves reservoir optima, and turns out to be mostly a lookup table.">
 <meta name="color-scheme" content="dark">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://caity.wtf/experiments/tiny-actors/">
 <meta property="og:title" content="A Thousand Tiny Actors: Language Modeling Without Arithmetic">
-<meta property="og:description" content="Lab note: a random automata ensemble as a language model — a subcritical optimum in the edge of chaos's birthplace, crowding-free memory, and a champion that is 86% lookup table.">
+<meta property="og:description" content="Lab note: a random automata ensemble as a language model. A subcritical optimum in the edge of chaos's birthplace, crowding-free memory, and a champion that is 86% lookup table.">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0d0c'/%3E%3Ctext x='5' y='23' font-family='monospace' font-size='18' fill='%237fd88f'%3E%3E_%3C/text%3E%3C/svg%3E">
 
@@ -163,19 +163,19 @@
     faithfully keeps its perturbation; the measured Derrida spread floors at ~1.5),
     while biasing toward a fixed <em>home mood</em> sweeps cleanly through the
     transition. (2)&nbsp;Under a ridge readout the bpc optimum is strictly subcritical
-    (λ_D&nbsp;=&nbsp;0.73) — the interior-optimum result of the companion note,
+    (λ_D&nbsp;=&nbsp;0.73), the interior-optimum result of the companion note,
     reproduced in the substrate where "edge of chaos" was coined. (3)&nbsp;Under a
-    logistic readout the optimum does <em>not</em> migrate toward criticality — it is
-    pinned at the same cell, and the logistic advantage is flat (0.40–0.46 bpc) across
+    logistic readout the optimum does <em>not</em> migrate toward criticality; it is pinned at the
+    same cell, and the logistic advantage is flat (0.40–0.46 bpc) across
     the entire dial, numerically matching the pure readout-calibration tax isolated in
     the funhouse note. The interference relief that moves reservoir optima has nothing
     to relieve here: discrete mood storage is crowding-free. (4)&nbsp;The best cell
-    reaches 2.304 validation bpc with 2.2×10⁵ trained parameters — ahead of every
+    reaches 2.304 validation bpc with 2.2×10⁵ trained parameters, ahead of every
     tanh reservoir of comparable and larger size at the same data budget.
     (5)&nbsp;Deep in the ordered phase the ensemble is <em>exactly</em> a finite-state
     machine: state determined by the trailing 8 characters, 115,200 samples collapsing
-    to 18,741 distinct states, with 2,336 states shared across suffix classes — partial
-    automaton minimization by physics, as in the companion note's max-plus reservoir.
+    to 18,741 distinct states, with 2,336 states shared across suffix classes: partial automaton
+    minimization by physics, as in the companion note's max-plus reservoir.
     The champion itself is 86% suffix-determined at depth 12: the best model in this
     program's weight class is mostly a lookup table.</p>
 
@@ -183,17 +183,17 @@
 
     <p>N&nbsp;=&nbsp;1000 actors each hold a mood s_i&nbsp;∈&nbsp;{0…7} and watch
     m&nbsp;=&nbsp;3 fixed random neighbors. Every step, all actors update
-    synchronously by personal random rule tables — heterogeneity is the point; there is
+    synchronously by personal random rule tables: heterogeneity is the point; there is
     no shared law, no metric, and no arithmetic anywhere in the dynamics:</p>
     <pre class="eq">s_i(t+1) = rule_i( s_i(t), s_{n1}(t), s_{n2}(t), s_{n3}(t), c_t )</pre>
     <p>The character c_t is the prompt the whole stage hears. The trained readout sees
     only the moods (one-hot, N·k&nbsp;=&nbsp;8000 features): ridge to one-hot targets
-    with validation-fitted temperature, or multinomial logistic — the companion notes'
-    readout code, unchanged. Criticality is measured, not assumed: λ_D is the mean
+    with validation-fitted temperature, or multinomial logistic: the companion notes' readout code,
+    unchanged. Criticality is measured, not assumed: λ_D is the mean
     one-step Hamming spread from a single flipped actor, post-washout.</p>
 
-    <p>The dial itself taught the first lesson. Our first bias — with probability β a
-    rule entry <em>keeps the actor's current mood</em> — looks like a calm knob and is
+    <p>The dial itself taught the first lesson. Our first bias (with probability β a rule entry
+    <em>keeps the actor's current mood</em>) looks like a calm knob and is
     not one: a perturbed actor's "keep your mood" faithfully keeps the <em>perturbed</em>
     mood, so persistence preserves mistakes and the spread cannot fall below the
     self-persistence floor (measured λ_D&nbsp;=&nbsp;1.54 at β&nbsp;=&nbsp;0.9; the
@@ -201,15 +201,15 @@
     each actor has a fixed home mood that biased entries return to, so perturbations
     heal regardless of what they were. Measured λ_D then sweeps 3.41&nbsp;→&nbsp;0.39
     as β runs 0.3&nbsp;→&nbsp;0.95, crossing criticality between β&nbsp;=&nbsp;0.8 and
-    0.9. Stubbornness is not stability; order requires a restoring force, not inertia —
-    the discrete cousin of the echo-state property.</p>
+    0.9. Stubbornness is not stability; order requires a restoring force, not inertia: the discrete
+    cousin of the echo-state property.</p>
 
     <h2 id="s2"><span class="sec">§2</span> The edge, in its birthplace</h2>
 
     <p>Random automata networks are where the edge-of-chaos hypothesis was born.
     The companion note found that language reservoirs tuned under a ridge readout
-    reject the edge; the same experiment here — five cells straddling the measured
-    transition, 2×10⁶ training characters each — reproduces it in the original
+    reject the edge; the same experiment here (five cells straddling the measured transition, 2×10⁶
+    training characters each) reproduces it in the original
     substrate: validation bpc has an interior optimum at λ_D&nbsp;=&nbsp;0.73, strictly
     inside the ordered phase, with both flanks rising (Fig.&nbsp;1). The best stage
     keeps its actors mostly in character.</p>
@@ -218,8 +218,8 @@
       <span class="frame"><img src="img/fig_edge_and_crown.png" loading="lazy" decoding="async"
         alt="Validation bits per character against measured Derrida spread for ridge and logistic readouts. Both curves have their minimum at spread 0.73, inside the ordered phase; the logistic curve reaches 2.304, below the 4-gram line and below the tanh reservoir with twenty thousand units at 2.348; a dashed vertical line marks criticality."></span>
       <figcaption><b>Fig. 1.</b> Validation bpc vs. measured Derrida spread λ_D
-      (N=1000 actors, 2M training characters). Both readouts share the same
-      subcritical argmin — the pinning of §3. References: 4-gram and 5-gram on
+      (N=1000 actors, 2M training characters). Both readouts share the same subcritical argmin, the
+      pinning of §3. References: 4-gram and 5-gram on
       identical splits; tanh ESN N=20k under the same logistic readout and budget
       (from the companion repository's N-sweep).</figcaption>
     </figure>
@@ -232,19 +232,19 @@
       <tr><th>model</th><th class="num">val bpc</th><th class="num">test bpc</th><th class="num">trained params</th></tr>
       <tr><td>3-gram</td><td class="num">2.928</td><td class="num">2.934</td><td class="num">~2×10⁴</td></tr>
       <tr class="hl"><td><b>troupe, ridge, λ_D=0.73</b></td><td class="num">2.759</td><td class="num">2.766</td><td class="num">2.2×10⁵</td></tr>
-      <tr><td>tanh ESN N=5k, logistic</td><td class="num">—</td><td class="num">2.448</td><td class="num">1.4×10⁵</td></tr>
+      <tr><td>tanh ESN N=5k, logistic</td><td class="num">n/a</td><td class="num">2.448</td><td class="num">1.4×10⁵</td></tr>
       <tr><td>4-gram</td><td class="num">2.441</td><td class="num">2.436</td><td class="num">~5×10⁵</td></tr>
-      <tr><td>tanh ESN N=10k, logistic</td><td class="num">2.347</td><td class="num">—</td><td class="num">2.7×10⁵</td></tr>
-      <tr><td>tanh ESN N=20k, logistic</td><td class="num">2.348</td><td class="num">—</td><td class="num">5.4×10⁵</td></tr>
+      <tr><td>tanh ESN N=10k, logistic</td><td class="num">2.347</td><td class="num">n/a</td><td class="num">2.7×10⁵</td></tr>
+      <tr><td>tanh ESN N=20k, logistic</td><td class="num">2.348</td><td class="num">n/a</td><td class="num">5.4×10⁵</td></tr>
       <tr class="hl"><td><b>troupe, logistic, λ_D=0.73</b></td><td class="num">2.304</td><td class="num">2.318</td><td class="num">2.2×10⁵</td></tr>
       <tr><td>5-gram</td><td class="num">2.159</td><td class="num">2.186</td><td class="num">~1.4×10⁷</td></tr>
-      <tr><td>tanh ESN N=50k, logistic (the program's leader)</td><td class="num">2.174</td><td class="num">—</td><td class="num">1.35×10⁶</td></tr>
+      <tr><td>tanh ESN N=50k, logistic (the program's leader)</td><td class="num">2.174</td><td class="num">n/a</td><td class="num">1.35×10⁶</td></tr>
     </table>
     </div>
 
     <p>The headline row: a thousand actors holding three bits each, wired by lookup
     tables, outscore tanh reservoirs holding ten and twenty thousand floating-point
-    units at the same data budget — with fewer trained parameters than either. Caveat
+    units at the same data budget, with fewer trained parameters than either. Caveat
     stated plainly: single seed on both sides of that comparison; the margin over
     N=10k (0.043) is several times the pond program's seed noise (±0.01) but a seed
     replication is the obvious next chore.</p>
@@ -256,7 +256,7 @@
     leaps to 0.95, because most of the high-memory penalty was interference a richer
     reader could relieve. The troupe refuses the move. The logistic argmin sits at the
     same λ_D&nbsp;=&nbsp;0.73 as ridge (grid caveat: migration inside (0.73,&nbsp;1.07)
-    would be invisible), and — the sharper diagnostic — the logistic advantage is
+    would be invisible), and (the sharper diagnostic) the logistic advantage is
     <em>flat across the entire dial</em>: 0.40–0.46 bpc everywhere, where the
     reservoir's gap grew five-fold with ρ (Fig.&nbsp;2). Flatter still: the gap sits
     numerically on the pure readout-calibration tax (0.464 bpc) that the funhouse note
@@ -270,12 +270,12 @@
       flat and equals the calibration-only tax. Nothing here is being relieved.</figcaption>
     </figure>
 
-    <p>Reading: the reservoir pays two taxes — readout calibration, plus interference
-    from memories superposed in a shared continuous state — and the second is what a
-    better reader relieves, moving the optimum. The troupe appears to pay only the
+    <p>Reading: the reservoir pays two taxes: readout calibration, plus interference from memories
+    superposed in a shared continuous state. The second is what a better reader relieves, moving the
+    optimum. The troupe appears to pay only the
     first. Its moods are discrete; nothing is graded, nothing superposes, so there is
     no crosstalk for a better reader to untangle and nothing to migrate for.
-    Crowding-free memory — and §4 supplies the mechanism.</p>
+    Crowding-free memory. §4 supplies the mechanism.</p>
 
     <h2 id="s4"><span class="sec">§4</span> The crystal: mostly a lookup table</h2>
 
@@ -283,11 +283,11 @@
     samples per cell; only suffix classes with ≥2 samples count, exact 1000-actor
     vector equality required; a shift-by-one alignment control scores far below the
     aligned version, 0.615 vs 0.993). Deep in the ordered phase the ensemble is not
-    <em>approximately</em> suffix-determined — it is exactly a finite-state machine
+    <em>approximately</em> suffix-determined; it is exactly a finite-state machine
     (Fig.&nbsp;3): at λ_D&nbsp;=&nbsp;0.39, determinism reaches 1.000 at
     k*&nbsp;=&nbsp;8, the 115,200 samples collapse to 18,741 distinct states, and
-    2,336 of those states are shared by multiple determined suffix classes — the
-    dynamics merging equivalent histories on its own, the partial automaton
+    2,336 of those states are shared by multiple determined suffix classes, the dynamics merging
+    equivalent histories on its own, the partial automaton
     minimization the companion note found in its max-plus reservoir, here reproduced
     in a rule-table substrate.</p>
 
@@ -296,27 +296,27 @@
         alt="Suffix determinism against suffix depth for five settings of the Derrida spread. The most ordered setting rises steeply and reaches determinism one at depth eight; the champion setting rises to 0.86 at depth twelve; near-critical and chaotic settings stay near zero, with every sampled state distinct."></span>
       <figcaption><b>Fig. 3.</b> Suffix-determinism vs. depth k per cell, with
       distinct-state counts. Deep order: an exact order-8 automaton (18.7k states).
-      Chaos: all 115,200 states distinct, determinism 0.000 — the smooth-reservoir
+      Chaos: all 115,200 states distinct, determinism 0.000, the smooth-reservoir
       signature. The champion (λ_D=0.73) sits at 0.861 by k=12: mostly a lookup
       table.</figcaption>
     </figure>
 
-    <p>Toward criticality the crystal melts continuously — 18.7k&nbsp;→&nbsp;85.9k&nbsp;→
-    114.1k&nbsp;→&nbsp;all-distinct — the third substrate in this program to show the
+    <p>Toward criticality the crystal melts continuously (18.7k&nbsp;→&nbsp;85.9k&nbsp;→
+    114.1k&nbsp;→&nbsp;all-distinct), the third substrate in this program to show the
     same discrete-to-fractal transition. And the two discretization routes differ
     mechanically: the max-plus reservoir's trajectories collide exactly in finite time
-    (absorbing), while the troupe <em>heals</em> — differences die out under the
+    (absorbing), while the troupe <em>heals</em>: differences die out under the
     typecast pull. A pre-registered mean-field form for that healing,
     det(k)&nbsp;≈&nbsp;exp(−D₀·λ_D^k), got the ordinal picture right (the champion
     should not and does not determinize by k&nbsp;=&nbsp;12; the deep-subcritical cell
     should and does, k*&nbsp;=&nbsp;8 vs. predicted 9.5) and the rate wrong in the
     favorable direction: measured determinism at the champion is 0.861 where the form
-    predicts 0.023. Large perturbations heal far faster than the linearized Derrida
-    rate — typecast pulls a wrong actor home regardless of its neighborhood, and λ_D,
+    predicts 0.023. Large perturbations heal far faster than the linearized Derrida rate: typecast
+    pulls a wrong actor home regardless of its neighborhood, and λ_D,
     a small-perturbation growth rate, overestimates the survival of big differences.</p>
 
-    <p>The synthesis the title promises: the best model in this note — the one
-    outscoring reservoirs five times its size — is 86% lookup table. It stores the
+    <p>The synthesis the title promises: the best model in this note, the one outscoring reservoirs
+    five times its size, is 86% lookup table. It stores the
     recent past not by superposing it in a crowded continuous state but by healing
     into a configuration that <em>stands for</em> the recent suffix. That is why §3
     found nothing to relieve: filing, not echo.</p>
@@ -333,8 +333,8 @@
     <p>Related work. Random Boolean networks and the Derrida annealed approximation:
     Kauffman; Derrida &amp; Pomeau. Edge-of-chaos computation: Langton, Packard;
     computation at the edge in RBNs is the founding literature this note's §2 answers.
-    Reservoir computing with cellular automata (ReCA): Yilmaz; Nichele &amp; Molund —
-    the nearest architectural antecedent, using uniform elementary CA rules; the
+    Reservoir computing with cellular automata (ReCA): Yilmaz; Nichele &amp; Molund, the nearest
+    architectural antecedent, using uniform elementary CA rules; the
     troupe differs in per-cell heterogeneous rule tables, per-step symbol drive to
     every cell, a measured criticality dial with a healing (typecast) bias, and the
     geometry/determinism instrumentation. The interference framing and all baselines

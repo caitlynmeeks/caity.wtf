@@ -9,7 +9,7 @@
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://caity.wtf/experiments/reservoir-lm/">
 <meta property="og:title" content="Suffix-Tree Geometry and a Readout-Dependent Edge in Reservoir Language Models">
-<meta property="og:description" content="Lab note: measured claims on reservoir language models — suffix-tree state geometry, semiring equivalence, automaton collapse, and a readout-dependent edge of chaos.">
+<meta property="og:description" content="Lab note: measured claims on reservoir language models. Suffix-tree state geometry, semiring equivalence, automaton collapse, and a readout-dependent edge of chaos.">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0d0c'/%3E%3Ctext x='5' y='23' font-family='monospace' font-size='18' fill='%237fd88f'%3E%3E_%3C/text%3E%3C/svg%3E">
 
@@ -148,8 +148,8 @@
     <p class="byline">C.&thinsp;Meeks · Tenerife · August 2026 ·
       <a href="https://github.com/caitlynmeeks/reservoir-llm-experiments" rel="noopener" target="_blank">code &amp; result JSONs</a></p>
 
-    <p class="abstract"><b>Abstract.</b> We fit only a readout — ridge, then multinomial
-    logistic — on the states of fixed, randomly parameterized dynamical systems driven by
+    <p class="abstract"><b>Abstract.</b> We fit only a readout (ridge, then multinomial logistic) on
+    the states of fixed, randomly parameterized dynamical systems driven by
     text8, and evaluate character-level language modeling against count-based n&#8209;gram
     baselines computed on identical splits. Four results. (1)&nbsp;Under a ridge readout, a
     40-configuration grid over spectral radius ρ and leak rate a has an interior optimum at
@@ -159,8 +159,8 @@
     and bits per character is −0.83, and single-linkage cophenetic correlation at the optimum
     is 0.990. (3)&nbsp;A max-plus (tropical) reservoir is statistically indistinguishable
     from the tanh reservoir at matched size, data, and readout; it exhibits the same
-    suffix-keyed geometry, and its state is exactly determined by the trailing 7 characters —
-    a finite-state machine in which 370 suffix classes are merged, i.e. partially minimized
+    suffix-keyed geometry, and its state is exactly determined by the trailing 7 characters, a
+    finite-state machine in which 370 suffix classes are merged, i.e. partially minimized
     by the dynamics. (4)&nbsp;A pre-registered readout intervention relocates the optimum:
     under a logistic readout the best ρ is 0.95, and 42% of the high-ρ penalty survives. The
     apparent absence of an edge-of-chaos optimum is a property of the readout family, not of
@@ -194,7 +194,7 @@ W rescaled so that its spectral radius is ρ;  W sparse (10 nonzeros/row);  x_t 
       computed on identical splits (5M train characters). Training time is the full cost of
       fitting the trainable parameters.</caption>
       <tr><th>model</th><th class="num">test bpc</th><th class="num">trainable params</th><th>training</th></tr>
-      <tr><td>uniform</td><td class="num">4.755</td><td class="num">0</td><td>—</td></tr>
+      <tr><td>uniform</td><td class="num">4.755</td><td class="num">0</td><td>none</td></tr>
       <tr><td>1-gram</td><td class="num">4.127</td><td class="num">27</td><td>seconds</td></tr>
       <tr><td>2-gram</td><td class="num">3.447</td><td class="num">~7×10²</td><td>seconds</td></tr>
       <tr><td>3-gram</td><td class="num">2.920</td><td class="num">~2×10⁴</td><td>seconds</td></tr>
@@ -212,8 +212,8 @@ W rescaled so that its spectral radius is ρ;  W sparse (10 nonzeros/row);  x_t 
     memory capacity over white-noise input peaks just past ρ&nbsp;=&nbsp;1
     (Fig.&nbsp;1, N&nbsp;=&nbsp;200 control experiment). The language task disagrees. Over a
     10×4 grid in (ρ, a) at N&nbsp;=&nbsp;5000 under the ridge readout (2×10⁶ training
-    characters per cell), validation bpc is monotone in leak rate — a&nbsp;=&nbsp;1
-    dominates everywhere — with a broad interior optimum at ρ&nbsp;≈&nbsp;0.5–0.6
+    characters per cell), validation bpc is monotone in leak rate (a&nbsp;=&nbsp;1 dominates
+    everywhere), with a broad interior optimum at ρ&nbsp;≈&nbsp;0.5–0.6
     (Fig.&nbsp;2). Both low-ρ and high-ρ boundaries of the basin were verified to turn
     upward. The scope of this claim is fixed in §3: it holds <em>for the ridge readout
     family</em>.</p>
@@ -244,8 +244,8 @@ W rescaled so that its spectral radius is ρ;  W sparse (10 nonzeros/row);  x_t 
     <p>over 2×10⁴ random state pairs. Faithfulness predicts language performance across the
     grid: Spearman(faithfulness, val&nbsp;bpc) = −0.83 (p&nbsp;=&nbsp;3.5×10⁻¹¹, 40
     configurations; Fig.&nbsp;3). The correlation is carried by the leak axis; within the
-    a&nbsp;=&nbsp;1 row faithfulness is approximately constant (≈0.45) while bpc still varies
-    with ρ — that residual is the subject of §3.</p>
+    a&nbsp;=&nbsp;1 row faithfulness is approximately constant (≈0.45) while bpc still varies with
+    ρ; that residual is the subject of §3.</p>
 
     <figure class="fig">
       <span class="frame"><img src="img/fig3_faithfulness.png" loading="lazy" decoding="async"
@@ -269,8 +269,8 @@ W rescaled so that its spectral radius is ρ;  W sparse (10 nonzeros/row);  x_t 
       letters carry the identities.</figcaption>
     </figure>
 
-    <p>Mechanistically, at a&nbsp;=&nbsp;1 the linearized state is Σ_k ρ^k·W_in·e(c_{t−k}) —
-    a radix-(1/ρ) expansion whose digits are the recent characters. Decoding the character at
+    <p>Mechanistically, at a&nbsp;=&nbsp;1 the linearized state is Σ_k ρ^k·W_in·e(c_{t−k}), a
+    radix-(1/ρ) expansion whose digits are the recent characters. Decoding the character at
     lag k from the state by ridge probe confirms the picture and locates its failure: decode
     depth (largest k at ≥50% held-out accuracy) is linear in −1/ln&nbsp;ρ for small ρ and
     saturates at high ρ, where accumulated digits interfere (Fig.&nbsp;5). Measured depths at
@@ -298,20 +298,20 @@ W rescaled so that its spectral radius is ρ;  W sparse (10 nonzeros/row);  x_t 
     the curve completed): logistic-readout argmin&nbsp;ρ&nbsp;∈&nbsp;[0.5,&nbsp;0.6] ⇒
     the tax is a property of the state ("pinned"); argmin&nbsp;≥&nbsp;0.8 ⇒ it was readout
     poverty ("migrated"); between ⇒ partial. A second pre-registered statistic: the penalty
-    at ρ&nbsp;=&nbsp;1.1 above each curve's own minimum, and the logistic/ridge ratio of
-    those penalties — the fraction of the high-ρ cost the better readout fails to remove.
+    at ρ&nbsp;=&nbsp;1.1 above each curve's own minimum, and the logistic/ridge ratio of those
+    penalties, the fraction of the high-ρ cost the better readout fails to remove.
     Protocol: identical splits, washout, and segmentation for both readouts; validation used
     only for early stopping (logistic) and temperature (ridge); headline numbers from the
     test split.</p>
 
     <p>Result: <em>migrated</em>. The logistic argmin is ρ&nbsp;=&nbsp;0.95 (ridge: 0.6),
-    and the logistic advantage grows with ρ — validation delta +0.03 at ρ&nbsp;=&nbsp;0.4,
+    and the logistic advantage grows with ρ: validation delta +0.03 at ρ&nbsp;=&nbsp;0.4,
     +0.40 at ρ&nbsp;=&nbsp;1.1 (Fig.&nbsp;6). The penalty ratio is 0.047/0.112&nbsp;=&nbsp;0.42.
     The optimum's location is therefore a property of the readout family; the residual 42%
     of the high-ρ cost is the state's own. The §1 claim revises to: the language task avoids
     the edge <em>under a readout that cannot afford it</em>. At full training budget (5M
     characters) the logistic configuration at ρ&nbsp;=&nbsp;0.95 reaches
-    val&nbsp;2.338&nbsp;/&nbsp;test&nbsp;2.398 — a statistical dead heat with the 4-gram
+    val&nbsp;2.338&nbsp;/&nbsp;test&nbsp;2.398, a statistical dead heat with the 4-gram
     (2.392), against roughly one quarter of the trainable parameters. The ridge model at the
     same knobs and budget: test 2.755.</p>
 
@@ -327,7 +327,7 @@ W rescaled so that its spectral radius is ρ;  W sparse (10 nonzeros/row);  x_t 
 
     <p>To test whether any of the above depends on smooth arithmetic, we built a reservoir
     over the max-plus (tropical) semiring, where addition is max and multiplication is +.
-    States are best-path scores over the random reservoir graph — the recursion is a
+    States are best-path scores over the random reservoir graph; the recursion is a
     soft-Viterbi table with per-step projective normalization:</p>
     <pre class="eq">x′_i = max( max_j (W_ij + x_j),  (W_in)_{i,c_t} ) ;   x′ ← x′ − max_i x′_i.</pre>
     <p>The stability parameter is the maximum cycle mean λ of W (Karp's algorithm), the
@@ -363,8 +363,8 @@ W rescaled so that its spectral radius is ρ;  W sparse (10 nonzeros/row);  x_t 
     correlation 0.970 (0.985), same last-character top-level partition (Fig.&nbsp;8). Since
     any fading-memory system over a discrete stream embeds some suffix-keyed geometry, the
     claim is deliberately not "both contain a tree." It is that both algebras' <em>tuned
-    optima co-locate at maximal tree-faithfulness</em>, and that faithfulness — not
-    architecture — is the quantity that predicts performance across every configuration
+    optima co-locate at maximal tree-faithfulness</em>, and that faithfulness, not architecture, is
+    the quantity that predicts performance across every configuration
     measured. The performance-governing quantity is substrate-independent.</p>
 
     <figure class="fig">
@@ -376,8 +376,8 @@ W rescaled so that its spectral radius is ρ;  W sparse (10 nonzeros/row);  x_t 
     </figure>
 
     <p>The two systems build the tree differently. The tanh state superposes lagged
-    characters (graded attenuation); the max-plus state stores them columnarly — a character
-    survives in a coordinate only while it remains that coordinate's maximum, and is then
+    characters (graded attenuation); the max-plus state stores them columnarly: a character survives
+    in a coordinate only while it remains that coordinate's maximum, and is then
     erased rather than faded. Both mechanistic predictions verify (Fig.&nbsp;9): the
     tropical lag-decode curve is an all-or-nothing cliff (0.94&nbsp;→&nbsp;0.39 across one
     lag) where tanh fades over three; and 293 of 2000 sampled tropical states are exact
@@ -395,14 +395,14 @@ W rescaled so that its spectral radius is ρ;  W sparse (10 nonzeros/row);  x_t 
     states by trailing suffix (counting only suffix classes with ≥2 samples, to exclude
     trivially deterministic singletons): the fraction of classes mapping to exactly one
     state rises 0.35 (k=4), 0.84 (k=5), 0.997 (k=6), 1.000 (k=7). Within sample, the
-    max-plus state is <em>exactly</em> a function of the trailing 7 characters — a
-    finite-state machine, with the readout a lookup table on its states. Moreover at
+    max-plus state is <em>exactly</em> a function of the trailing 7 characters: a finite-state
+    machine, with the readout a lookup table on its states. Moreover at
     k&nbsp;=&nbsp;7, 370 determined classes share states with other classes (191 merge
     groups; largest spans 26 suffixes): distinct states run fewer than distinct suffixes,
-    i.e. the dynamics performs a partial minimization of the automaton. Merges are
-    linguistically coherent — contexts ending in <code>" the "</code> merge across their
+    i.e. the dynamics performs a partial minimization of the automaton. Merges are linguistically
+    coherent: contexts ending in <code>" the "</code> merge across their
     2-character prefixes; <code>"cation "</code>, <code>"dition "</code>, <code>"ration "</code>
-    share a state — the equivalence classes a variable-order Markov model would prune to.
+    share a state, the equivalence classes a variable-order Markov model would prune to.
     The tanh control under the same analysis: 20000 distinct states in 20000 samples,
     determinism 0.000 at every depth. Both systems realize the suffix tree; one as a finite
     automaton, one as an infinite-precision iterated-function-system attractor.</p>
@@ -430,7 +430,7 @@ W rescaled so that its spectral radius is ρ;  W sparse (10 nonzeros/row);  x_t 
     radius trade-offs are standard. Reservoir language modeling at scale, the direct
     antecedent: Köster &amp; Uchida (arXiv:2507.15779). Suffix-keyed fractal state geometry
     of contracting RNNs ("Markovian architectural bias," fractal prediction machines):
-    Tiňo and collaborators — §2 measures this bias and correlates it with performance; the
+    Tiňo and collaborators. §2 measures this bias and correlates it with performance; the
     max-plus realization appears new. Max-plus algebra in neural computation: morphological
     neural networks (Ritter &amp; Sussner); max-plus spectral theory and coupling: Baccelli
     et&nbsp;al. Memory traces under superposition and interference: Ganguli &amp;

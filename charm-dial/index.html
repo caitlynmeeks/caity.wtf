@@ -228,7 +228,7 @@
       at it.</p>
 
       <p>That turned out to be the harder half. The state is thirteen numbers that change
-      continuously, and thirteen numbers in a table is not a thing anyone reads &mdash; it is a thing
+      continuously, and thirteen numbers in a table is not a thing anyone reads: it is a thing
       people glance at, and stop glancing at by the second day. What follows is one 286-pixel
       square, the reasoning behind each encoding, and the one place where the obvious drawing would
       have been a category error.</p>
@@ -240,7 +240,7 @@
         <img src="dial.png" width="402" height="811" loading="lazy" decoding="async"
              alt="The charm dial in use: a dark circular face labelled ENERGIZED, CALM, GUARDED and WARM, with a bright dot, a heart, an open ring and a crosshair clustered in the warm and energized quadrant. Below it a readout gives P +0.74, A +0.48, D −0.04, Af +0.85, S +0.46; three rows labelled FAST, MEDIUM and SLOW hold editable hex fields; an arc strip traces four lines across recent turns; resonance reads +0.13.">
         <figcaption>The dial as it actually runs. Everything below is a description of this panel,
-        top to bottom &mdash; the face, the readout split into the two lower corners, the three hex
+        top to bottom: the face, the readout split into the two lower corners, the three hex
         fields, the arc, and the resonance figure under it. Note that the three hexes are carrying
         real values here rather than the neutral <code>#80808080</code>, which is the whole point of
         them.</figcaption>
@@ -249,15 +249,15 @@
       <h2>What has to fit</h2>
 
       <p>Per turn, the appraisal model emits pleasure, arousal, dominance, affiliation and surprise.
-      The charm network holds the first four at three timescales &mdash; momentary state,
-      trajectory, baseline &mdash; and surprise at one, because a momentary startle has no long-run
+      The charm network holds the first four at three timescales (momentary state, trajectory,
+      baseline) and surprise at one, because a momentary startle has no long-run
       average worth the name.</p>
 
-      <p>So: thirteen numbers &mdash; five in the momentary state, four in the trajectory, four in
-      the baseline &mdash; plus resonance, the derived measure of whether the moment agrees with the
+      <p>So: thirteen numbers (five in the momentary state, four in the trajectory, four in the
+      baseline) plus resonance, the derived measure of whether the moment agrees with the
       direction of travel. All of it live, all of it changing while you watch.</p>
 
-      <p>Two of those axes are <em>directed</em> &mdash; affiliation and dominance are held toward a
+      <p>Two of those axes are <em>directed</em>: affiliation and dominance are held toward a
       particular person rather than simply held. That is not a display detail. It means the picture
       is incomplete unless it says whom it is about.</p>
 
@@ -326,24 +326,24 @@
 
             <!-- callouts -->
             <g class="fig-note">
-              <text x="352" y="52">medium <tspan class="k">— the fast mark advanced</tspan></text>
+              <text x="352" y="52">medium<tspan class="k">: the fast mark advanced</tspan></text>
               <text x="352" y="68">along its trajectory. A position,</text>
               <text x="352" y="84">never a velocity.</text>
 
-              <text x="352" y="116">affiliation <tspan class="k">— a heart, filled</tspan></text>
+              <text x="352" y="116">affiliation<tspan class="k">: a heart, filled</tspan></text>
               <text x="352" y="132">from the point. Half is neutral.</text>
 
-              <text x="352" y="174">fast <tspan class="k">— the moment. Its radius</tspan></text>
+              <text x="352" y="174">fast<tspan class="k">: the moment. Its radius</tspan></text>
               <text x="352" y="190">carries dominance.</text>
 
               <text x="352" y="236">the dashed ring is neutral</text>
               <text x="352" y="252">dominance, always drawn, so the</text>
               <text x="352" y="268">dot's size reads absolutely.</text>
 
-              <text x="352" y="298">surprise <tspan class="k">— a ripple, gone in</tspan></text>
+              <text x="352" y="298">surprise<tspan class="k">: a ripple, gone in</tspan></text>
               <text x="352" y="314">about a second.</text>
 
-              <text x="352" y="354">slow <tspan class="k">— the baseline.</tspan></text>
+              <text x="352" y="354">slow<tspan class="k">: the baseline.</tspan></text>
               <text x="352" y="370">Temperament, as a dim crosshair.</text>
 
               <text x="352" y="408">the trail, which goes dashed when</text>
@@ -354,7 +354,7 @@
         </div>
         <figcaption>The whole face. Three marks that are all positions, two channels drawn as
         events, and one reference ring that exists only so a size can be read. Redrawn here with
-        the marks pulled apart for legibility &mdash; in use they frequently overlap, which is why
+        the marks pulled apart for legibility; in use they frequently overlap, which is why
         the heart has a dark backing under it.</figcaption>
       </figure>
 
@@ -371,7 +371,7 @@
 x     = cx + p · scale · R
 y     = cy − a · scale · R</pre>
 
-      <p>Pleasure and arousal are independent, so the reachable space is a <em>square</em> &mdash; a
+      <p>Pleasure and arousal are independent, so the reachable space is a <em>square</em>: a
       character can be fully elated and fully energized at once. The dial is drawn as a disc.
       Scaling each axis onto the radius directly puts that corner at 1.41 times the radius, outside
       the ring the dial draws as its own edge, and it did: on 18% of recorded turns the mark was
@@ -379,8 +379,8 @@ y     = cy − a · scale · R</pre>
 
       <p>So the square is mapped onto the disc along each spoke. The direction from center is left
       exactly alone and only the distance is rescaled, from the Euclidean length to the larger of
-      the two axes. Russell reads the angle as <em>which</em> mood this is and the radius as
-      <em>how strong</em> &mdash; so this keeps the first untouched while making the second say how
+      the two axes. Russell reads the angle as <em>which</em> mood this is and the radius as <em>how
+      strong</em>, so this keeps the first untouched while making the second say how
       far your strongest axis is pushed. The rim is reached by full pleasure alone, and by full
       pleasure with full arousal together; no range is given up, and nothing can leave the dial. A
       test now asserts that last part directly.</p>
@@ -406,12 +406,12 @@ y     = cy − a · scale · R</pre>
       <h2>A heart that fills rather than turns</h2>
 
       <p>Affiliation gets a small heart set above and right of the mark, like an exponent, filled
-      from the bottom &mdash; <code>fill = (affiliation + 1) / 2</code>.</p>
+      from the bottom: <code>fill = (affiliation + 1) / 2</code>.</p>
 
       <p>Fill, specifically, and not rotation. A small icon's angle has no baseline to be read
       against, and the middle of a rotation carries no meaning: a heart at 45 degrees is not "mildly
       warm", it is a tilted heart. Fill is a length judgement, which stays legible at icon size, and
-      the midpoint lands exactly where it should &mdash; half full is neutral, which is what neutral
+      the midpoint lands exactly where it should: half full is neutral, which is what neutral
       affiliation is.</p>
 
       <p>It fills upward from the point, so a nearly-cold heart is still recognizably a heart
@@ -420,8 +420,8 @@ y     = cy − a · scale · R</pre>
 
       <p>One heart, on the fast mark only. The axis has all three timescales, but three hearts on
       one face is clutter, and the other two are already carried by the numeric fields underneath.
-      And because affiliation is directed, a line beside the dial names the party it is about
-      &mdash; <em>toward Sam</em>. With nobody addressed, that line is empty rather than showing a
+      And because affiliation is directed, a line beside the dial names the party it is about:
+      <em>toward Sam</em>. With nobody addressed, that line is empty rather than showing a
       warmth toward no one.</p>
 
       <h2>Things that happen, versus things that are</h2>
@@ -432,8 +432,7 @@ y     = cy − a · scale · R</pre>
       it goes. Momentary by construction, so a persistent mark would misrepresent it. It happens and
       it is gone, which is the whole character of the quantity.</p>
 
-      <p><b>Resonance</b> &mdash; whether the moment agrees with the trend &mdash; is carried by the
-      trail the fast mark leaves. Coherent, the trail is solid. Below &minus;0.3 it goes dashed.
+      <p><b>Resonance</b> (whether the moment agrees with the trend) is carried by the trail the fast mark leaves. Coherent, the trail is solid. Below &minus;0.3 it goes dashed.
       Nothing is added to the picture; something already in it changes texture, and a conversation
       pulling against its own direction looks broken-up rather than annotated.</p>
 
@@ -445,35 +444,33 @@ y     = cy − a · scale · R</pre>
 
       <p>Not by color. A palette would have been easier to read at a glance and would have failed
       for anyone who cannot separate the hues, in grayscale, and in a screenshot run through
-      anything. Shape survives all three. The frontend tests assert it as a property &mdash;
-      <em>selection is shown without relying on hue</em> &mdash; rather than trusting anyone to
-      remember.</p>
+      anything. Shape survives all three. The frontend tests assert it as a property (<em>selection
+      is shown without relying on hue</em>) rather than trusting anyone to remember.</p>
 
       <p>Selection is the same problem twice, because the selected timescale also needs marking.
       Brightness alone cannot carry it: fast is already the brightest thing here, so there is no
-      lift available. Nor a ring around the selected mark &mdash; the medium mark <em>is</em> a
-      ring, and a ring drawn around a ring reads as data rather than as a pointer at data. So: four
+      lift available. Nor a ring around the selected mark: the medium mark <em>is</em> a ring, and a ring drawn around a ring reads as data rather than as a pointer at data. So: four
       corner brackets, drawn last so they are never buried under the fast mark's glow.</p>
 
       <h2>The category error at the middle of it</h2>
 
       <p>The medium mark is the interesting one, and the obvious drawing is wrong.</p>
 
-      <p>The trajectory is a set of slopes &mdash; how fast each axis is moving. The obvious thing
+      <p>The trajectory is a set of slopes: how fast each axis is moving. The obvious thing
       is to plot the slope vector as a point. Do that and the dial now contains two different kinds
       of thing in one coordinate space: fast and slow are <em>positions</em> in affect space, and
       the medium mark is a <em>velocity</em>. The same location means something different depending
       on which mark is sitting there, which is precisely the failure a shared coordinate space is
       supposed to prevent.</p>
 
-      <p>So the medium mark is the fast position advanced along the trajectory &mdash;
-      <code>medium = fast + slope · gain</code>. That keeps all three marks honest positions: this
+      <p>So the medium mark is the fast position advanced along the trajectory: <code>medium = fast
+      + slope · gain</code>. That keeps all three marks honest positions: this
       is where it is, this is where it is heading, this is what it is normally like.</p>
 
       <p>And it has the property the slope drawing lacks. When nothing is moving, the projection
       collapses onto the fast dot exactly. "Not heading anywhere" looks like <em>not heading
-      anywhere</em>, rather than like a mark sitting at the origin &mdash; which is a claim about
-      neutral affect, and an entirely different sentence.</p>
+      anywhere</em>, rather than like a mark sitting at the origin, which is a claim about neutral
+      affect, and an entirely different sentence.</p>
 
       <p>Two lines complete it: a dashed one from baseline to fast, the deviation that drives the
       mood description, and a solid one from fast to medium, which is the direction of travel.</p>
@@ -486,7 +483,7 @@ y     = cy − a · scale · R</pre>
 
       <p>Every structural check passed the entire time it was happening. The fix is four lines
       clamping the anchor inside the canvas, and it sits in the codebase with a comment saying what
-      it is for &mdash; because the interesting part is not the arithmetic. It is that a suite
+      it is for, because the interesting part is not the arithmetic. It is that a suite
       asserting on values cannot see a thing leave the frame. Some bugs are only visible in a
       picture.</p>
 
@@ -509,7 +506,7 @@ D    dominance     dark     dotted</pre>
       signed, at that moment.</p>
 
       <p>Scrubbing also pins the dial to that moment, and this is the part I like best. When the
-      dial is pinned it stops animating &mdash; the trail and the ripples hold still. What you are
+      dial is pinned it stops animating: the trail and the ripples hold still. What you are
       looking at is not a mood the character is in; it is a mood they <em>were</em> in, and a mood
       still moving would be a lie about which tense you are reading. Typing returns you to the
       present, which is also asserted in a test.</p>
@@ -525,7 +522,7 @@ D    dominance     dark     dotted</pre>
       untouched is that the two registers cover each other's weaknesses completely.</p>
 
       <p>Affect has the same shape of problem. So the dial is the field, and underneath it are three
-      hex strings &mdash; one per Varela timescale, each editable:</p>
+      hex strings, one per Varela timescale, each editable:</p>
 
 <pre class="math">●  FAST     #80808080     P  A  D  S     the moment
 ◉  MEDIUM   #80808080     P  A  D  Af    the four slopes
@@ -533,20 +530,20 @@ D    dominance     dark     dotted</pre>
              └┬┘└┬┘└┬┘└┬┘
               one byte per axis · 0x80 is exactly neutral</pre>
 
-      <p>The glyph on each row is the mark that timescale draws on the face above &mdash; filled
-      dot, open ring, crosshair &mdash; so the picker and the drawing name each other without a
+      <p>The glyph on each row is the mark that timescale draws on the face above (filled dot, open
+      ring, crosshair), so the picker and the drawing name each other without a
       legend.</p>
 
       <p>And they are inputs, not readouts. Type a hex, press Enter, and the network takes it; the
       dial redraws to whatever you just pasted. A malformed string is refused outright rather than
-      coerced into something plausible &mdash; the field goes gray and nothing is set, because the
+      coerced into something plausible: the field goes gray and nothing is set, because the
       one thing worse than rejecting an edit is quietly accepting a different one.</p>
 
       <p>Two details are load-bearing. Neutral is anchored at <code>0x80</code> rather than falling
       wherever the arithmetic lands, so the negative half gets 128 steps and the positive half 127,
       and a neutral state reads as exactly zero instead of a hair off it. And the byte is computed
       with <code>floor(x + 0.5)</code> rather than a rounding function, because Python rounds halves
-      to even and JavaScript rounds them up &mdash; two languages disagreeing about a half-step
+      to even and JavaScript rounds them up; two languages disagreeing about a half-step
       would put a one-bit difference between the browser and the server on the same state. There is
       a test whose only job is to assert the two codecs agree byte for byte.</p>
 
@@ -574,8 +571,8 @@ D    dominance     dark     dotted</pre>
       <p>The last three are not about affect at all. They are about a display not saying something
       faintly false: <code>-0.00</code> is a claim about sign that a rounding artefact should not
       get to make, <code>1 turns</code> is a small wrongness that makes a reader trust the rest
-      less, and an empty box that does not say <em>which</em> emptiness it is &mdash; nothing
-      recorded, or everything filtered out &mdash; is a display declining to answer the only
+      less, and an empty box that does not say <em>which</em> emptiness it is (nothing recorded, or
+      everything filtered out) is a display declining to answer the only
       question being asked of it.</p>
 
       <p>None of that is affect modelling. It is the same rule as the claim/act quarantine in the
@@ -586,7 +583,7 @@ D    dominance     dark     dotted</pre>
       <h2>What is not being claimed</h2>
 
       <p>The dial shows the scaffold's state. It is not a picture of an inner life, and nothing here
-      asserts one &mdash; the <a class="ilink" href="/charm-network/">previous piece</a> has the full
+      asserts one; the <a class="ilink" href="/charm-network/">previous piece</a> has the full
       version of that disclaimer and it holds unchanged.</p>
 
       <p>What it is: a readout for numbers that already exist, whose whole design brief was to not

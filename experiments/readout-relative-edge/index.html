@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Readout-Relative Edge: How Much Past Should a Machine Hold?</title>
-<meta name="description" content="A law assembled across five substrates and a tunable-memory task family: optima of fixed random systems track what the past is worth to whoever reads them. Task prices memory, readout prices interference, the optimizer prices signal variance — and a braiding horizon caps what any reader can reach.">
+<meta name="description" content="A law assembled across five substrates and a tunable-memory task family: optima of fixed random systems track what the past is worth to whoever reads them. Task prices memory, readout prices interference, the optimizer prices signal variance, and a braiding horizon caps what any reader can reach.">
 <meta name="color-scheme" content="dark">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://caity.wtf/experiments/readout-relative-edge/">
 <meta property="og:title" content="The Readout-Relative Edge: How Much Past Should a Machine Hold?">
-<meta property="og:description" content="Lab note: the synthesis of the reservoir program — spike sources with known entropy, pre-registered surfaces, a confirmed starvation equation, an optimizer clause, and the braiding horizon.">
+<meta property="og:description" content="Lab note: the synthesis of the reservoir program. Spike sources with known entropy, pre-registered surfaces, a confirmed starvation equation, an optimizer clause, and the braiding horizon.">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0d0c'/%3E%3Ctext x='5' y='23' font-family='monospace' font-size='18' fill='%237fd88f'%3E%3E_%3C/text%3E%3C/svg%3E">
 
@@ -155,35 +155,35 @@
       <!-- TODO(caity): add "· code & result JSONs" link when the annex repo is pushed --></p>
 
     <p class="abstract"><b>Abstract.</b> Across three companion notes, fixed random
-    systems with trained readouts kept refusing the edge of chaos on text8 — and kept
-    walking back toward it when the readout improved. This note tests whether that
+    systems with trained readouts kept refusing the edge of chaos on text8, and kept walking back
+    toward it when the readout improved. This note tests whether that
     pattern is a law by varying the <em>task</em>: spike sources
     c_t&nbsp;~&nbsp;T[c_{t−1},&nbsp;c_{t−j}] with one shared table across depths
     j&nbsp;∈&nbsp;{2…16}, so entropy is matched, the prize at lag j is a constant 1.32
-    bits, and the generator's true entropy anchors every number. Two axes — an echo
-    state network's spectral radius and a memoryless random-feature window — were swept
+    bits, and the generator's true entropy anchors every number. Two axes (an echo state network's
+    spectral radius and a memoryless random-feature window) were swept
     against the depth dial under two readouts, with predictions pre-registered.
     Results. (1)&nbsp;<b>The dial moves with the task:</b> the reservoir's logistic
     optimum climbs ρ&nbsp;=&nbsp;0.4&nbsp;→&nbsp;0.6&nbsp;→&nbsp;0.8 as j goes
     1&nbsp;→&nbsp;2&nbsp;→&nbsp;4, and the window model's best width tracks
     L&nbsp;=&nbsp;j exactly until there is nothing left to buy. (2)&nbsp;<b>Service is
     graded, and its price is measurable:</b> the window model's capture of the spike
-    follows F&nbsp;/&nbsp;(729·C(L,2)) — a pre-registered scaling that landed inside
+    follows F&nbsp;/&nbsp;(729·C(L,2)), a pre-registered scaling that landed inside
     both bands (33%&nbsp;→&nbsp;57%&nbsp;→&nbsp;84% as features doubled).
     (3)&nbsp;<b>The interference clause is substrate-dependent:</b> the reservoir's
     optimum migrates under a better readout; the automata ensemble's does not, its
-    flat readout gap equaling the pure calibration tax — discrete memory has no
+    flat readout gap equaling the pure calibration tax; discrete memory has no
     crowding to relieve. (4)&nbsp;<b>The optimizer is part of the readout:</b> against
-    registration, ridge out-cashes logistic at depth — and survives a tuning check —
-    because early-stopped SGD is an implicit spectral filter that never reaches the
+    registration, ridge out-cashes logistic at depth (and survives a tuning check) because
+    early-stopped SGD is an implicit spectral filter that never reaches the
     low-variance interaction directions ridge solves in closed form.
     (5)&nbsp;<b>A braiding horizon caps everything:</b> at depth 8 the needed
     character is provably decodable from the state, yet no readout cashes more than
-    ~4% at any spectral radius up to 1.8 — the reservoir's nonlinear mixing horizon
+    ~4% at any spectral radius up to 1.8: the reservoir's nonlinear mixing horizon
     is far shorter than its linear memory horizon, and it does not yield to more
     recurrence. The law, in one sentence: <em>a fixed random system should hold
     exactly as much past as its cheapest reader can afford to decode, and every term
-    in that sentence — worth, cost, reader — is measurable.</em></p>
+    in that sentence (worth, cost, reader) is measurable.</em></p>
 
     <h2 id="s1"><span class="sec">§1</span> The claim, and a ruler with the answers printed on it</h2>
 
@@ -192,7 +192,7 @@
     geometry governing performance across substrates; a pure readout-calibration tax
     of 0.464 bpc isolated at feature-complete inputs; and an interference cost of
     held-but-unneeded past that appears even with no dynamics at all. All of it on one
-    corpus whose useful context is ~3 characters — leaving open that every "law" was
+    corpus whose useful context is ~3 characters, leaving open that every "law" was
     text8's shallowness in costume. So we built corpora whose memory demand is a dial:</p>
     <pre class="eq">c_t ~ T[ c_{t−1}, c_{t−j} ]        j ∈ {2, 4, 8, 12, 16},  j=1 control</pre>
     <p>One conditional table T, drawn once and shared by every j: entropy rate matched
@@ -204,19 +204,17 @@
     lag-1 term nearly worthless (~0.07 bits), so the entire prize lives in the
     <em>joint</em> pattern of two characters j&nbsp;apart. Axes: a tanh echo state
     network (N&nbsp;=&nbsp;5000, ρ&nbsp;∈&nbsp;[0.4,&nbsp;1.8]) and the funhouse
-    window model (F random features on the last L characters) — a machine with
-    memory and no window against a machine with a window and no memory — each under
-    ridge and logistic readouts, all predictions registered in the lab journal before
+    window model (F random features on the last L characters), a machine with memory and no window
+    against a machine with a window and no memory, each under ridge and logistic readouts, all predictions registered in the lab journal before
     their runs.</p>
 
     <h2 id="s2"><span class="sec">§2</span> The dial moves: memory is priced by the task</h2>
 
-    <p>The registered kill condition — optima indifferent to j — is refuted on both
-    axes. The reservoir's logistic optimum climbs ρ&nbsp;=&nbsp;0.4&nbsp;→&nbsp;0.6
+    <p>The registered kill condition (optima indifferent to j) is refuted on both axes. The reservoir's logistic optimum climbs ρ&nbsp;=&nbsp;0.4&nbsp;→&nbsp;0.6
     →&nbsp;0.8 across j&nbsp;=&nbsp;1&nbsp;→&nbsp;2&nbsp;→&nbsp;4, and at
     j&nbsp;=&nbsp;8 both readouts push to the top of the grid chasing what little
     remains (Fig.&nbsp;1). The window model is blunter still: its best width is
-    <em>exactly</em> L&nbsp;=&nbsp;j at every depth it can serve — it stretches
+    <em>exactly</em> L&nbsp;=&nbsp;j at every depth it can serve; it stretches
     precisely to the spike, paying window tax only for cause, and collapses back to
     L&nbsp;=&nbsp;2 at j&nbsp;=&nbsp;16 when the spike is out of reach. On text8 the
     optimum sat low because three characters is what text8 pays for; move the pay and
@@ -230,21 +228,20 @@
       (N=5000, 2M characters per cell). Shallow spikes are served at low ρ; the
       logistic optimum climbs with j; at j ≥ 8 the curves pin to the uncashed level
       and the argmin slides to the grid edge. Extension cells at j=8 (ρ = 1.4, 1.6,
-      1.8, pre-registered): a flat top at ρ ≈ 1.25–1.4, then degradation — the drift
-      has a ceiling.</figcaption>
+      1.8, pre-registered): a flat top at ρ ≈ 1.25–1.4, then degradation: the drift has a ceiling.</figcaption>
     </figure>
 
     <h2 id="s3"><span class="sec">§3</span> Service is graded: the starvation equation</h2>
 
     <p>The registered served-vs-abandoned cliff came back wrong in an instructive way:
-    the window model does not cliff — it <em>starves in place</em>. Its argmin stays
+    the window model does not cliff; it <em>starves in place</em>. Its argmin stays
     snapped to L&nbsp;=&nbsp;j while the fraction of the prize it cashes decays
     smoothly: 100% at j&nbsp;=&nbsp;2, a third at 4, six percent at 8, one percent at
     12. The mechanism is arithmetic: F random features must span a pairwise
     interaction space that grows as C(L,2)·729, so capture should scale as
     F&nbsp;/&nbsp;(729·C(L,2)). That equation was registered with bands and then
     tested by doubling F twice at j&nbsp;=&nbsp;4: capture went 33%&nbsp;→&nbsp;57%
-    (band 55–70%)&nbsp;→&nbsp;84% (band ≥80%) — the program's first derived equation
+    (band 55–70%)&nbsp;→&nbsp;84% (band ≥80%), the program's first derived equation
     to survive its own quantitative test (Fig.&nbsp;2).</p>
 
     <figure class="fig">
@@ -258,11 +255,11 @@
     <h2 id="s4"><span class="sec">§4</span> The interference clause is substrate-dependent</h2>
 
     <p>On text8, the reservoir's optimum migrates when ridge is replaced by logistic
-    (ρ&nbsp;0.6&nbsp;→&nbsp;0.95, with 42% of the high-ρ penalty surviving) — the
-    signature of interference a richer reader can relieve. The automata ensemble of
+    (ρ&nbsp;0.6&nbsp;→&nbsp;0.95, with 42% of the high-ρ penalty surviving), the signature of
+    interference a richer reader can relieve. The automata ensemble of
     the third companion refuses the same intervention: its optimum is pinned, and its
     logistic-over-ridge gap is flat across the entire order–chaos dial at
-    0.40–0.46&nbsp;bpc — numerically the pure calibration tax the funhouse isolated
+    0.40–0.46&nbsp;bpc, numerically the pure calibration tax the funhouse isolated
     (0.464). One substrate stores the past by graded superposition in a shared
     continuous state and pays crosstalk for it; the other heals into discrete
     suffix-determined configurations and pays none. The tax's <em>existence</em> is
@@ -272,14 +269,14 @@
 
     <p>The registration bet that the richer reader holds depth longer. Inverted: at
     j&nbsp;=&nbsp;4 and 8 <em>ridge out-cashes logistic</em> (0.59 vs 0.40 bits at
-    j=4) — the program's first sustained ridge win — and a pre-committed tuning check
+    j=4), the program's first sustained ridge win, and a pre-committed tuning check
     (3× learning rate, 2.5× epochs, generous patience) recovered only 0.08 of the
     0.44-bit gap, with a hotter rate doing worse. The reading was named before the
     check ran: early-stopped SGD is an implicit spectral filter. The spike's
     interaction signal lives in low-variance state directions whose gradients are
     tiny; within any practical budget SGD never digs them out, while ridge's closed
     form solves them exactly. Scope stated plainly: multinomial logistic is convex,
-    so with unbounded budget it must eventually win — but unbounded budget is
+    so with unbounded budget it must eventually win. But unbounded budget is
     precisely what no reader has, and budget-relativity is this law's native
     vocabulary. "Readout family" means readout&nbsp;×&nbsp;optimizer&nbsp;×&nbsp;budget.</p>
 
@@ -287,14 +284,13 @@
 
     <p>The sharpest new object. At j&nbsp;=&nbsp;8, the character eight steps back is
     comfortably within the reservoir's <em>linear</em> decode depth (9.3–12.7
-    characters at ρ&nbsp;≥&nbsp;0.8, measured in the first companion note) — a probe
-    can read it. Yet the best any readout cashes is ~4%, at any ρ up to 1.8. The
+    characters at ρ&nbsp;≥&nbsp;0.8, measured in the first companion note): a probe can read it. Yet the best any readout cashes is ~4%, at any ρ up to 1.8. The
     resolution: this task's prize requires the <em>product</em> of two characters, and
-    no linear readout can multiply two decodable memories — the interaction must
+    no linear readout can multiply two decodable memories; the interaction must
     already exist in the state, formed by the dynamics' own nonlinear mixing. The
     reservoir braids adjacent characters nearly for free (88% at j=2), characters four
-    apart at half strength, characters eight apart essentially not at all — and the
-    pre-registered grid extension shows more recurrence does not help (flat top at
+    apart at half strength, characters eight apart essentially not at all, and the pre-registered
+    grid extension shows more recurrence does not help (flat top at
     ρ&nbsp;≈&nbsp;1.25–1.4, then worse). <em>The memory horizon and the mixing horizon
     are different lengths, and the short one pays.</em> In hindsight the program had
     seen this twice: the reservoir's parity dominance (nonlinearly mixed lag
@@ -310,19 +306,23 @@
       journal is the receipt.</caption>
       <tr><th>registered</th><th>verdict</th></tr>
       <tr><td>LR0: spike value constant across j (±0.02)</td><td>PASSED (±0.0024)</td></tr>
-      <tr><td>Kill condition: optima indifferent to j → no law</td><td>REFUTED — the dial moves, both axes</td></tr>
-      <tr><td>LR1: argmin ρ rises by j=4 (both readouts)</td><td>CONFIRMED logistic; VOID ridge (flat-control argmin — registration design flaw, admitted)</td></tr>
-      <tr><td>LR2: served→abandoned cliff; logistic abandons later</td><td>FALSIFIED — starvation, not cliffs; ordering INVERTED (→ §5)</td></tr>
+      <tr><td>Kill condition: optima indifferent to j → no law</td><td>REFUTED: the dial moves, both
+      axes</td></tr>
+      <tr><td>LR1: argmin ρ rises by j=4 (both readouts)</td><td>CONFIRMED logistic; VOID ridge (flat-control
+      argmin: registration design flaw, admitted)</td></tr>
+      <tr><td>LR2: served→abandoned cliff; logistic abandons later</td><td>FALSIFIED: starvation,
+      not cliffs; ordering INVERTED (→ §5)</td></tr>
       <tr><td>LR3: funhouse argmin L = j, collapse beyond j*</td><td>CONFIRMED (location exact, collapse at 16); readout separation failed</td></tr>
       <tr><td>LR4: "partial service" middle outcome</td><td>DOMINANT regime, both axes</td></tr>
-      <tr><td>Optimizer check: tuned logistic closes to ≤0.05 of ridge</td><td>MISSED — inversion stands; spectral-filter clause adopted</td></tr>
+      <tr><td>Optimizer check: tuned logistic closes to ≤0.05 of ridge</td><td>MISSED: inversion
+      stands; spectral-filter clause adopted</td></tr>
       <tr><td>Braid extension: interior optimum in [1.25, 1.8]</td><td>CONFIRMED (flat top 1.25–1.4, then degradation)</td></tr>
-      <tr><td>Starvation scaling: 55–70% at F=2048, ≥80% at 4096</td><td>CONFIRMED — both bands hit</td></tr>
+      <tr><td>Starvation scaling: 55–70% at F=2048, ≥80% at 4096</td><td>CONFIRMED: both bands
+      hit</td></tr>
     </table>
     </div>
 
-    <p>Limits. Spike sources concentrate all deep value at a single lag — the sharpest
-    test and the least language-like; a decaying-utility family is the registered
+    <p>Limits. Spike sources concentrate all deep value at a single lag: the sharpest test and the least language-like; a decaying-utility family is the registered
     sequel. One reservoir size (N=5000), one seed per cell, one machine; the j=1
     control's entropy differs from the family's and served only argmin comparisons;
     logistic conclusions are budget-scoped by construction (§5). The substrate clause
@@ -331,7 +331,7 @@
 
     <p>Related work. Memory–nonlinearity trade-offs in reservoirs (Dambre
     et&nbsp;al.'s information processing capacity; Verstraeten et&nbsp;al.) are the
-    nearest theory to the braiding horizon — §6 is a task-side measurement of that
+    nearest theory to the braiding horizon; §6 is a task-side measurement of that
     trade at controlled lag separation. Memory traces under interference: Ganguli
     &amp; Sompolinsky. Next-generation reservoir computing (Gauthier et&nbsp;al.)
     anticipates window models as reservoir substitutes; the funhouse note repurposes
@@ -342,11 +342,11 @@
 
     <p>The law, final form. <em>A fixed random system driven by a stream should hold
     exactly as much past as its readers can afford to decode. The task sets what the
-    past is worth; the substrate sets the storage tax — crowding for superposed
+    past is worth; the substrate sets the storage tax: crowding for superposed
     continuous states, nothing for healed discrete ones; the readout and its
     optimizer set which of the stored bits are reachable; and the dynamics' mixing
-    horizon caps what can be braided together at all. The edge of chaos is not a
-    place a system wants to be — it is the most memory anyone ever afforded.</em></p>
+    horizon caps what can be braided together at all. The edge of chaos is not a place a system
+    wants to be; it is the most memory anyone ever afforded.</em></p>
 
     <footer>
       <p>Credits. Experiments, analysis, figures, and infrastructure were produced with

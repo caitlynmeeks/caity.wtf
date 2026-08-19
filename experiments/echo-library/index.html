@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Pond That Remembered Everything</title>
-<meta name="description" content="A reservoir keeps every state it ever visited and predicts by retrieval: nearest-neighbor lookup over its own history, indexed by its suffix-tree geometry, breaks the 5-gram fence no architecture in this program had beaten — with zero training beyond the readout it already had.">
+<meta name="description" content="A reservoir keeps every state it ever visited and predicts by retrieval: nearest-neighbor lookup over its own history, indexed by its suffix-tree geometry, breaks the 5-gram fence no architecture in this program had beaten, with zero training beyond the readout it already had.">
 <meta name="color-scheme" content="dark">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://caity.wtf/experiments/echo-library/">
 <meta property="og:title" content="The Pond That Remembered Everything">
-<meta property="og:description" content="Lab note: retrieval as the fourth reader — a training-free episodic memory carries 75% of the vote, breaks the 5-gram fence, and beats reservoirs fifty times its size.">
+<meta property="og:description" content="Lab note: retrieval as the fourth reader. A training-free episodic memory carries 75% of the vote, breaks the 5-gram fence, and beats reservoirs fifty times its size.">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0d0c'/%3E%3Ctext x='5' y='23' font-family='monospace' font-size='18' fill='%237fd88f'%3E%3E_%3C/text%3E%3C/svg%3E">
 
@@ -147,7 +147,7 @@
     <h1>The Pond That Remembered Everything</h1>
     <p class="subtitle">Retrieval as the fourth reader: a training-free episodic
     memory breaks the fence no architecture in this program had beaten</p>
-    <p class="byline">C.&thinsp;Meeks · Tenerife · August 2026 · sixth in the series —
+    <p class="byline">C.&thinsp;Meeks · Tenerife · August 2026 · sixth in the series ·
       <a href="/experiments/reservoir-lm/">reservoir</a> ·
       <a href="/experiments/funhouse/">funhouse</a> ·
       <a href="/experiments/tiny-actors/">tiny actors</a> ·
@@ -161,23 +161,23 @@
     inference the current state retrieves its nearest stored states and lets them
     vote, blended with the pond's own logistic readout. The index is the geometry
     the companion notes measured: reservoir states form a near-exact suffix tree, so
-    nearest-in-state means longest-shared-suffix — retrieved neighbors share a mean
+    nearest-in-state means longest-shared-suffix: retrieved neighbors share a mean
     <b>8.2 characters</b> of history with their query (registered gate: ≥4), making
     the library an adaptive-depth context model with no fixed order. Results, all
     pre-registered. (1)&nbsp;<b>The fence falls:</b> pond + library reaches
     2.013 validation / <b>2.054 test bpc</b> against the 5-gram's 2.159/2.186 on
-    identical splits — the first architecture in this program to beat that baseline,
+    identical splits, the first architecture in this program to beat that baseline,
     at every spectral radius tested, with the album carrying 75–80% of the
     probability mass. It simultaneously overtakes every reservoir in both companion
     programs, including one with fifty times the units and 1.35M trained parameters.
     (2)&nbsp;<b>Retrieval is nearly tax-free:</b> where ridge, logistic, and sparse
     readers all price held memory (the companion law), the library's performance
-    varies by 0.014 bpc across the whole ρ range — with a slight preference for
+    varies by 0.014 bpc across the whole ρ range, with a slight preference for
     <em>deeper</em> states, inverting the registered direction: depth sharpens
     addresses and nothing has to pay to decode it. (3)&nbsp;The claim is mechanistic,
     not novelty: adaptive-order context modeling has beaten fixed n-grams since PPM
     (1984). The news is that a <em>random, untrained dynamical system's state
-    geometry implements it for free</em> — and that storage separated from state,
+    geometry implements it for free</em>, and that storage separated from state,
     the transformer's deepest architectural move, works even when everything else
     is a puddle of random numbers.</p>
 
@@ -189,7 +189,7 @@
     that followed. At inference, the query state retrieves its top-64 stored
     neighbors and they vote:</p>
     <pre class="eq">p(c) = (1−w) · p_logistic(c | x)  +  w · Σ_neighbors softmax(−d/σ) · 1[next = c]</pre>
-    <p>(σ, w) are tuned on validation only — the sole tuning in the system. The
+    <p>(σ, w) are tuned on validation only, the sole tuning in the system. The
     index design is stolen from the companion notes' own measurement: the state
     cloud's dendrogram splits first on the last character, then the one before, so
     the library is filed in 729 drawers by the last two context characters and
@@ -203,7 +203,7 @@
     characters of trailing context with their query (the drawer alone guarantees
     ~2). Measured: a mean of <b>8.2</b>, stable across ρ, with a tail past 20
     (Fig.&nbsp;1, left). Nearest-in-state is longest-suffix-match, as the suffix-tree
-    geometry promised — the library behaves as a ~9-gram whose order flexes per
+    geometry promised; the library behaves as a ~9-gram whose order flexes per
     query: ordinary moments match a few characters deep, rare phrases match as far
     as the corpus has ever seen them. The blend curve (Fig.&nbsp;1, right) shows the
     division of labor: bpc falls monotonically as the album's share of the vote
@@ -222,8 +222,7 @@
 
     <h2 id="s3"><span class="sec">§3</span> The fence falls</h2>
 
-    <p>The 5-gram baseline — 2.159 validation / 2.186 test at this budget — had
-    survived every architecture in both programs: every reservoir at every size,
+    <p>The 5-gram baseline (2.159 validation / 2.186 test at this budget) had survived every architecture in both programs: every reservoir at every size,
     the tropical pond, the funhouse, the troupe, the champion 50,000-unit network
     with 1.35 million trained parameters. The pond with a library clears it at
     every spectral radius tested (Fig.&nbsp;2): the validation-chosen cell scores
@@ -257,16 +256,16 @@
     calibration plus interference, logistic pays what its optimizer can't reach,
     selection starves on distributed codes. Retrieval completes the taxonomy, and
     its price list is nearly empty: across ρ&nbsp;∈&nbsp;{0.6, 0.8, 0.95} the
-    library's bpc spans 0.014 — against the 0.4-bit swings the same dial produces
+    library's bpc spans 0.014, against the 0.4-bit swings the same dial produces
     under parametric readouts. The registered prediction (the optimum retreats to
     shallow ρ once the album carries the memory) was falsified in the informative
-    direction: the optimum drifted <em>deeper</em>, because depth sharpens the
-    address — more past in the state means finer suffix discrimination in the
-    metric — and no readout ever has to decode that past, so the usual interference
+    direction: the optimum drifted <em>deeper</em>, because depth sharpens the address (more past in
+    the state means finer suffix discrimination in the metric), and no readout ever has to decode
+    that past, so the usual interference
     bill never arrives. Memory you navigate by costs almost nothing; memory you
-    must linearly decode costs everything. That is this program's oldest thesis —
-    the first note's frozen-transformer finding was that attention retrieves the
-    past without storing it in a crowded state — now demonstrated constructively,
+    must linearly decode costs everything. That is this program's oldest thesis (the first note's
+    frozen-transformer finding was that attention retrieves the past without storing it in a crowded
+    state), now demonstrated constructively,
     with a filing cabinet standing in for attention and zero gradients standing in
     for pretraining.</p>
 
@@ -279,7 +278,7 @@
     are quarantined in the repository, and every number above is from the fixed
     rerun. The third registered prediction (the album earns most on rare contexts)
     is UNRESOLVED: the shipped instrument binned by target-included trigram
-    frequency — target rarity, not context rarity as registered — and under that
+    frequency, target rarity rather than context rarity as registered, and under that
     (wrong) binning pure-kNN loses on rare targets through vote sparsity, which is
     precisely why the blend retains a parametric floor. A corrected instrument is
     queued. Scope: one corpus, 2×10⁶-character library, N&nbsp;=&nbsp;1000,
@@ -288,10 +287,10 @@
     champion cell (Table&nbsp;1), single seeds elsewhere.</p>
 
     <p>Related work. Nearest-neighbor language models over learned representations:
-    Khandelwal et&nbsp;al. (kNN-LM) — the direct modern relative; here the encoder
+    Khandelwal et&nbsp;al. (kNN-LM), the direct modern relative; here the encoder
     is random and untrained, and the finding is that suffix-tree geometry alone
     suffices. Adaptive-order context modeling: PPM (Cleary &amp; Witten, 1984) and
-    context-tree weighting — the classical family this machine implements
+    context-tree weighting, the classical family this machine implements
     geometrically; beating fixed n-grams is their legacy, not our news. Fractal
     prediction machines (Tiňo et&nbsp;al.) supply the theory of why reservoir
     states encode suffixes; the companion notes supply the measurements this
