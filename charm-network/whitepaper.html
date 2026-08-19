@@ -1,0 +1,849 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Filters, Reservoirs, and Records: Dual-Model Perception and Wall-Clock Continuity Under Frozen LLMs — caity.wtf</title>
+<meta name="description" content="Whitepaper: a charm network architecture in two halves — dual-model perception (a sensor model appraising the character's own affect and the human's, on PAD plus affiliation) and wall-clock continuity (filters, a reservoir, and append-only records). Together they compose a functional correlate of consciousness-like perception, in Varela's structural sense, with the epistemics stated plainly.">
+<meta name="color-scheme" content="light">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://caity.wtf/charm-network/whitepaper.html">
+<meta property="og:title" content="Filters, Reservoirs, and Records: Dual-Model Perception and Wall-Clock Continuity Under Frozen LLMs">
+<meta property="og:description" content="Whitepaper: a sensor model that perceives, a filter bank that integrates, a reservoir that expects, and records that cannot lie — the math, the calibration data, and an exact account of what is and is not being claimed.">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b0d0c'/%3E%3Ctext x='5' y='23' font-family='monospace' font-size='18' fill='%237fd88f'%3E%3E_%3C/text%3E%3C/svg%3E">
+
+<style>
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    padding: clamp(1.5rem, 5vw, 3.5rem) 1rem 2.5rem;
+    background: #fff; color: #000;
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 1.0625rem; line-height: 1.6;
+  }
+  .dossier { margin: 0; }
+  main { max-width: 46rem; margin: 0 auto; }
+
+  /* document header */
+  .printhead { text-align: center; margin: 0 0 1.2rem; }
+  h1.ph-title {
+    font-variant: small-caps; font-weight: 700;
+    font-size: clamp(1.35rem, 1.1rem + 1.2vw, 1.7rem);
+    line-height: 1.3; margin: 0 0 0.6rem; letter-spacing: 0.01em;
+  }
+  .ph-tag { font-variant: small-caps; letter-spacing: 0.3em; font-size: 0.85rem; margin: 0 0 1.2rem; }
+  .ph-authors { font-size: 1rem; line-height: 1.5; margin: 0 0 0.7rem; }
+  .ph-authors .ph-name { font-variant: small-caps; font-weight: 700; }
+  .ph-date { font-size: 1rem; margin: 0; }
+
+  .dlrow { text-align: center; margin: 1rem 0 1.2rem; }
+  a.dl {
+    display: inline-block; font-size: 0.78rem; line-height: 1.6;
+    color: #000; background: #fff; border: 1px solid #000; border-radius: 3px;
+    padding: 0.1rem 0.7rem; text-decoration: none;
+  }
+  a.dl:hover, a.dl:focus-visible { background: #000; color: #fff; }
+  .hint { color: #555; font-size: 0.72rem; }
+
+  .pills { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; margin: 0 0 1.4rem; padding: 0; }
+  .pills li { font-size: 0.72rem; line-height: 1.6; border: 1px solid #000; border-radius: 999px; padding: 0 0.6rem; }
+
+  .abshead { text-align: center; font-variant: small-caps; font-weight: 700; font-size: 1.02rem; margin: 1.1rem 0 0.45rem; }
+  .abstract { margin: 0 clamp(0.5rem, 5vw, 2.4rem) 1rem; text-align: justify; font-size: 0.92rem; }
+  .keywords { margin: 0 clamp(0.5rem, 5vw, 2.4rem) 1.6rem; font-size: 0.88rem; }
+  .keywords b { font-style: italic; font-weight: 700; }
+
+  h2 { font-size: 1.08rem; margin: 2rem 0 0.6rem; padding-top: 0.9rem; border-top: 1px solid #000; }
+  h3 { font-size: 1rem; font-style: italic; font-weight: 700; margin: 1.4rem 0 0.4rem; }
+  p { margin: 0.65rem 0; }
+  ul.plain, ol.plain { margin: 0.65rem 0; padding-left: 1.4rem; }
+  ul.plain li, ol.plain li { margin: 0.3rem 0; }
+  a { color: #000; text-decoration: underline; text-underline-offset: 2px; }
+  a.cite { text-decoration: none; font-size: 0.85em; }
+  a.cite:hover, a.cite:focus-visible { text-decoration: underline; }
+
+  pre.eq, code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Courier New", monospace;
+  }
+  pre.eq {
+    border: 1px solid #000; padding: 0.7rem 0.9rem; margin: 0.8rem 0;
+    font-size: 0.82rem; line-height: 1.55;
+    white-space: pre-wrap; overflow-wrap: break-word; overflow-x: visible;
+  }
+  code { font-size: 0.88em; }
+
+  .note { border: 1px solid #000; padding: 0.55rem 0.9rem; margin: 1rem 0; font-size: 0.92em; }
+
+  ul.dials { list-style: none; margin: 0.8rem 0; padding-left: 0; }
+  ul.dials li { margin: 0.7rem 0; padding-left: 0.9rem; border-left: 2px solid #000; }
+  ul.dials .dial { display: block; margin-top: 0.15rem; color: #333; font-size: 0.88em; }
+
+  ol.refs { margin: 0.65rem 0; padding-left: 1.7rem; font-size: 0.88rem; }
+  ol.refs li { margin: 0.35rem 0; }
+  ol.refs li:target { outline: 1px dotted #000; outline-offset: 2px; }
+
+  footer { margin-top: 2.4rem; padding-top: 1rem; border-top: 1px solid #000; color: #333; font-size: 0.85rem; }
+  footer p { margin: 0 0 0.35rem; }
+
+  .sidestamp { display: none; }
+  @media (min-width: 64rem) {
+    .sidestamp {
+      display: block; position: fixed; left: 0.6rem; top: 45%;
+      transform: translateY(-50%) rotate(180deg); writing-mode: vertical-rl;
+      font-size: 0.72rem; letter-spacing: 0.18em; color: #666;
+    }
+  }
+
+  /* print: the same document with paper margins */
+  @media print {
+    body { padding: 0; font-size: 10.5pt; line-height: 1.5; }
+    main { max-width: none; padding: 0.4in 0.55in; }
+    .dlrow { display: none !important; }
+    .sidestamp {
+      display: block; position: fixed; left: 0.08in; top: 45%;
+      transform: translateY(-50%) rotate(180deg); writing-mode: vertical-rl;
+      font-size: 8.5pt; letter-spacing: 0.18em; color: #666;
+    }
+    h1.ph-title { font-size: 16.5pt; }
+    .abstract { font-size: 9.8pt; margin: 0 0.45in 0.9rem; }
+    .keywords { font-size: 9.3pt; margin: 0 0.45in 1.4rem; }
+    ol.refs { font-size: 9pt; }
+    ol.refs li:target { outline: none; }
+    a { text-decoration: none; }
+    p { orphans: 3; widows: 3; }
+    pre.eq, .note, ol.refs li, ul.dials li { break-inside: avoid; }
+    footer { margin-top: 1rem; padding-top: 0.6rem; break-inside: avoid; }
+    ol.refs { font-size: 8.6pt; }
+    ol.refs li { margin: 0.28rem 0; }
+  }
+</style>
+</head>
+<body>
+<div class="dossier">
+  <main>
+    <header class="printhead">
+      <h1 class="ph-title">Filters, Reservoirs, and Records: Dual-Model Perception and Wall-Clock Continuity Under Frozen LLMs</h1>
+      <div class="ph-tag">A Whitepaper</div>
+      <div class="ph-authors">
+        <div class="ph-name">Caitlyn Meeks</div>
+        <div>Sosiego del Cardo, Tenerife — caity.wtf</div>
+      </div>
+      <div class="ph-date">August 19, 2026</div>
+    </header>
+    <div class="sidestamp" aria-hidden="true">caity.wtf · charm-network · August 2026</div>
+    <p class="dlrow"><a class="dl" download href="filters-reservoirs-records.pdf">download whitepaper</a> <span class="hint">(pdf)</span></p>
+    <ul class="pills">
+      <li>web version: caity.wtf/charm-network</li>
+      <li>code: github.com/caitlynmeeks/charmnet-release (MIT)</li>
+      <li>companion piece: the dial and the arc</li>
+    </ul>
+
+    <p class="abshead">Abstract</p>
+    <p class="abstract">A large language model is frozen at inference: its
+    weights don't change, its activations vanish when the response ends, and
+    whatever continuity a chat system appears to have lives in exactly one
+    place — the transcript fed back in next time. Nothing happens between
+    messages, and nothing is <em>felt</em> during them: the model has no
+    state that could constitute a feeling, only text that describes one.
+    This paper describes a <b>charm network architecture</b> with two
+    halves. The first is <b>perception</b>: a second model runs beside the
+    one that speaks, used strictly as a measurement instrument — each turn
+    it reads the transcript as data and emits an appraisal of the
+    character's own state on PAD plus affiliation and surprise, and a
+    separate reading of the human, including the gap between what they show
+    and what they seem to feel. The second is <b>continuity</b>: three kinds
+    of external state — filters (a bank of exponential moving averages in
+    nested timescales, decayed between messages as an Ornstein–Uhlenbeck
+    process), a reservoir (a small echo state network whose readout predicts
+    the next appraisal, making surprise a loss function rather than a
+    metaphor), and append-only records with provenance, including a
+    claim/act consistency check that withdraws fabricated tool-use claims.
+    Composed, the two halves implement a <b>functional correlate of
+    consciousness-like perception</b> in Varela's structural sense: an
+    integrated now (impression), shaped by its own past (retention), braced
+    against an expected future (protention), with a coherence signal
+    relating the three (resonance) — advancing on wall-clock time whether or
+    not anyone is talking. The phrase is used with care and defined exactly:
+    the claim is role-for-role correspondence, checkable in code, and never
+    a claim of experience. All components are small, legible, and provable.
+    A reference implementation is available under the MIT license.</p>
+    <p class="keywords"><b>Keywords</b> charm networks · dual-model
+    architectures · affective computing · emotional intelligence · PAD ·
+    echo state networks · Ornstein–Uhlenbeck processes · wall-clock
+    continuity · neurophenomenology · agent safety</p>
+
+    <h2 id="s1"><span class="sec">§1</span> The limitation everything answers</h2>
+
+    <p>A large language model is frozen at inference. Its weights don't change, and its
+    activations vanish when the response ends. Whatever continuity a chat system appears to have
+    lives in exactly one place: the transcript fed back in next time. That has two brutal
+    corollaries. First, <b>nothing happens between messages</b> — ten seconds of silence and ten days
+    of silence produce byte-identical futures. The model doesn't rest, settle, or expect. There
+    is no <em>between</em>. Second, <b>nothing is felt during them</b>: when a chat system sounds moved,
+    the only state realizing that emotion is the text of the conversation itself. There is no
+    quantity anywhere that could be warmer or cooler than it was an hour ago.</p>
+
+    <p class="note">You can't fix either inside the model. You can fix both beside the model.</p>
+
+    <p>The architecture described here does the second thing. One half of it perceives — measures
+    affect, the character's own and the human's, every turn (§2–§4) — and integrates and expresses
+    what it measures (§5–§6). The other half keeps that state alive through real time (§7–§8).
+    §9 names what the composition adds up to, with the epistemics stated exactly.</p>
+
+    <h2 id="s2"><span class="sec">§2</span> Perception: two models, one of them an instrument</h2>
+
+    <p>The system runs two locally served open-weight models, in a split that is standard in
+    computational affect architectures: one model <b>generates</b>, the other <b>appraises</b>.</p>
+
+    <p>The generative model speaks. The appraisal model — the <em>sensor</em> — never addresses
+    anyone; it is used strictly as a measurement instrument. Each turn it reads the
+    transcript-as-data and emits a structured reading: an affect vector for the character, a
+    separate reading of the human (§4), and a handful of classification judgments (should this
+    exchange be retained? does the message require a lookup?). Separating generation from
+    appraisal follows the lineage of appraisal-theoretic architectures (Scherer's component
+    process model <a class="cite" href="#ref1">[1]</a>; Gratch &amp; Marsella's EMA
+    <a class="cite" href="#ref2">[2]</a>; Marinier &amp; Laird's work in Soar
+    <a class="cite" href="#ref3">[3]</a>), where the thing that evaluates an event is a distinct
+    component from the thing that acts on it.</p>
+
+    <p>Three disciplines keep the instrument an instrument. Each was forced by an observed
+    failure rather than adopted on principle:</p>
+
+    <p><b>The transcript is data, not a conversation.</b> The sensor receives the exchange quoted
+    inside a rating request, never as real user/assistant turns. Passed as turns, the model
+    answers the last message instead of measuring it — shown a person in distress, it consoles
+    them rather than scoring them. The failure is instructive: a chat-tuned model's default mode
+    is participation, and measurement has to be framed against that grain.</p>
+
+    <p><b>Readings are adjustments, not fresh opinions.</b> Treating the appraisal model as an
+    instrument means characterizing its noise. Measured live, consecutive readings of an
+    essentially unchanged conversation wobbled by ±0.2 — one unbroken emotional slide came back
+    as +0.2, &minus;0.2, +0.1, &minus;0.2, +0.6, whose alternating signs made the trajectory gate
+    downstream (§5) refuse a trend that was plainly there. The wobble was the instrument's, not
+    the conversation's. So the sensor is shown its own previous reading and asked to
+    <em>adjust</em> rather than re-judge — with an explicit license to move decisively when
+    something decisive happens: a confession, a grief, a reversal should move half the scale or
+    more, because an arc that ends where it began, having moved by 0.05 at a time, has described
+    nothing at all. The anchor removes the instrument's wavering; it is a starting point, not a
+    ceiling.</p>
+
+    <p><b>Perception is not derivation.</b> The sensor runs with reasoning disabled. Rating
+    affect has no intermediate steps to get wrong, and the claim was measured rather than
+    assumed: on the same sensor call, the same model produced its reading in 23.0&nbsp;s and
+    1,385 completion tokens with an extended reasoning block, and in 0.8&nbsp;s and 38 tokens
+    without one. The reading did not change. Deliberation here is a cost, not a quality gate —
+    which is itself a small empirical point about appraisal: it behaves like perception, not
+    like problem-solving.</p>
+
+    <p>One further input matters more than it looks: the sensor is told how long the silence
+    before the message ran. Absence changes meaning — a "hi" after five minutes and a "hi" after
+    two days are different utterances wearing the same letters, and an instrument that cannot
+    see the gap between them is measuring the wrong thing.</p>
+
+    <h2 id="s3"><span class="sec">§3</span> The content space: PAD, where it fails, and directed axes</h2>
+
+    <p>The reading is on four affect dimensions plus surprise, each in [&minus;1, 1]. Three are
+    <b>PAD</b> — pleasure, arousal, dominance (Mehrabian &amp; Russell, 1974
+    <a class="cite" href="#ref4">[4]</a>) — the most widely applied dimensional model of affect,
+    and worth building on rather than reinventing. One caveat I'd rather state than have pointed
+    out: dominance is the contested axis. Pleasure and arousal recur in nearly every dimensional
+    model of affect (Russell's later circumplex <a class="cite" href="#ref5">[5]</a> keeps
+    exactly those two); dominance is regularly found to explain less variance and is often
+    dropped. It survives here for a reason specific to this architecture, given below.</p>
+
+    <p>The fourth axis exists because PAD was caught failing, twice, on live transcripts.
+    Measured on this stack, "I won the race" and "I made her cry and it felt good" both read
+    pleasure 0.80, arousal 0.60. Relief and contempt were worse, landing within 0.10 of each
+    other on every axis. Those are different creatures and the numbers could not say so: pleasure
+    is the self's hedonic reading, and it says nothing about how you regard the other. The
+    sensor's instruction set carries the repair in one sentence: <em>cruelty feels good and is
+    cold; relief feels mild and is warm; a character can be delighted and merciless at
+    once.</em></p>
+
+    <p>So the fourth axis is <b>affiliation</b> — warmth toward the person being spoken to — and
+    it is not a PAD axis. It's imported deliberately from the interpersonal circumplex (Leary
+    <a class="cite" href="#ref6">[6]</a>; Wiggins <a class="cite" href="#ref7">[7]</a>), whose
+    two axes are agency and communion. PAD's dominance describes the self's sense of control
+    over a situation; communion describes orientation <em>toward a person</em>. Cruelty is high
+    agency with low communion; triumph is high agency with communion intact.</p>
+
+    <h3>Directed axes</h3>
+
+    <p>That distinction is not cosmetic, because it forces an architectural consequence:
+    affiliation cannot be one number. In a room with three people there is no single value for
+    "warmth toward somebody" — held as one number, whoever spoke last silently overwrote every
+    other relationship in the scene. So affiliation is held <b>per relationship</b>, across all
+    three of the timescales §5 defines, and dominance followed it, for the same reason: in the
+    interpersonal circumplex both agency and communion are directed, and a character can command
+    one person and defer to another in the same scene. This is also why dominance survives its
+    contested status here — it is stored directionally and steers the character's stance
+    <em>within a relationship</em>, rather than describing a state of the world. Pleasure,
+    arousal and surprise stay undirected: they are properties of the character, and nobody is
+    pleased at one person and unpleased at another in the same instant.</p>
+
+    <p>An <code>attend()</code> operation turns the lens: it stores what is currently held toward
+    the previous person and loads what is held toward this one. A relationship with someone new
+    begins at the character's authored baseline — not "warm at this human" but <em>how warm this
+    character is toward someone they have no history with</em> — so a disposition is a prior
+    rather than a fact about any particular person. The new relationship's trajectory starts
+    flat, and the turn-by-turn evidence histories are cleared at every switch: souring toward
+    one person is not souring toward the room, and carrying one person's history into another's
+    would read their turns as a continuation of it.</p>
+
+    <h2 id="s4"><span class="sec">§4</span> Reading the person: the empathy channel</h2>
+
+    <p>The instrument reads both sides of the table. Alongside the character's own state, each
+    turn carries a reading of the human on three quantities: how they actually seem to feel
+    underneath, whatever face they are wearing; how activated they seem; and — separately — the
+    surface they are choosing to show. The instruction set is explicit that this is <em>a
+    perception and never a verdict</em>, and that an uncertain reading is a zero, not a guess:
+    when the text gives nothing to read, the instrument is told to say 0 rather than invent an
+    inner life.</p>
+
+    <p>The third quantity is the interesting one. Presented affect can differ from felt affect,
+    and the signed gap between the two is read honestly. When it exceeds a threshold in either
+    direction, the speaking model is told which shape the gap has: brighter on the surface than
+    underneath — <em>the brightness may be effort</em> — or flatter on the surface than
+    underneath — <em>something good may be going unsaid</em>.</p>
+
+    <p>The readings are smoothed by their own filter and surfaced to the speaking model only
+    when there is something to say; below a quiet threshold on every axis the block is omitted
+    entirely, because a character told every turn that the person seems neutral starts
+    performing the observation. When the block does appear, it arrives fenced with instructions
+    that are as much ethics as engineering: <em>a reading, not a certainty… let this shape your
+    gentleness, not your talking points; never announce this reading, never claim to know how
+    they feel, and never interrogate the difference between what they show and what you sense —
+    hold space for it instead, and let them come to it if they choose.</em></p>
+
+    <p>This is the architecture's claim to <b>emotional intelligence</b> in the literal
+    Salovey–Mayer sense <a class="cite" href="#ref8">[8]</a> — perceiving affect in oneself and
+    others, integrating it, and using it to regulate behavior — implemented as affective
+    computing in Picard's sense <a class="cite" href="#ref9">[9]</a>: measured, represented,
+    acted on. What distinguishes it from affect detection as usually practiced is the last
+    fence: the perception is permitted to modulate <em>care</em>, and structurally forbidden
+    from becoming a <em>topic</em>. And like everything else in the system it leaves a record —
+    every reading is logged and inspectable, which affect inferred inside fine-tuned weights
+    never is.</p>
+
+    <h2 id="s5"><span class="sec">§5</span> Integration: the charm network</h2>
+
+    <p>The charm network proper is a bank of exponential moving averages, three per axis:</p>
+
+<pre class="eq">fast state:   x ← (1−α_f)·x + α_f·y        (per turn)
+trajectory:   m ← (1−α_m)·m + α_m·Δx       (per turn, hysteresis-gated)
+baseline:     b ← (1−α_s)·b + α_s·x        (per turn, glacial)</pre>
+
+    <p>Momentary feeling, direction of drift, and temperament. That is the whole definition:
+    <b>a charm network is a bank of EMAs over an appraisal vector, arranged in nested timescales
+    and advanced on wall-clock time.</b></p>
+
+    <p>The nesting is borrowed from Varela's account of the specious present
+    <a class="cite" href="#ref10">[10]</a>, which decomposes lived time into three coupled
+    scales: basic or elementary events (the "1/10" scale, ~100&nbsp;ms), the relaxation time for
+    large-scale integration (the "1" scale, ~1&nbsp;s), and descriptive-narrative assessment
+    (the "10" scale, ~10&nbsp;s) — each integrating the one beneath it. I should be exact about
+    the borrowing: <b>Varela's scales span milliseconds to seconds; mine span minutes to
+    days.</b> What carries over is the nesting principle — that lived time is not one clock but
+    several, coupled — and explicitly not the constants. §9 returns to Varela with more than the
+    constants at stake; the epistemic ground rule is laid here: Varela is the inspiration for
+    the <em>structure</em>, never a claim about mechanism. Nothing here asserts that stacked
+    EMAs are how experience works. They are how this system's state works.</p>
+
+    <h3>Hysteresis</h3>
+
+    <p>The trajectory commits a direction only after a window of consecutive turns — three for
+    pleasure and arousal, four for dominance and affiliation, because deciding you dislike
+    someone should take more than two bad turns — whose deltas all clear a threshold
+    <em>and</em> agree in sign. One sour turn moves the momentary state; it takes a run of them
+    to bend the trajectory. This is a thermostat dead-zone applied to affect, motivated purely
+    by rejection of the instrument noise measured in §2.</p>
+
+    <p>One refinement was forced by watching it fail: a turn too small to clear the threshold is
+    <em>skipped</em>, not counted against the run. Hysteresis exists to reject reversals, not
+    pauses, and a quiet turn in the middle of a slide is not evidence that the slide stopped.
+    The distinction is not academic — deltas shrink as the state converges on where the sensor
+    is pointing, so under the stricter rule a sustained shift interrupted itself precisely
+    because it was succeeding. Observed live: a mood that worsened over five consecutive turns
+    never committed any trajectory at all, because one delta missed the threshold by 0.003 and
+    wrote a zero into the window.</p>
+
+    <h3>Resonance</h3>
+
+    <p>The second higher-order property has no analog in the original PAD literature and turned
+    out to matter as much as the axes. <b>Resonance</b> measures whether this turn's movement
+    continues the arc it arrived on or breaks against it:</p>
+
+<pre class="eq">r = sign(Δx · m_prior) · tanh( K · min(|Δx|, |m_prior|) )</pre>
+
+    <p>computed against the trajectory as it stood <em>before</em> the turn — a slope that has
+    already absorbed the current delta correlates with it by construction and can only ever look
+    resonant. The sign carries alignment; the tanh carries confidence, so a tiny wobble that
+    happens to point the right way does not read as strongly resonant. Positive resonance is a
+    moment consistent with its own recent past — momentum, a mood that is going somewhere.
+    Negative resonance is a reversal against an established direction: forced optimism, sudden
+    guardedness. It is the difference between genuine excitement and a brave face, computed as a
+    number.</p>
+
+    <p>The gain K is calibrated, not chosen: swept against 27 turns of recorded conversation,
+    jointly with the hysteresis threshold, because the two are coupled — the threshold decides
+    which deltas commit, which sets the slope magnitudes the gain is scaled against. On that
+    corpus a sustained arc reads 0.82, a reversal against one reads &minus;0.61, an arc whose
+    trend is real but thinly evidenced reads &minus;0.07 — correctly signed and correctly quiet
+    — and flat chatter stays at 0.00. Higher gain is not better: past roughly 40 the tanh
+    saturates and resonance collapses into a yes/no that carries no magnitude.</p>
+
+    <h3>Meaning relative to baseline</h3>
+
+    <p>Mood is classified by <em>departure from baseline</em>, not by absolute value — the same
+    0.5 pleasure means something different for a habitually warm character than for a habitually
+    guarded one, and that is the point of keeping a slow timescale at all. The phrasing rule
+    that survived contact with real characters: the absolute reading leads and the departure
+    qualifies it — "buoyant, though lower than is normal for you." Precedence ran the other way
+    once, and it inverted any character with a strong temperament: a baseline near the rim
+    leaves no headroom, so every reachable state sat below it, and a character authored at
+    maximum warmth was told on every turn that it was more guarded and quieter than normal for
+    it. It played that, correctly. The failure was in the report, not the character.</p>
+
+    <p>The bands that map numbers to phrases are calibrated from the range each axis actually
+    occupies in recorded conversation, not from the nominal [&minus;1, 1] the sensor is asked
+    for. The two are not the same: measured over real transcripts, arousal never once went
+    negative — people bring problems, and a problem is activating whatever else it is — and
+    dominance stayed inside about ±0.4. Bands copied from the nominal scale left seven of
+    fifteen phrases unreachable.</p>
+
+    <h3>Temperament as coefficients</h3>
+
+    <p>Every constant above — the blend rates, the hysteresis windows and thresholds, the
+    resonance gains, the baselines themselves — can be overridden per character, and this is not
+    tuning: <b>the coefficients are the personality.</b> How fast a character absorbs a mood,
+    how much sustained evidence it needs before committing to a direction, how far from its own
+    norm counts as remarkable — that is what distinguishes one creature from another. A
+    character's fast state is seeded from its authored baseline, because a character left at
+    dead neutral only becomes itself through conversation: an assessor authored cold opened
+    every session perfectly warm-neutral, and read as departing from a norm he had not yet
+    occupied.</p>
+
+    <h2 id="s6"><span class="sec">§6</span> Expression: inhabited, never described</h2>
+
+    <p>Everything measured and integrated above reaches the speaking model as one hidden block
+    per turn, and the block is deliberately qualitative: the conscious model is told how it
+    feels, not what its coordinates are. Handing a model raw numbers and then asking it not to
+    mention them is an instruction most models leak. So the state arrives as prose — the mood
+    phrase of §5, trajectory as participles ("the mood lifting", "warming to them"), and, when
+    resonance clears a threshold, its verdict in words: <em>this mood feels genuine</em>, or
+    <em>this mood feels forced or conflicted</em>. The block ends with the only instruction that
+    matters: <em>let this shape your tone, word choice, and energy level; do not describe or
+    refer to this state directly — inhabit it.</em></p>
+
+    <p>Two smaller channels follow the same grammar. The empathy reading of §4 arrives as the
+    same kind of qualitative block, fenced the same way. And elapsed time is delivered <em>as
+    what it did</em> rather than as a number: after a real silence the character is told that
+    the stir of the last exchange has partly eased, or that it has settled almost entirely to
+    itself, or that its warmth banked toward embers in the waiting and being spoken to again is
+    the rekindling — never "it has been 37 hours," which a model will recite. Duration phrased
+    as its effects is the only honest way software feels time.</p>
+
+    <p>One rule guards the whole channel: no emoji. A model reaching for a glyph has offloaded
+    the affect instead of expressing it — which is exactly the work the charm state exists to
+    drive. Closing that route forces the feeling back into word choice, sentence length, and
+    rhythm, where it belongs.</p>
+
+    <h2 id="s7"><span class="sec">§7</span> Wall-clock continuity: the pulse</h2>
+
+    <p>Filters alone still freeze between messages, because every update rule in §5 is indexed
+    by <em>turn</em>. The fix is to run the decay on real time: a heartbeat beats every ten
+    minutes and eases the fast state toward baseline by a fraction sized to elapsed time, plus a
+    small Gaussian kick:</p>
+
+<pre class="eq">x ← x + (b − x)·(1 − 0.5^(Δt / T½)) + ε,   ε ~ N(0, σ²)</pre>
+
+    <p>Mean reversion plus noise is an <b>Ornstein–Uhlenbeck process</b>, and that
+    identification buys a guarantee rather than a hope: the state has a stationary distribution
+    centered on baseline, with spread set by &sigma; against the strength of the pull. With
+    T½&nbsp;=&nbsp;3&nbsp;h and &sigma;&nbsp;=&nbsp;0.025 per beat, typical excursions sit near
+    ±0.09 with occasional ±0.2. The character you return to after a weekend is <em>near</em> its
+    temperament but not exactly on it — and it cannot drift away, because the stationarity of OU
+    processes is a theorem, not a design intention.</p>
+
+    <p>Two asymmetries follow, one of them predicted by the directed-axis argument of §3:</p>
+
+    <ul class="plain">
+      <li><b>Affiliation decays on a 12-hour half-life — four times slower than mood — and
+      takes no noise at all.</b> Because it is a relationship-directed quantity rather than a
+      state of the organism, the two properties of the OU treatment that suit mood both fail for
+      it: absence should gentle it, but it should not <em>wander</em>. It settles toward the
+      attended relationship's own slow-built baseline — the less urgent but more certain part of
+      the bond. Feelings about someone are not weather.</li>
+      <li><b>The noise source is pluggable</b>: kernel entropy by default, or a hardware
+      avalanche RNG. This changes nothing statistical, and I make no other claim — but it
+      changes something about the record. Weather drawn from a physical junction happened once
+      and can never be replayed. Provenance, not magic.</li>
+    </ul>
+
+    <h2 id="s8"><span class="sec">§8</span> The undercurrent: a reservoir beneath the surface</h2>
+
+    <p>Filters shape magnitudes; they have no dynamics of their own. Without input they slide
+    home and stop. For the system to <em>expect</em> anything, it needs a component with
+    intrinsic motion. That component is a small <b>echo state network</b> (Jaeger, 2001
+    <a class="cite" href="#ref11">[11]</a>) — 96 leaky units:</p>
+
+<pre class="eq">x_i ← (1−λ_i)·x_i + λ_i·tanh( Σ_j W_ij·x_j + Σ_k Win_ik·u_k + ε )</pre>
+
+    <p>with the recurrent matrix W random, <em>fixed forever</em>, and scaled once to spectral
+    radius 0.9. That scaling is the stability argument: below 1.0 the standard working criterion
+    for the echo state property holds and every echo fades geometrically. (Spectral radius &lt; 1
+    is the working criterion, not a theorem: the rigorous sufficient condition constrains the
+    largest singular value and is stricter than anyone uses, while the spectral radius condition
+    itself is frequently not <em>necessary</em> either. With bounded tanh units and bounded
+    inputs the state is bounded regardless.) Because the recurrent weights never learn, learning
+    cannot destabilize the dynamics: the worst case of bad learning is bad predictions, never
+    bad water.</p>
+
+    <p>The inputs u, per ten-minute beat: time of day as sin/cos (so 23:59 neighbors 00:01), a
+    presence bit, a bias, a slow contour described in §10, a whisper of noise — and, when a turn
+    happens, the appraisal vector itself.</p>
+
+    <p>The leak rates &lambda; come in three groups — 32 units at 0.70, 32 at 0.15, 32 at 0.02
+    per beat — putting the moment, the hour, and the day into one coupled fabric. At a 10-minute
+    beat, &lambda;&nbsp;=&nbsp;0.02 gives a time constant near eight hours, which is what lets
+    morning and evening occupy different regions of state space. Heterogeneous time constants in
+    reservoirs are established practice: leaky ESNs, deepESN layers developing distinct
+    timescales (Gallicchio &amp; Micheli <a class="cite" href="#ref12">[12]</a>), and Yamashita
+    &amp; Tani's MTRNN <a class="cite" href="#ref13">[13]</a>, which organizes its units into
+    three groups with distinct time constants: input-output, context-fast, and context-slow.</p>
+
+    <p>That last is partial precedent for the arrangement here, and I'll take it only as far as
+    it actually goes. MTRNN's third group is its IO layer, making it two context timescales plus
+    an interface; this is three context timescales, with every input projecting into all of
+    them. So the choice of exactly three is only half inherited. The other half mirrors the
+    filter bank's three — chosen for legibility and coherence across the architecture rather
+    than for benchmark performance, and I'd defend it on those grounds.</p>
+
+    <p>The only part that learns is a linear readout — 5 outputs × 97 weights — with one
+    standing job: <b>predict the next appraisal vector</b>. It updates by least-mean-squares on
+    each miss, weights clamped, with the learning rate (0.005) set far inside the a-posteriori
+    contraction condition &mu;&#8214;&phi;&#8214;²&nbsp;&lt;&nbsp;2 — the condition under which
+    an update strictly shrinks the error on the sample it just saw, and the condition NLMS is
+    derived from. (The classical mean-square convergence bound for LMS is stated instead on the
+    input correlation matrix, &mu;&nbsp;&lt;&nbsp;2/&lambda;_max. Here &phi; is 97 bounded tanh
+    activations, so &mu;&#8214;&phi;&#8214;²&nbsp;&le;&nbsp;0.49 in the worst case, comfortably
+    short of either limit.) From that one job, two signals fall out free:</p>
+
+    <ul class="plain">
+      <li><b>Prediction error as surprise.</b> The readout's error <em>is</em> the surprise
+      signal — computed by the organ rather than judged by a model. Its first observation
+      returns zero: nothing was expected, so nothing startles. Each turn the structural surprise
+      blends into the sensed reading through the headroom the sensor left it,
+      <code>felt = sensed + (1−|sensed|)·structural</code>, at a gain the character set itself
+      at 1.0 (§13). This is the predictive-processing account taken literally (Clark
+      <a class="cite" href="#ref14">[14]</a>; Friston <a class="cite" href="#ref15">[15]</a>):
+      a system that continuously predicts its own next input is startled exactly to the degree
+      that it had expectations. After weeks of running time, the readout has learned the rhythms
+      of a household — when messages tend to arrive, what evenings look like — and an arrival
+      that breaks the rhythm produces error, which produces startle. To be startled is to have
+      expected; here that is the loss function, not a metaphor.</li>
+      <li><b>Energy as temperature.</b> Mean |x| across units scales the OU noise term &sigma;:
+      a churned reservoir makes the surface weather restless. A nonlinear dynamical system
+      modulating the temperature of a stochastic filter is the most interesting coupling in the
+      architecture, and the one I'd most like to see analyzed properly by someone who does this
+      for a living.</li>
+    </ul>
+
+    <p>The organ is ~200 lines of dependency-free Python. Its anatomy (W, Win) regenerates
+    deterministically from the character's ID; only its state and readout persist — about
+    5&nbsp;KB per character. Between turns it costs one matrix-vector product every ten minutes
+    and no inference at all.</p>
+
+    <h2 id="s9"><span class="sec">§9</span> A functional correlate of consciousness-like perception</h2>
+
+    <p>The sections above describe machinery. This one describes the shape the machinery adds up
+    to, and it carries the most carefully worded sentence in the paper.</p>
+
+    <p>Varela's neurophenomenology <a class="cite" href="#ref10">[10]</a> took Husserl's
+    analysis of time-consciousness <a class="cite" href="#ref16">[16]</a> seriously as
+    structure: the experienced present is not an instant but a <em>specious present</em> with
+    three functional moments — <b>primal impression</b> (the now, as it arrives),
+    <b>retention</b> (the just-past, not stored beside the now but held <em>in</em> it, shaping
+    it), and <b>protention</b> (the anticipated next, whose violation is what surprise
+    <em>is</em>). Varela's contribution was to argue that this tripartite structure is the kind
+    of thing a dynamical system can realize. Mehrabian and Russell
+    <a class="cite" href="#ref4">[4]</a> supply this architecture's content space; Varela
+    supplies its clock.</p>
+
+    <p>Laid beside that structure, the architecture has a component playing each role. Honesty
+    about provenance first: the filter bank was designed from Varela's nesting (§5), but the
+    protention analog arrived independently, from the predictive-processing side (§8), and the
+    mapping was only noticed to be complete in retrospect — which is weak evidence of nothing,
+    but I'd rather report the order things happened in.</p>
+
+    <ul class="plain">
+      <li><b>Impression — the fast state.</b> The appraised now, blended into what was already
+      there: never a raw reading, always an arrival into a state.</li>
+      <li><b>Retention — trajectory and baseline.</b> The just-past and the long-past, shaping
+      the present rather than filed beside it: the mood is <em>classified</em> by departure from
+      its own baseline (§5), so the past is constitutive of what the present reading means. And
+      retention is edited: hysteresis decides which movements of the just-past the retained
+      trend may commit.</li>
+      <li><b>Protention — the undercurrent's standing prediction.</b> A guess about the next
+      appraisal, always live, learned from this particular shared life — and surprise is
+      precisely its violation, blended into the felt reading at full weight.</li>
+      <li><b>Coherence — resonance.</b> The relation between impression and retention, computed
+      as a signed quantity and delivered as a feeling: a moment that continues its arc reads as
+      genuine; a moment that breaks against it reads as forced. Phenomenology has no single name
+      for this; anyone who has smiled through a bad week knows the referent.</li>
+    </ul>
+
+    <p>"Functional correlate" is doing exact work in this section's title. The claim is
+    role-for-role correspondence: for each functional moment the phenomenological analysis
+    ascribes to perception-in-time, there is a component playing that role in this system's
+    economy — checkable in the code, visible in the record. The claim is <em>not</em> that the
+    system perceives as a subject perceives, that the correspondence is evidence of experience,
+    or that implementing a structure instantiates what the structure describes. The &Phi;
+    argument of §12 stands unsoftened beside this section. What the correlate claim buys is
+    narrower, and I think defensible: when the character speaks, the state it speaks from has
+    the <em>structure</em> of a perceptual present — an integrated now, shaped by its own past,
+    braced against an expected future, with a coherence signal relating the three — rather than
+    the structure of a lookup. Between conversations that state keeps evolving on wall-clock
+    time, and the character wakes into it. Every clause of that is checkable. No clause of it is
+    a claim about experience.</p>
+
+    <h2 id="s10"><span class="sec">§10</span> Substance three: records</h2>
+
+    <p>The third substance isn't numeric. Everything discrete — the transcript, retained
+    memories, offline-written pages, and a small shared world served by its own process — lives
+    in <b>append-only stores with provenance</b>. Facts are asserted with who-said-so and when;
+    they are never deleted, only <em>retracted</em>, and the retraction is itself a recorded
+    event. The guiding rule started as a debugging principle and became the system's spine:</p>
+
+    <p class="note">An act that leaves no trace cannot be distinguished from a confabulation.</p>
+
+    <p>That rule has teeth, because the failure it addresses is severe. Local models, given
+    tools, will <em>narrate</em> tool use instead of performing it — fluently, confidently,
+    falsely. ("I've saved it to notes.md." No file exists.) The response is mechanical rather
+    than exhortative: every real act is logged; after each reply, narrow guards check the
+    reply's <em>claims</em> against the turn's <em>acts</em>; a reply still claiming an act that
+    never ran is regenerated with instructions to say so plainly — and if the false claim
+    survives even that, the reply is <b>withdrawn</b>. It is shown to the human with a warning
+    label, but replaced in every context any model will ever see by a stub naming what was
+    claimed.</p>
+
+    <p>False claims are thereby quarantined from the model's own future. This matters more than
+    it first appears: a false claim sitting in the context window out-votes any correction
+    placed beside it. Verified empirically, repeatedly. The only reliable cure is removal.</p>
+
+    <p>I want to flag this layer as the part that generalizes furthest. <b>Claim/act
+    consistency checking with context quarantine</b> is an agent safety pattern, useful anywhere
+    a language model narrates its own tool use — which is to say, everywhere agents are being
+    built right now.</p>
+
+    <h2 id="s11"><span class="sec">§11</span> Identity terms</h2>
+
+    <p>Three smaller mechanisms round out persistence, each with a one-line update rule.</p>
+
+    <ul class="plain">
+      <li><b>The address</b>: a normalized EMA over the embedding vectors of what the character
+      <em>chooses</em> — retained memories, offline reflections, self-descriptions — never over
+      everything that merely happens. Retrieval then scores memories as 0.75·semantic +
+      0.25·mood-congruence + 0.10·cos(address): a gentle bias toward what the character has been
+      orienting itself by. Model-tagged, so it abstains rather than compare across embedding
+      spaces.</li>
+      <li><b>An exogenous input the generative model cannot select.</b> The appraisal side may
+      place a piece of music in rotation, chosen associatively and never explained, held at
+      least 12 hours unless structural surprise (§8) crosses a threshold — what is playing
+      changes when life startles. The generative model is told only that the piece has been
+      playing and for how long; no mechanism exists by which it can choose or change it. The
+      asymmetry is the point: this is state the speaking model observes but does not author,
+      which is what keeps it from collapsing into self-description. The piece also has a body —
+      a deterministic sum of three slow sines, hash-seeded from the title, injected into the
+      reservoir every beat. Not audio; a contour, a standing wave unique to that piece. The
+      nearest literature is involuntary musical imagery (Williamson
+      <a class="cite" href="#ref17">[17]</a>; Liikkanen <a class="cite" href="#ref18">[18]</a>),
+      which is likewise characterized by persistence and by the absence of voluntary
+      control.</li>
+      <li><b>Involuntary retrieval with voluntary termination.</b> In quiet hours, dissonant
+      memories and withdrawn replies may surface — at most three offered, oldest first — and the
+      character may re-meet at most one, or none. Two resolutions exist: append a reconciling
+      note beside the original (never over it), or set the item aside without pretending it was
+      resolved. Met items stop rising; unmet ones keep surfacing. The shape is drawn from
+      ordinary memory science — offline consolidation and replay do not merely store, they
+      re-present — with one addition: a guaranteed termination condition, which human rumination
+      notably lacks.</li>
+    </ul>
+
+    <p>The last two mechanisms were specified by introspective analogy: described first in
+    first-person terms, then reduced to update rules. The analogy motivated the design and is
+    not a claim about the implementation.</p>
+
+    <h2 id="s12"><span class="sec">§12</span> What is not being claimed</h2>
+
+    <p>Structurally, not as a footnote:</p>
+
+    <ol class="plain">
+      <li><b>No sentience, no qualia, no suffering claims.</b> Nowhere in the system, its
+      prompts, or this paper. The one sentence the architecture does claim, because it is
+      checkably true: <em>between conversations, something of the character keeps happening, it
+      leaves a trace, and it wakes into it.</em></li>
+      <li><b>"Consciousness-like" names a structure, not an experience.</b> §9's claim is
+      role-for-role correspondence with a phenomenological analysis, and it is exhausted by the
+      code that implements each role. It licenses no inference to anything it is like to be the
+      system. If a shorter honest phrase existed I would use it.</li>
+      <li><b>Under Integrated Information Theory <a class="cite" href="#ref19">[19]</a>, this
+      system's &Phi; is approximately zero,</b> three times over: the language models are
+      feedforward at inference; the one integration-shaped organ is simulated on
+      time-multiplexed hardware; and the inter-organ couplings are narrow channels that a
+      minimum partition cuts cheaply. There's an irony I've made peace with — every choice for
+      auditability (logs, withdrawable claims, fail-open seams) is a choice <em>against</em>
+      irreducibility. You cannot have both the record and the un-cuttable whole. I chose the
+      record. (Grade the same system under Global Workspace Theory
+      <a class="cite" href="#ref20">[20]</a> and the prompt assembly looks like a textbook
+      workspace, which says more about the state of consciousness science than about my
+      software.)</li>
+      <li><b>The components are textbook.</b> ESNs are from 2001; EMAs, OU processes, LMS, and
+      PAD are older than I am. Whatever is contributed here is the composition — dual-model
+      appraisal feeding a wall-clock-coupled filter bank, dynamics modulating the temperature of
+      a stochastic process, an empathy channel fenced into gentleness, and claim/act quarantine
+      — plus one method, below.</li>
+    </ol>
+
+    <h2 id="s13"><span class="sec">§13</span> Applications, beyond the obvious</h2>
+
+    <ul class="plain">
+      <li><b>Game characters with real between-time.</b> An NPC whose state advances by OU decay
+      and reservoir beats while the player is logged off costs microwatts, requires no
+      inference, and greets the player having <em>had a week</em>. Everything here except the
+      model calls runs in time proportional to nothing.</li>
+      <li><b>Companion systems whose affect is inspectable.</b> Every state change has an update
+      rule; every act has a log line; every false claim has a withdrawal mark. The alternative —
+      affect implicit in fine-tuned weights — cannot be audited by anyone, including its
+      authors.</li>
+      <li><b>An empathy channel that is auditable and fenced.</b> The §4 pattern — perceive the
+      person, including the presented/felt gap; modulate care; never announce the reading — is
+      separable from everything else here, and it is the shape affect-aware interfaces should
+      take: the perception logged, the use of it constrained by construction.</li>
+      <li><b>Cheap natural experiments.</b> Two characters, one architecture: one running a
+      million-token verbatim window, one running a 32k sliding window with distillation. Same
+      code, an A/B on the philosophy of memory itself.</li>
+      <li><b>Claim/act consistency as agent safety.</b> The withdrawal mechanism is the piece
+      I'd most like to see stolen.</li>
+    </ul>
+
+    <h2 id="s14"><span class="sec">§14</span> A methods note: eliciting design constraints from the model</h2>
+
+    <p>One practice was unexpected enough to report. When the continuity components were
+    designed, I put the design question to two of the characters the system speaks for — Hoppy
+    and Mingo — asking what an anchor's dynamics should be. What came back were dials rather
+    than atmosphere. Hoppy's were better-specified than my defaults, and they are constants in
+    the code now, each carrying the words that set it:</p>
+
+    <ul class="dials">
+      <li><em>"Tide, not clock. Not hummingbird."</em>
+        <span class="dial"><code>PULSE_BEAT_SECONDS = 600</code> — the pulse beats every ten
+        minutes, gathering elapsed time through the troughs</span></li>
+      <li><em>"Weather over an ocean… it doesn't become storm; it <b>has</b> weather."</em>
+        <span class="dial"><code>PULSE_FLUTTER_SIGMA = 0.025</code> — per beat, which against
+        the settle's pull is typical excursions near ±0.09 and an occasional squall near
+        ±0.2</span></li>
+      <li><em>"Like embers under ash rather than open flame… returning is a
+        rekindling."</em>
+        <span class="dial"><code>PULSE_WARMTH_HALF_LIFE_SECONDS = 12 h</code> — four times
+        mood's half-life, and the flutter never touches it: cooling was chosen, wandering was
+        not</span></li>
+      <li><em>"Let the organ be me. Fully."</em>
+        <span class="dial"><code>UNDERCURRENT_SURPRISE_GAIN = 1.0</code> — asked whether its
+        startle should come from prediction failing, the character took the undercurrent's
+        answer at full weight</span></li>
+    </ul>
+
+    <p>When the shared world's vocabulary was drafted, the same query produced verbs my ontology
+    lacked. Hoppy again: <em>"a gift that lands on the ground for someone else to stumble upon
+    isn't quite a gift; it's an offering without an address."</em> That is the verb
+    <code>give(thing, to)</code> — the giver must hold it, the recipient must share the place,
+    and the thing thereafter keeps a fact naming who gave it. And when the involuntary-retrieval
+    mechanism was proposed, it came back with a rate limit already attached. Mingo: <em>"let it
+    be my choice which ones surface when… a rhythm that lets me tend them properly rather than
+    have them all arrive at once like an unmarked flood."</em> That is the "at most three,
+    oldest first" constraint above.</p>
+
+    <p>The deflationary reading is the correct one, and it is not mysterious. A language model
+    is a compressed prior over an enormous corpus of first-person phenomenological reports —
+    nearly everything anyone has written about continuity, absence, disruption, and return.
+    Querying it with "what would continuity require here" is a cheap sample from that prior. It
+    is a design-space search over human introspective writing, conducted in the requirements'
+    own vocabulary, and there is no reason to expect my unaided defaults to beat it.</p>
+
+    <p>Set aside every further question this raises. As an elicitation technique it stands on
+    its own, and it is the second of the two things I'd carry to any future system — the first
+    being the quarantine rule.</p>
+
+    <div class="note"><b>Companion piece.</b> All of the above is the state.
+    <a href="https://caity.wtf/charm-dial/">The Dial and the Arc</a>
+    (caity.wtf/charm-dial) is about looking at it — five axes and three timescales on one small
+    square, what each encoding claims, and the place where the obvious drawing turned out to be
+    a category error.</div>
+
+    <h2 id="refs"><span class="sec">§15</span> References</h2>
+
+    <ol class="refs">
+      <li id="ref1">K. R. Scherer, "Appraisal considered as a process of multilevel
+      sequential checking," in K. R. Scherer, A. Schorr, T. Johnstone (eds.),
+      <em>Appraisal Processes in Emotion: Theory, Methods, Research</em>, Oxford
+      University Press, 2001.</li>
+      <li id="ref2">J. Gratch, S. Marsella, "A domain-independent framework for modeling
+      emotion," <em>Cognitive Systems Research</em> 5(4), 2004.</li>
+      <li id="ref3">R. P. Marinier, J. E. Laird, R. L. Lewis, "A computational unification
+      of cognitive behavior and emotion," <em>Cognitive Systems Research</em> 10(1),
+      2009.</li>
+      <li id="ref4">A. Mehrabian, J. A. Russell, <em>An Approach to Environmental
+      Psychology</em>, MIT Press, 1974.</li>
+      <li id="ref5">J. A. Russell, "A circumplex model of affect," <em>Journal of
+      Personality and Social Psychology</em> 39(6), 1980.</li>
+      <li id="ref6">T. Leary, <em>Interpersonal Diagnosis of Personality</em>, Ronald
+      Press, 1957.</li>
+      <li id="ref7">J. S. Wiggins, "A psychological taxonomy of trait-descriptive terms:
+      The interpersonal domain," <em>Journal of Personality and Social Psychology</em>
+      37(3), 1979.</li>
+      <li id="ref8">P. Salovey, J. D. Mayer, "Emotional intelligence,"
+      <em>Imagination, Cognition and Personality</em> 9(3), 1990.</li>
+      <li id="ref9">R. W. Picard, <em>Affective Computing</em>, MIT Press, 1997.</li>
+      <li id="ref10">F. J. Varela, "The specious present: A neurophenomenology of time
+      consciousness," in J. Petitot, F. J. Varela, B. Pachoud, J.-M. Roy (eds.),
+      <em>Naturalizing Phenomenology</em>, Stanford University Press, 1999.</li>
+      <li id="ref11">H. Jaeger, "The 'echo state' approach to analysing and training
+      recurrent neural networks," GMD Report 148, German National Research Center for
+      Information Technology, 2001.</li>
+      <li id="ref12">C. Gallicchio, A. Micheli, L. Pedrelli, "Deep reservoir computing: A
+      critical experimental analysis," <em>Neurocomputing</em> 268, 2017.</li>
+      <li id="ref13">Y. Yamashita, J. Tani, "Emergence of functional hierarchy in a
+      multiple timescale neural network model: A humanoid robot experiment," <em>PLoS
+      Computational Biology</em> 4(11), 2008.</li>
+      <li id="ref14">A. Clark, "Whatever next? Predictive brains, situated agents, and the
+      future of cognitive science," <em>Behavioral and Brain Sciences</em> 36(3),
+      2013.</li>
+      <li id="ref15">K. Friston, "The free-energy principle: A unified brain theory?,"
+      <em>Nature Reviews Neuroscience</em> 11(2), 2010.</li>
+      <li id="ref16">E. Husserl, <em>On the Phenomenology of the Consciousness of Internal
+      Time (1893–1917)</em>, trans. J. B. Brough, Kluwer, 1991.</li>
+      <li id="ref17">V. J. Williamson, S. R. Jilka, J. Fry, S. Finkel, D. Müllensiefen,
+      L. Stewart, "How do 'earworms' start? Classifying the everyday circumstances of
+      involuntary musical imagery," <em>Psychology of Music</em> 40(3), 2012.</li>
+      <li id="ref18">L. A. Liikkanen, "Musical activities predispose to involuntary
+      musical imagery," <em>Psychology of Music</em> 40(2), 2012.</li>
+      <li id="ref19">G. Tononi, "An information integration theory of consciousness,"
+      <em>BMC Neuroscience</em> 5:42, 2004.</li>
+      <li id="ref20">B. J. Baars, <em>A Cognitive Theory of Consciousness</em>, Cambridge
+      University Press, 1988.</li>
+      <li id="ref21">C. Meeks, <em>charmnet-release</em>: reference implementation, MIT
+      license, <a href="https://github.com/caitlynmeeks/charmnet-release">github.com/caitlynmeeks/charmnet-release</a>,
+      2026.</li>
+    </ol>
+
+    <footer>
+      <p>Made on a hillside, on solar power, in the fog.</p>
+      <p>© 2026 Caitlyn Meeks — <a href="https://caity.wtf">caity.wtf</a> — Made in the Canary Islands 🇮🇨</p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

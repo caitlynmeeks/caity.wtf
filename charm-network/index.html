@@ -95,6 +95,21 @@
   .byline { color: var(--faint); margin: 0 0 0.4rem; font-size: 0.9em; }
   .byline b { color: var(--dim); font-weight: 600; }
 
+  .dlrow { margin: 1.1rem 0 1.5rem; }
+  a.dl {
+    display: inline-block;
+    padding: 0.5rem 1.2rem;
+    border: 1px solid var(--green);
+    border-radius: 6px;
+    color: var(--green);
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 120ms ease, color 120ms ease;
+  }
+  a.dl::before { content: "⇩ "; font-weight: 400; }
+  a.dl:hover, a.dl:focus-visible { background: var(--green); color: var(--bg); outline: none; }
+  .dlhint { color: var(--faint); font-size: 0.85em; margin-left: 0.4rem; }
+
   .lede { color: var(--fg); }
 
   h2 {
@@ -212,6 +227,8 @@
       <h1>Filters, Reservoirs, and Records: A Charm Network Scaffold for Wall-Clock Continuity Under Frozen LLMs</h1>
       <p class="byline"><b>Caitlyn Meeks</b> ~~ source at
       <a class="ilink" href="https://github.com/caitlynmeeks/charmnet-release" rel="noopener" target="_blank">github.com/caitlynmeeks/charmnet-release</a> (MIT)</p>
+
+      <p class="dlrow"><a class="dl" download href="filters-reservoirs-records.pdf">download whitepaper</a><span class="dlhint">(pdf, 14 pages)</span></p>
 
       <p class="lede">This is a description of a <b>charm network scaffold</b>: a small amount of
       external state, running beside a frozen language model, that gives the character the model
