@@ -37,6 +37,14 @@
   .ph-authors .ph-name { font-variant: small-caps; font-weight: 700; }
   .ph-date { font-size: 1rem; margin: 0; }
   .back { font-size: 0.85rem; margin: 0 0 1.4rem; }
+  .dlrow { text-align: center; margin: 1rem 0 1.2rem; }
+  a.dl {
+    display: inline-block; font-size: 0.78rem; line-height: 1.6;
+    color: #000; background: #fff; border: 1px solid #000; border-radius: 3px;
+    padding: 0.1rem 0.7rem; text-decoration: none;
+  }
+  a.dl:hover, a.dl:focus-visible { background: #000; color: #fff; }
+  .hint { color: #555; font-size: 0.72rem; }
 
   h2 { font-size: 1.08rem; margin: 2rem 0 0.6rem; padding-top: 0.9rem; border-top: 1px solid #000; }
   h2#abstract { text-align: center; font-variant: small-caps; border-top: none; padding-top: 0; }
@@ -70,7 +78,7 @@
   @media print {
     body { padding: 0; font-size: 10.5pt; line-height: 1.5; }
     main { max-width: none; padding: 0.4in 0.55in; }
-    .back { display: none; }
+    .back, .dlrow { display: none; }
     h1.ph-title { font-size: 16.5pt; }
     a { text-decoration: none; }
     p { orphans: 3; widows: 3; }
@@ -91,6 +99,7 @@
       <div class="ph-date">October 3, 2026</div>
     </header>
     <div class="sidestamp" aria-hidden="true">parfit · October 2026</div>
+    <p class="dlrow"><a class="dl" download href="the-parfit-architecture.pdf">download article</a> <span class="hint">(pdf)</span></p>
 
 <h2 id="abstract">Abstract</h2>
 <p>Parfit is an architecture for a language model that keeps learning from one person’s writing, every day, while it is served for conversation on the same machine. A 27-billion-parameter model (Qwen3.8 27B, a hybrid of DeltaNet and attention layers) runs on a single Mac Studio. Its frozen base weights never change; a low-rank adapter learns from each day’s text in prequential order, scored before it is trained on, and is held near the base by a quadratic pull toward the starting weights (an L2 penalty toward the base, called the spring in the design). A registered drift line, a journal the model writes and signs itself, nightly recaps, a prefix cache per prompt form, and a door that never lets a training step and a generation interleave make it one process that learns and talks. Nothing in the learning rule is new. What is new is the regime: one person’s stream, scored before it is learned, served live for weeks under a registered line, and reported with its negative results. This article explains why the architecture is named for Derek Parfit, what it is built from, what it measured on the way, where it stands among existing methods, and what it has not solved.</p>
