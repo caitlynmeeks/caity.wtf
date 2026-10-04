@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Parfit Architecture · caity.wtf</title>
+<title>The Parfit Architecture</title>
 <meta name="description" content="A language model that keeps learning from one person's writing every day while it is served for conversation, on one machine; named for Derek Parfit, because continuity, not identity, is what matters. The design, the measurements and the negative results.">
 <meta name="color-scheme" content="light">
 <meta property="og:type" content="article">
@@ -80,17 +80,17 @@
 </head>
 <body>
   <main>
-    <p class="back"><a href="/">&larr; caity.wtf</a></p>
+    <p class="back"><a href="/">&larr; home</a></p>
     <header class="printhead">
       <h1 class="ph-title">The Parfit Architecture</h1>
       <p class="ph-sub">A 27-billion-parameter language model that learns from one person’s writing every day while it talks with them, on one machine, and why continuity rather than identity is the property to engineer.</p>
       <div class="ph-authors">
         <div class="ph-name">Caitlyn Meeks</div>
-        <div>Sosiego del Cardo, Tenerife · caity.wtf</div>
+        <div>Icod de los Vinos, Tenerife · caitsters(at)gmail.com</div>
       </div>
       <div class="ph-date">October 3, 2026</div>
     </header>
-    <div class="sidestamp" aria-hidden="true">caity.wtf · parfit · October 2026</div>
+    <div class="sidestamp" aria-hidden="true">parfit · October 2026</div>
 
 <h2 id="abstract">Abstract</h2>
 <p>Parfit is an architecture for a language model that keeps learning from one person’s writing, every day, while it is served for conversation on the same machine. A 27-billion-parameter model (Qwen3.8 27B, a hybrid of DeltaNet and attention layers) runs on a single Mac Studio. Its frozen base weights never change; a low-rank adapter learns from each day’s text in prequential order, scored before it is trained on, and is held near the base by a quadratic pull toward the starting weights (an L2 penalty toward the base, called the spring in the design). A registered drift line, a journal the model writes and signs itself, nightly recaps, a prefix cache per prompt form, and a door that never lets a training step and a generation interleave make it one process that learns and talks. Nothing in the learning rule is new. What is new is the regime: one person’s stream, scored before it is learned, served live for weeks under a registered line, and reported with its negative results. This article explains why the architecture is named for Derek Parfit, what it is built from, what it measured on the way, where it stands among existing methods, and what it has not solved.</p>
@@ -254,7 +254,7 @@
 
     <footer>
       <p>Made on a hillside, on solar power, in the fog.</p>
-      <p>© 2026 Caitlyn Meeks · <a href="https://caity.wtf">caity.wtf</a> · Made in the Canary Islands 🇮🇨</p>
+      <p>© 2026 Caitlyn Meeks · caitsters(at)gmail.com · Made in the Canary Islands 🇮🇨</p>
     </footer>
   </main>
 </body>
